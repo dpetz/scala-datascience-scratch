@@ -9,15 +9,14 @@ import io.Reader
     /** Map result if Match. */
     def map[B](f: A => B): Result[B]
 
-    /** Map this instance if Match. */
+    /** Map this instance if a Match. */
     def apply[B](f: (Match[A] => Result[B])): Result[B]
 
-    /** Map this instance if if Fail **/
+    /** Map this instance if a Fail **/
     def atFail[B >: A](f: Fail[A] => Result[B]): Result[B]
 
-    //def flat[B]:Parsed[B]
+    def toMatch:Match[A]
 
-    //def asMatch:Match[A]
   }
 
 
@@ -32,8 +31,11 @@ import io.Reader
     /** New match with results combined by function and reader from second match */
     def add[B,C](m:Match[B])(f:(A,B)=>C ):Match[C]=Match(f(result,m.result),m.follow)
 
-    //def asMatch = this
+    def toMatch = this
+
   }
+
+  case class ParseException[A](f:Fail[A]) extends Exception
 
   case class Fail[+A](parser: Parser[_], follow: Reader) extends Result[A] {
     def map[B](f: A => B) = Fail[B](this)
@@ -44,7 +46,7 @@ import io.Reader
 
     def atFail[B >: A](f: Fail[A] => Result[B]) = f(this)
 
-    //def asMatch = throw new ClassCastException
+    def toMatch = throw ParseException(this) 
   }
 
   object Fail {

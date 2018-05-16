@@ -1,0 +1,18 @@
+[0m[[0m[0minfo[0m] [0m[0m[32mParse:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mArray String[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should have 9 elements[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should contain JSON literal 10[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mMatrix[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should be parsed *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  java.lang.NullPointerException:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at io.parse.Or.$anonfun$apply$1(Or.scala:5)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at io.parse.Fail.atFail(Result.scala:47)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at io.parse.Or.apply(Or.scala:5)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at io.parse.Or.apply(Or.scala:5)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at io.parse.Postfix.apply(Postfix.scala:6)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at io.parse.Prefix.$anonfun$apply$1(Prefix.scala:6)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at io.parse.Match.apply(Result.scala:27)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at io.parse.Prefix.apply(Prefix.scala:6)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at io.parse.Gate.apply(Gate.scala:7)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at io.parse.Parser$Parser2SeqParser.apply(Parser.scala:36)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m

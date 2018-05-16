@@ -1,5 +1,5 @@
 import io.parse.Parser
-import io.Json
+import io.json
 
 
 object Main extends App {
