@@ -6,7 +6,7 @@ import io.Reader
     def apply(r: Reader) =
       p1(r) { m1 =>
         p2(m1.follow) { m2 =>
-          Match[Seq[A]](m1.result ++ m2.result, m2.follow)
+          m1.add(m2){ _ ++: _ } 
         }
       }
   }

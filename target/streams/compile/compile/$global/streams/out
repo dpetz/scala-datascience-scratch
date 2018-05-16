@@ -1,6 +1,4 @@
-[0m[[0m[31merror[0m] [0m[0mC:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\src\main\scala\io\json.scala:109:98: type mismatch;[0m
-[0m[[0m[31merror[0m] [0m[0m found   : Seq[Seq[io.Json]][0m
-[0m[[0m[31merror[0m] [0m[0m required: Seq[io.Json][0m
-[0m[[0m[31merror[0m] [0m[0m	  val arr = Gate("[",Optional(Then(JsonParser(),Repeat(Prefix(",",JsonParser())))),"]") > { Arr(_) }[0m
-[0m[[0m[31merror[0m] [0m[0m	                                                                                                ^[0m
+[0m[[0m[31merror[0m] [0m[0mC:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\src\main\scala\util\Tree.scala:3:12: class Tree needs to be abstract, since method dfs is not defined[0m
+[0m[[0m[31merror[0m] [0m[0mcase class Tree[A](val root:A)(childs:A=>Seq[A]) {[0m
+[0m[[0m[31merror[0m] [0m[0m           ^[0m
 [0m[[0m[31merror[0m] [0m[0mone error found[0m

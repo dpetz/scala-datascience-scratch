@@ -55,7 +55,7 @@ class json extends FlatSpec with OptionValues with Matchers {
       |  }
       |}
     """.stripMargin
-).asInstanceOf[Obj].values should have size 6
+).asInstanceOf[Obj].values should have size 5
 
 }
 

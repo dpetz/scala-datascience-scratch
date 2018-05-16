@@ -63,3 +63,5 @@ test:clean
 ~run
 ~test
 ~run
+~test
+~compile

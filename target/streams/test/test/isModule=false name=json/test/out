@@ -5,16 +5,4 @@
 [0m[[0m[0minfo[0m] [0m[0m[32mMatrix[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- should have more than 10 elements[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32mObject[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m- should be parsed with different values and a nested object. *** FAILED ***[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  io.parse.ParseException:[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  at io.Json$.parse(json.scala:79)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  at io.Json$.apply(json.scala:84)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  at json.$anonfun$new$4(json.scala:41)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:12)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.OutcomeOf.outcomeOf(OutcomeOf.scala:85)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.OutcomeOf.outcomeOf$(OutcomeOf.scala:83)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.OutcomeOf$.outcomeOf(OutcomeOf.scala:104)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.Transformer.apply(Transformer.scala:22)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.Transformer.apply(Transformer.scala:20)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  at org.scalatest.FlatSpecLike$$anon$1.apply(FlatSpecLike.scala:1682)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should be parsed with different values and a nested object.[0m[0m

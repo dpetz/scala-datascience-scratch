@@ -106,12 +106,11 @@ object Json {
 	   */
 	  def spaces[A](p:Parser[A]):Parser[A]=Gate(Spaces,p,Spaces)
   
-	  val arr = Gate("[",Then(JsonParser(),Repeat(Prefix(",",JsonParser()))),"]") > { Arr(_) }
+	  val arr = Gate("[",Optional(Then(JsonParser(),Repeat(Prefix(",",JsonParser())))),"]") > { Arr(_) }
 
-	  val emptyArr = Then(Cons("["),spaces("]")) > { _ => Arr(Nil)}
-
+	  
 	  case class JsonParser() extends Parser[Json] {
-	    def apply(r: Reader):Result[Json] = spaces ( num | str | nul | tru | fal | arr | obj | emptyArr) (r) 
+	    def apply(r: Reader):Result[Json] = spaces ( num | str | nul | tru | fal | arr | obj) (r) 
 	  }
 
 	 val pair:Parser[(String,Json)] = Then(Postfix(spaces(str), ":"), JsonParser()) > {
@@ -122,7 +121,7 @@ object Json {
 	  }
 
 	  val obj:Parser[Obj] =
-	    Gate("{",Then(pair,Repeat(Prefix(",",pair))),"}")  > {
+	    Gate("{",Then(Optional(pair),Repeat(Prefix(",",pair))),"}")  > {
 	      m:Seq[(String,Json)] => Obj(m.toMap)
 	  }
 
