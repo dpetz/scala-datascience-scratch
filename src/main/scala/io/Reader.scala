@@ -20,14 +20,14 @@ trait Reader {
       * See https://stackoverflow.com/questions/6005392/isnt-that-code-in-tail-recursive-style */
     @tailrec
     def collectNext(l:Seq[Char], r:Reader, n:Int):Seq[Char] = {
-      if (!r.hasNext) return l ++ "<END>".toCharArray
-      if (n==0) return l
-      return collectNext(l :+ r.char, r.next, n-1)
+      return if (n==0) l
+        else if (!r.hasNext) l ++ "<END>".toCharArray
+        else collectNext(l :+ r.char, r.next, n-1)
     }
     collectNext(Vector(), this,n).mkString
   }
 
-  override def toString=s"Reader(${next(5)}...)"
+  override def toString=s"Reader(${next(10)}...)"
 }
 
 object Reader {

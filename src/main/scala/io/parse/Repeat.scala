@@ -2,7 +2,7 @@ package io.parse
 import io.Reader
 import scala.annotation.tailrec
 
-/** Repeat */
+/** Repeats parsing at least `min` an at most `max`. */
   case class Repeat[A](p: Parser[A], min: Int = 0, max: Int = Int.MaxValue) extends Parser[Seq[A]] {
 
     def apply(r: Reader) = {

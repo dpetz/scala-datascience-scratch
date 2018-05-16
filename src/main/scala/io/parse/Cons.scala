@@ -1,7 +1,7 @@
 package io.parse
 import io.Reader
 
-  /** Parse predefined string */
+  /** Parses predefined string */
   case class Cons(val s: String) extends Parser[String] {
     def apply(r: Reader) =
       Chars(s.length)(r) { m =>

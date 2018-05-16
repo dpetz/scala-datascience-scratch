@@ -6,19 +6,17 @@ import io.Reader
 
     def follow: Reader
 
-    /** Map result if Match. */
+    /** Maps result if [[Match]]. */
     def map[B](f: A => B): Result[B]
 
-    /** Map this instance if a Match. */
+    /** Maps this if a [[Match]]. */
     def apply[B](f: (Match[A] => Result[B])): Result[B]
 
-    /** Map this instance if a Fail **/
+    /** Maps this instance if a [[Fail]] **/
     def atFail[B >: A](f: Fail[A] => Result[B]): Result[B]
 
     def toMatch:Match[A]
-
   }
-
 
   /** @param follow : Reader after parsed content has been consumed */
   case class Match[+A](result: A, follow: Reader) extends Result[A] {
@@ -29,13 +27,12 @@ import io.Reader
     def atFail[B >: A](f: Fail[A] => Result[B]) = this
 
     /** New match with results combined by function and reader from second match */
-    def add[B,C](m:Match[B])(f:(A,B)=>C ):Match[C]=Match(f(result,m.result),m.follow)
+    def add[B,C](m:Match[B])(f:(A,B)=>C ):Match[C] =
+      Match(f(result,m.result),m.follow)
 
     def toMatch = this
 
   }
-
-  case class ParseException[A](f:Fail[A]) extends Exception
 
   case class Fail[+A](parser: Parser[_], follow: Reader) extends Result[A] {
     def map[B](f: A => B) = Fail[B](this)
@@ -52,4 +49,8 @@ import io.Reader
   object Fail {
     def apply[B](f: Fail[_]): Fail[B] = Fail[B](f.parser, f.follow)
   }
+
+   case class ParseException[A](f:Fail[A]) extends Exception {
+    override def toString = s"$f"
+   }
 
