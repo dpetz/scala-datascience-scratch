@@ -9,12 +9,18 @@ package io
 import io.parse._
 import io.parse.Parser.Spaces
 import scala.util.{Try, Success, Failure}
+import util.Tree
 //import scala.collection.AbstractTraversable
 
 /** JSON object */
-sealed trait Json { //extends Traversable[Json] {
-  //def values:Traversable[Json]
-  //def foreach(f:(Json) => Unit ):Unit = values.foreach(f)
+sealed trait Json {
+
+  def tree = Tree(this) { parent:Json =>
+  	parent match {
+  		case c:Collection => c.values
+  		case _ => Nil
+  	}
+  }
 }
 
 
@@ -22,15 +28,15 @@ sealed trait Collection extends Json {
 	def values:Seq[Json]
 }
 
-/** JSON Object */
-case class Obj (pairs:Map[String,Json]) extends Json {
-  def values = pairs.values
+/** JSON Object Maintains entry order. */
+case class Obj (pairs:Map[String,Json]) extends Collection {
+  def values = pairs.values.toSeq
   override def toString = pairs.iterator.map{
   	case (k,v) => s""""$k":$v"""}.mkString("{",",","}")
 }
 
 /** JSON Array */
-case class Arr (values:Seq[Json]) extends Json {
+case class Arr (values:Seq[Json]) extends Collection {
   override def toString = values.mkString("[",",","]")
 }
 

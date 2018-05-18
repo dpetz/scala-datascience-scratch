@@ -65,3 +65,9 @@ test:clean
 ~run
 ~test
 ~compile
+exit
+^
+~
+~compile
+~run
+exit

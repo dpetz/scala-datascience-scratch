@@ -54,6 +54,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\LinAlg$Matrix$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	io\False$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\io\False$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	util[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\util[0m
 [0m[[0m[0mdebug[0m] [0m[0m	LinAlg$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\LinAlg$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	io\Null.class[0m
@@ -112,6 +114,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\Main.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	io\Obj$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\io\Obj$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	util\Tree$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\util\Tree$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	io\parse\Match$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\io\parse\Match$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	io\Reader$SourceReader.class[0m
@@ -120,6 +124,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\io\parse\ParseException$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	io\Json$Parsers$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\io\Json$Parsers$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	util\Tree.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\util\Tree.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	Main$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  C:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\target\scala-2.12\classes\Main$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	io\parse\Prefix$.class[0m
