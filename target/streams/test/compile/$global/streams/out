@@ -1,5 +1,0 @@
-[0m[[0m[33mwarn[0m] [0m[0mC:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\src\test\scala\io\json.scala:16:17: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: False, Null, Num(_), Obj(_), Str(_), Sym(), True[0m
-[0m[[0m[33mwarn[0m] [0m[0m  val arr = Json(arrStr) match { case a:Arr => a }[0m
-[0m[[0m[33mwarn[0m] [0m[0m                ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m

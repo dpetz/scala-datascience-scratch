@@ -71,3 +71,12 @@ exit
 ~compile
 ~run
 exit
+~compile
+sbt
+~compile
+~run
+clean
+~run
+exit
+~run
+exit

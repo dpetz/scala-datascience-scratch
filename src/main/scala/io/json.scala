@@ -10,10 +10,19 @@ import io.parse._
 import io.parse.Parser.Spaces
 import scala.util.{Try, Success, Failure}
 import util.Tree
-//import scala.collection.AbstractTraversable
+
+
+
 
 /** JSON object */
 sealed trait Json {
+
+
+case class JsonException(msg:String, json:Json) extends Exception {
+	override def toString = msg + ": " + json
+}	
+
+private def fail(msg:String) = Failure(JsonException(msg,this))
 
   def tree = Tree(this) { parent:Json =>
   	parent match {
@@ -21,6 +30,11 @@ sealed trait Json {
   		case _ => Nil
   	}
   }
+
+  def toNum:Try[Num]=fail("Not a number")
+
+  def toArr:Try[Arr]=fail("Not an array")
+
 }
 
 
@@ -38,6 +52,7 @@ case class Obj (pairs:Map[String,Json]) extends Collection {
 /** JSON Array */
 case class Arr (values:Seq[Json]) extends Collection {
   override def toString = values.mkString("[",",","]")
+  override def toArr = Success(this)
 }
 
 /**JSON literal, i.e. [[Str]] or [[Num]]. */
@@ -49,7 +64,9 @@ sealed trait Lit[A] extends Json {
 /** JSON number */
 case class Num(value:Double) extends Lit[Double] {
   override def toString = value.toString
+  override def toNum = Success(this)
 }
+
 /** Provides constructor from [[String]] */
 object Num {
 	def apply(s:String):Num=Num(s.toDouble)

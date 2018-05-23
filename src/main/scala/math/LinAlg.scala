@@ -78,37 +78,4 @@ object LinAlg {
   }
 
 
-  /**
-    *
-    */
-  trait Matrix extends Seq[Double] {
-    def apply(i:Int,j:Int)
-    def rows:Int
-    def cols:Int
-  }
-
-  object Matrix {
-
-
-    class RowMatrix(v:Seq[Double],width:Int) extends AbstractSeq[Double] with Matrix {
-
-      require(v.size % width == 0)
-
-      /** Assert indices */
-      private def assert(i:Int,j:Int): Unit ={
-        if (j<0 | j>=width)
-          throw new IllegalArgumentException(f"Column index not in [0,$width):$j")
-        if (i<0 | i>=(size/width))
-          throw new IllegalArgumentException(f"Row index not in [0,${size/width}):$i")
-      }
-      def rows=v.size / width
-      def cols=width
-      def apply(i:Int,j:Int)={ assert(i,j); v(i*width+j) }
-      override def iterator = v.iterator
-      override def apply(idx: Int): Double = v(idx)
-      override def length = v.length
-    }
-
-    def fromRows(v:Seq[Double],width:Int)=new RowMatrix(v,width)
-  }
 }
