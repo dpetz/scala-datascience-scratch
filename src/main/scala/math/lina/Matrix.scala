@@ -2,6 +2,8 @@ package math.lina
 
 import io.Json
 
+import scala.collection.{Map,AbstractSeq,AbstractMap}
+
 /**
   * Subclasses must implement at least [[rows]]
   */
@@ -21,13 +23,44 @@ trait Matrix[A] {
   def nRows:Int = rows.size
   def nCols:Int = rows(0).size
   def apply(i:Int,j:Int) = assert (i,j) (rows(_)(_))
-  def cols:Seq[Seq[A]] = (0 to nCols-1).map { new ColView(this,_) }
+  def cols:Seq[Seq[A]] = (0 to nCols-1).map { new Matrix.Column(this,_) }
   def rows:Seq[Seq[A]]
+  def toMap:Map[(Int,Int),A] = new Matrix.AsMap[A](this)
+
   
   override def toString = s"Matrix($nRows rows, $nCols columns)"
 }
   
 object Matrix {
 
+  type Index =(Int, Int)
+
+  /** Shortcut to [[RowsMatrix.fromJson]]. */
   def apply(json:String):Matrix[Double]=RowsMatrix.fromJson(Json(json)).get
+
+  /** Wraps column as [[Seq]] */
+  class Column[A](val m:Matrix[A], val j:Int) extends AbstractSeq[A] {
+    def apply(i:Int):A = m(i,j)
+    def iterator:Iterator[A] = (0 to length-1).map(m(_,j)).iterator
+    def length:Int=m.nRows
+  }
+
+  /** Wraps matrix as [[Map]] */
+  class AsMap[A](mat:Matrix[A]) extends AbstractMap[Index,A] {
+
+    def get(idx:Index):Option[A] = 
+      try { Some(mat(idx._1, idx._2)) }
+      catch { case e:Exception => None }
+    
+    def iterator = mat.rows.zipWithIndex.flatMap {
+       case (row,i) => row.zipWithIndex.map {
+          case (x,j) => ((i,j),x) }}.iterator
+
+    /** Unsupported because result not rectangular. */
+    def +[B >: A](kv:(Index,B)):Map[Index,B] = throw new UnsupportedOperationException
+
+    /** Unsupported because result not rectangular. */
+    def -(k:Index) = throw new UnsupportedOperationException
+
+  }
 }
