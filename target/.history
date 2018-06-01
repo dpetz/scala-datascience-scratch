@@ -85,3 +85,13 @@ exit
 ~run
 rcit
 exit
+~run
+~compile
+~ompile
+compile
+~compile
+~run
+~un
+~run
+exit
+~run

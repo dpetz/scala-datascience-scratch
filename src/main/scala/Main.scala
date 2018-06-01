@@ -1,7 +1,7 @@
 import io.parse._
 import io._
 import util._
-import math.lina.Matrix
+import math.lina.Rows
 
 
 object Main extends App {
@@ -25,7 +25,7 @@ val json = Json(
 //println(matrix)
 
 
-val mat = Matrix("[[1,2,3],[4,5,6],[7,8,9]]")
-println(mat.cols(2))
+val mat = Rows("[[1,2,3],[4,5,6],[7,8,9]]")
+println(mat.columns(2))
 //println(mat.toMap)
 }
