@@ -48,7 +48,7 @@ object Entries {
 
     ///// More Map methods /////
 
-    def mapNeu[B](f:(((Int,Int),A))=>((Int,Int),B)):Entries[B] = Map2Entries(this.map(f))
+    def map[B](f:(((Int,Int),A))=>((Int,Int),B)):Entries[B] = Entries(super.map(f))
 
   }
 }
