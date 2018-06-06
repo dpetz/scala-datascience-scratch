@@ -41,10 +41,9 @@ class DoubleField extends Field[Double] {
   def inverse(v:Double):Double = 1/v
 
 }
-/*
-implicit class MatrixGroup[A](mat:Matrix) extends Ring[Matrix[A]] {
 
+class MatrixGroup[A](mat:Matrix[A],field:Field[A]) {// extends Ring[Matrix[A]] {
 
-    lazy val zero = 
+    // context and view bounds
+    lazy val zero = Matrix.SeqOfRows(mat.rows( _.elems(_ => field.zero) ))
 }
-*/
