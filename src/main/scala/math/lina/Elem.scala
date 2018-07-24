@@ -1,3 +1,3 @@
 package math.lina
 
-case class Elem[A] (val i:Int, val j:Int, val x:A)
+case class Elem[A] (i:Int, j:Int, x:A)

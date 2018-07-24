@@ -19,15 +19,12 @@ trait Group[A] extends Monoid[A] {
 trait Ring[A] extends Group[A] {
     def one:A
     def times(l:A,r:A):A
-
 }
 
 trait Field[A] extends Ring[A] {
     def divide(l:A,r:A):A
     def inverse(v:A):A
-
 }
-
 
 class DoubleField extends Field[Double] {
   val zero = 0.0
@@ -42,8 +39,15 @@ class DoubleField extends Field[Double] {
 
 }
 
-class MatrixGroup[A](mat:Matrix[A],field:Field[A]) {// extends Ring[Matrix[A]] {
+implicit class MatrixMath[A](matLeft:Matrix[A])(implicit f:Field[A]) {
 
     // context and view bounds
-    lazy val zero = Matrix.SeqOfRows(mat.rows( _.elems(_ => field.zero) ))
+    //lazy val zero = Matrix.Rows(mat.elems(_ => field.zero) ))
+
+    private def zip(matRight:Matrix[A]) = matLeft.elems(_.x).zip(matRight.elems(_.x))
+
+    def +(matRight:Matrix[A]) = {
+      assert( (matLeft.n == matRight.n) && (matLeft.m == matRight.m) )
+      Matrix.Split(matLeft.m)(zip(matRight).map(case (l,r) => f.plus(l,r)))
+    }
 }

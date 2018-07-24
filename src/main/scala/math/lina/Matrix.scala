@@ -18,6 +18,11 @@ trait Matrix[A] {
   def m:Int
   def apply(i:Int,j:Int):A
 
+  /** Rowwise or Columnwise depending on implementation */
+  def elems[B](rowwise=true)(f:Elem[A]=>B):Seq[B]=
+    if (rowwise) rows(_.elems(f))
+    else cols(_.elems(f))
+
   def row(i:Int):Row[A]=Row(i,this)
   def rows[B](f:Row[A]=>B):Seq[B]=(0 to n-1).map(Row(_,this)).map(f)
 
@@ -26,14 +31,13 @@ trait Matrix[A] {
 
 
   override def toString = s"Matrix($n rows, $m columns)"
+
 }
-
-
 
 object Matrix {
 
   /** Implements [[Rows]] as a vector (the rows) of vectors (the entries).  */
-  case class SeqOfRows[A](val data:Seq[Seq[A]]) extends Matrix [A] {
+  case class Rows[A](data:Seq[Seq[A]]) extends Matrix[A] {
 
     /** Checks all row vectors have equal length */
     require (data.forall( _.size == m),
@@ -44,12 +48,22 @@ object Matrix {
     def n=data.size
     def m=data(0).size
 
-
   }
 
-  
- /** Copies [[Json]] array of number arrays into scala vector of vectors */
-  def fromJson[A](json:Json,parse:Json=>A):Try[Matrix[A]]= {
+  case class Split[A](data:Seq[B],m:Int) extends Matrix[A] {
+    assert(data.size % m == 0)
+    def n = data.size / m
+    def apply(i:Int, j:Int) = data(i*m+j)
+  }
+
+  case class Trans[A](mat:Matrix[A]) extends Matrix[A] {
+    def n = mat.m
+    def m = mat.n
+    def apply(i:Int,j:Int)=mat(j,i)
+  }
+
+/** Copies [[Json]] array of number arrays into scala vector of vectors */
+  def apply[A](json:Json,parse:Json=>A):Try[Matrix[A]]= {
     try {
         Success(new SeqOfRows[A](
           json.toArr.get.values.map {  // rows              
@@ -63,11 +77,10 @@ object Matrix {
     }
   }
 
-
   def parseDouble(json:Json):Double = json.toNum.get.value
 
-  /** Shortcut to ``fromJson(Json((jsonStr))´´. */
+  /** Parses matrix of doubles from json string.
+   *  Shortcut to ``apply(Json(jsonStr),parseDouble)´´. */
   def apply(jsonStr:String):Matrix[Double]=
-    fromJson[Double](Json(jsonStr),parseDouble).get
-
+    fromJson[Double](Json(jsonStr),parseDouble).get 
 }
