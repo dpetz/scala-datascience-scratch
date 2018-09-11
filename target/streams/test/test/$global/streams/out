@@ -1,0 +1,12 @@
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(Gradient, org.scalatest.tools.Framework$$anon$1@2ad34f24, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(json, org.scalatest.tools.Framework$$anon$1@2ad34f24, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(Matrix, org.scalatest.tools.Framework$$anon$1@2ad34f24, false, [SuiteSelector])[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mRun completed in 262 milliseconds.[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mTotal number of tests run: 7[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mSuites: completed 3, aborted 0[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[36mTests: succeeded 7, failed 0, canceled 0, ignored 0, pending 0[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mAll tests passed.[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mPassed tests:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Matrix[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Gradient[0m
+[0m[[0m[0mdebug[0m] [0m[0m	json[0m

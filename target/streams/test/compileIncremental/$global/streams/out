@@ -1,0 +1,15 @@
+[0m[[0m[0mdebug[0m] [0m[0mThe math.algebra.DoubleField has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	.[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll member reference dependencies will be considered within this context.[0m
+[0m[[0m[0mdebug[0m] [0m[0mFiles invalidated by inheriting from (external) math.algebra.DoubleField: Set(); now invalidating by inheritance (internally).[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting direct dependencies of all classes transitively invalidated by inheritance.[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting classes that directly depend on (external) math.algebra.DoubleField.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of Matrix. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe math.algebra.Field has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(plus,[Default]), UsedName($init$,[Default]), UsedName(times,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll member reference dependencies will be considered within this context.[0m
+[0m[[0m[0mdebug[0m] [0m[0mFiles invalidated by inheriting from (external) math.algebra.Field: Set(); now invalidating by inheritance (internally).[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting direct dependencies of all classes transitively invalidated by inheritance.[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting classes that directly depend on (external) math.algebra.Field.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of Matrix. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mNo changes[0m

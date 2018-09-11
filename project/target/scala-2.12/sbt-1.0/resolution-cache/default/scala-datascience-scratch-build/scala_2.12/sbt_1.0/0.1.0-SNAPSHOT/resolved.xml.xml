@@ -4,7 +4,7 @@
 		module="scala-datascience-scratch-build"
 		revision="0.1.0-SNAPSHOT"
 		status="integration"
-		publication="20180511164538"
+		publication="20180823113236"
 		e:sbtVersion="1.0" e:scalaVersion="2.12"
 	>
 		<description>

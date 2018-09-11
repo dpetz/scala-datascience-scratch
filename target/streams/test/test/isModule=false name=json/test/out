@@ -1,0 +1,8 @@
+[0m[[0m[0minfo[0m] [0m[0m[32mjson:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mArray String[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should have 8 elements[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should contain JSON literal 10[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mMatrix[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should have more than 10 elements[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mObject[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should be parsed with different values and a nested object.[0m[0m

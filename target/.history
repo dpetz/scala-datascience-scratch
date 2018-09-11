@@ -98,3 +98,26 @@ exit
 exit
 ~run
 exit
+~run
+~run -feature
+~run
+~run -feature
+~test
+~run
+clear
+clean
+~run
+~run -feature
+~test
+~run -feature
+exit
+~run -feature
+exit
+~run -feature
+~test
+exit
+scaladoc
+help
+tasks
+doc
+~doc

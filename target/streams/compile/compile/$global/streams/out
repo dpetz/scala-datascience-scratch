@@ -1,6 +1,2 @@
-[0m[[0m[31merror[0m] [0m[0mC:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\src\main\scala\math\lina\Algebra.scala:48:59: type mismatch;[0m
-[0m[[0m[31merror[0m] [0m[0m found   : () => A[0m
-[0m[[0m[31merror[0m] [0m[0m required: math.lina.Elem[A] => ?[0m
-[0m[[0m[31merror[0m] [0m[0m    lazy val zero = Matrix.SeqOfRows(mat.rows( _.elems(() => field.zero) ))[0m
-[0m[[0m[31merror[0m] [0m[0m                                                          ^[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m
+[0m[[0m[33mwarn[0m] [0m[0mthere was one feature warning; re-run with -feature for details[0m
+[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
