@@ -1,4 +1,0 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/dpetzoldt/Documents/GitHub/scala-datascience-scratch/src/test/scala/math/ana/Gradient.scala:18:26: not found: value Random[0m
-[0m[[0m[31merror[0m] [0m[0m    val v = Seq.fill(10)(Random.nextInt(10) + 1.0)[0m
-[0m[[0m[31merror[0m] [0m[0m                         ^[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m

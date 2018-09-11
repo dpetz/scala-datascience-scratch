@@ -1,4 +1,0 @@
-[0m[[0m[0minfo[0m] [0m[0m[32mMatrix:[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32mM=[[1,2],[3,4]][0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- should (M + M) equal (2 * M)[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- should (M * M) elements sum equal 54[0m[0m
