@@ -1,16 +1,7 @@
-[0m[[0m[31merror[0m] [0m[0mC:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\src\main\scala\util\MapWrapper.scala:3:36: not found: type AbstractMap[0m
-[0m[[0m[31merror[0m] [0m[0m  class MapWrapper[K,+V]() extends AbstractMap[K,V] {[0m
-[0m[[0m[31merror[0m] [0m[0m                                   ^[0m
-[0m[[0m[31merror[0m] [0m[0mC:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\src\main\scala\util\MapWrapper.scala:4:34: not found: value toMap[0m
-[0m[[0m[31merror[0m] [0m[0m      def get(idx:K):Option[V] = toMap.get(idx)[0m
-[0m[[0m[31merror[0m] [0m[0m                                 ^[0m
-[0m[[0m[31merror[0m] [0m[0mC:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\src\main\scala\util\MapWrapper.scala:5:22: not found: value toMap[0m
-[0m[[0m[31merror[0m] [0m[0m      def iterator = toMap.iterator[0m
-[0m[[0m[31merror[0m] [0m[0m                     ^[0m
-[0m[[0m[31merror[0m] [0m[0mC:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\src\main\scala\util\MapWrapper.scala:6:33: not found: value toMap[0m
-[0m[[0m[31merror[0m] [0m[0m      def +[B >: V](kv:(K,B)) = toMap + kv [0m
-[0m[[0m[31merror[0m] [0m[0m                                ^[0m
-[0m[[0m[31merror[0m] [0m[0mC:\Users\dpetzoldt\Documents\GitHub\scala-datascience-scratch\src\main\scala\util\MapWrapper.scala:7:20: not found: value toMap[0m
-[0m[[0m[31merror[0m] [0m[0m      def -(k:K) = toMap - k[0m
-[0m[[0m[31merror[0m] [0m[0m                   ^[0m
-[0m[[0m[31merror[0m] [0m[0m5 errors found[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/dpetzoldt/Documents/GitHub/scratch/src/main/scala/io/json.scala:12:8: object Tree is not a member of package util[0m
+[0m[[0m[31merror[0m] [0m[0mimport util.Tree[0m
+[0m[[0m[31merror[0m] [0m[0m       ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/dpetzoldt/Documents/GitHub/scratch/src/main/scala/io/json.scala:27:14: not found: value Tree[0m
+[0m[[0m[31merror[0m] [0m[0m  def tree = Tree(this) { parent:Json =>[0m
+[0m[[0m[31merror[0m] [0m[0m             ^[0m
+[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
