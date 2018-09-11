@@ -3,6 +3,7 @@
 .log
 project/
 target/
+lib/
 # ignore all . files (such as .DS_Store) and . folders
 .*
 # Dont ignore .gitignore (this file)
