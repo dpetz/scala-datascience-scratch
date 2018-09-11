@@ -5,3 +5,4 @@ target/
 .*
 # Dont ignore .gitignore (this file)
 !/.gitignore
+.DS_Store
