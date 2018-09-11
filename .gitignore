@@ -1,9 +1,10 @@
 
 .class
+.log
 project/
 target/
-# ignore all . files and . folders
+# ignore all . files (such as .DS_Store) and . folders
 .*
 # Dont ignore .gitignore (this file)
 !/.gitignore
-.DS_Store
+
