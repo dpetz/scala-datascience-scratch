@@ -1,0 +1,9 @@
+
+.class
+project/
+target/
+# ignore all . files and . folders
+.*
+# Dont ignore .gitignore (this file)
+!/.gitignore
+.DS_Store
