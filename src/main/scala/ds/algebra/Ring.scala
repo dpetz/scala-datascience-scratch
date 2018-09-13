@@ -1,4 +1,4 @@
-package math.algebra
+package ds.algebra
 
 trait Ring[A] extends Group[A] {
   def one:A

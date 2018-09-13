@@ -1,4 +1,4 @@
-package math.lina
+package ds.lina
 
 case class Column[A] (matrix:Matrix[A], index:Int) extends Seq[A] {
   def length = matrix.rows

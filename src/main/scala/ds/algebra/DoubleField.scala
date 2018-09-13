@@ -1,4 +1,4 @@
-package math.algebra
+package ds.algebra
 
 /**
  * @see https://github.com/non/spire

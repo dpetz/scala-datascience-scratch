@@ -1,6 +1,5 @@
-import io._
-import math.lina._
-import util._
+import parser._
+import ds.lina._
 
 object Main extends App {
 

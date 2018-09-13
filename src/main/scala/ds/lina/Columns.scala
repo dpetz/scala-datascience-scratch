@@ -1,4 +1,4 @@
-package math.lina
+package ds.lina
 
 case class Columns[A](matrix:Matrix[A]) extends  Seq[Column[A]] {
 

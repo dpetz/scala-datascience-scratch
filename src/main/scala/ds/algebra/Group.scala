@@ -1,4 +1,4 @@
-package math.algebra
+package ds.algebra
 
 trait Group[A] extends Monoid[A] {
 	def negate(v:A):A

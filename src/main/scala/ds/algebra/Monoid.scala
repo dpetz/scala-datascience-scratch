@@ -1,4 +1,4 @@
-package math.algebra
+package ds.algebra
 
 trait Monoid[A] {
   def zero:A

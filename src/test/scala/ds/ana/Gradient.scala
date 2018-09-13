@@ -1,6 +1,6 @@
 import org.scalatest._
 import io._
-import math.ana._
+import ds.ana._
 import scala.util.Random 
 
 class Gradient extends FlatSpec with OptionValues with Matchers {

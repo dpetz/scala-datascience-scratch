@@ -1,6 +1,6 @@
-package math.lina
+package ds.lina
 
-import io.Json
+import parser.Json
 import scala.util.{Try, Success, Failure}
 
 

@@ -1,4 +1,4 @@
-import math.lina
+import ds.lina
 
 /**
   * Created by Dirk on 21.04.17.

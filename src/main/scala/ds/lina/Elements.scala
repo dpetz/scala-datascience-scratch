@@ -1,4 +1,4 @@
-package math.lina
+package ds.lina
 
 case class Elements[A](matrix:Matrix[A],byRow:Boolean=true) extends Seq[A] {
 

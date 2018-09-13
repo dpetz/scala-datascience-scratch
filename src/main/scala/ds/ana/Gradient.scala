@@ -1,6 +1,6 @@
-package math.ana
+package ds.ana
 
-import math.lina._
+import ds.lina
 import Function.tupled
 
 /** Gradient of real-valued function

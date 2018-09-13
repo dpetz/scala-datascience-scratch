@@ -1,4 +1,4 @@
-package math
+package ds
 
 // https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet
 
@@ -9,7 +9,7 @@ package math
  */
 package object lina {
 
-  import math.algebra._
+  import ds.algebra._
 
   type Vec = Seq[Double]
 

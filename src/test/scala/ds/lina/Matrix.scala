@@ -1,5 +1,5 @@
 import org.scalatest._
-import math.lina._
+import ds.lina._
 
 class Matrix extends FlatSpec with OptionValues with Matchers {
 

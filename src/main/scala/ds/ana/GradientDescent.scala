@@ -1,7 +1,7 @@
-package math.ana
+package ds.ana
 
 import scala.util.Random
-import math.lina._
+import ds.lina
 import scala.annotation.tailrec
 
 import GradientDescent._

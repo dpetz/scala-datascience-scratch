@@ -1,10 +1,10 @@
-package math
+package ds
 
 // https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet
 
 package object ana {
 
-  import math.algebra._
+  import ds.algebra._
 
   implicit val algebra = DoubleField()
 
