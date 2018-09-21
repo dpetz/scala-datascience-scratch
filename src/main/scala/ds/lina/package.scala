@@ -1,5 +1,5 @@
 package ds
-
+import ds.algebra._
 // https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet
 
 
@@ -9,11 +9,26 @@ package ds
  */
 package object lina {
 
-  import ds.algebra._
-
   type Vec = Seq[Double]
 
-  implicit val algebra = DoubleField()
+
+implicit val vecGroup = new Group[Vec] {
+  val zero = Nil
+  
+  def plus(l:Vec,r:Vec):Vec =
+    if (l==zero) r
+    else if (r==zero) l
+    else (l zip r) map { case (x,y) => x+y }
+  
+  def negate(v:Vec):Vec =
+    if (v==zero) v else v.map { -_ }
+
+  def minus(l:Vec, r:Vec):Vec =
+    if (r==zero) l
+    else if (l==zero) r.map { -_ }
+    else (l zip r) map { case (x,y) => x-y }
+}
+
 
   implicit class SequenceOps[A](seq:Seq[A]) {
 
@@ -28,8 +43,6 @@ package object lina {
     	def apply(i:Int, j:Int) = seq(i*rows+j)
     }
 
-
-
     /* Returns random slices of given size.
      * Each element returned once except remainder which is ignored */
     def randomSlices(size:Int=1):TraversableOnce[Seq[A]]={
@@ -38,7 +51,6 @@ package object lina {
       for (b <- 0 until seq.length / size)
         yield vShuffled.slice(b*size,b*size+size)
     }
-
 
     val locale = java.util.Locale.US
 
@@ -91,6 +103,9 @@ package object lina {
     val algebra = implicitly[Field[A]]
 
     def +(other:Matrix[A]) =
+      (matrix zip other) map algebra.plus
+    
+    def test(other:Matrix[A]) =
       (matrix zip other) map algebra.plus
 
     def *(x:A) =

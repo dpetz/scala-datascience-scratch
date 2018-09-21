@@ -1,7 +1,9 @@
-package ds.ana
+package ds.calc
 
 import scala.util.Random
-import ds.lina
+import ds.lina._
+import ds.algebra._
+
 import scala.annotation.tailrec
 
 import GradientDescent._
@@ -16,11 +18,11 @@ import GradientDescent._
   * @param stop Predicate if continue
   * @param previous Previous descent step (if any)
   */
-case class GradientDescent(gradient:Gradient, position:Vec, steps:Steps = new Grid, stop:Stop = new Stop,
+case class GradientDescent(func:ScalarField, gradient:Gradient, position:Vec, steps:Steps = new Grid, stop:Stop = new Stop,
                             previous:Option[GradientDescent]=None) extends Traversable[GradientDescent] {
 
   /** Current value at */
-  def value:Double=gradient.func(position)
+  def value:Double=func(position)
 
   /**
     * Try one step.
@@ -41,13 +43,13 @@ case class GradientDescent(gradient:Gradient, position:Vec, steps:Steps = new Gr
     */
   @tailrec final def minimize:GradientDescent={
     val neggradient = gradient(position).map(-_)
-    val vMinFunc = steps(this) map { step(position,neggradient,_) } minBy { (gradient.func) wrap recodeNaN }
+    val vMinFunc = steps(this) map { step(position,neggradient,_) } minBy { (func) andThen recodeNaN }
     if ( stop(this,vMinFunc) ) return this
-    new GradientDescent(gradient,vMinFunc,steps,stop,Some(this)).minimize
+    new GradientDescent(func,gradient,vMinFunc,steps,stop,Some(this)).minimize
   }
 
   def maximize:GradientDescent={
-    GradientDescent(gradient.negate,position,steps,stop,None).minimize
+    GradientDescent(func.negate,gradient.negate,position,steps,stop,None).minimize
   }
 
   /* Iterate beginning first until this step */
@@ -71,7 +73,7 @@ object GradientDescent {
     * does not improve beyond tolerance. */
   class Stop(val tolerance:Double=0.000001) extends ((GradientDescent, Vec) => Boolean) {
     def apply(gd:GradientDescent, nextV:Vec)=
-      Math.abs(gd.value - gd.gradient.func(nextV)) < tolerance
+      Math.abs(gd.value - gd.func(nextV)) < tolerance
   }
 }
 

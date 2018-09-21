@@ -5,7 +5,7 @@ import scala.util.{Try, Success, Failure}
 
 
 /**
-  * Subclasses must implement at least [[rows]]
+  * Minimal interface for a matrix. 
   */
 trait Matrix[A] {
    
