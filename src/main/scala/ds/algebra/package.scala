@@ -25,8 +25,18 @@ package object algebra {
 		 /** Negate real function (one argument) */
 		def negate = { x:X => algebra.negate(function(x)) }
 
-
 	}
+
+
+  implicit class FunctionOps[A,B](f:A=>B) {
+  	
+  	def recode(before:B, after:B):A=>B={ x:A =>
+  		val y = f(x)
+  		if (y == before) after else y
+  	}
+  }
+
+
 
 	/*
 	implicit class Function2Math[X,Z,Y:Field](function:(X,Z)=>Y) {

@@ -75,22 +75,29 @@ implicit val vecGroup = new Group[Vec] {
     def dot(other:Seq[A]):A = (seq * other) total
 
     /** zips and applies binary operation */
-    private def op(other: Seq[A], f: (A,A)=>A) = {
+    private def each(other: Seq[A], f: (A,A)=>A) = {
       require (seq.size == other.size)
       (seq zip other) map (x => f(x._1, x._2))
     }
 
     /** Add elementwise */
-    def +(other: Seq[A]) = op(other, algebra.plus)
+    def +(other: Seq[A]) = each(other, algebra.plus)
 
     /** Substract elementwise */
-    def -(other: Seq[A]) = op(other, algebra.minus)
+    def -(other: Seq[A]) = each(other, algebra.minus)
 
-    /** Add constant */
-    def +(x: A) = seq map (algebra.plus(_,x))
+
+    def unary_- = seq map (algebra.negate(_))
+
 
     /* Multiply elementwise */
-    def *(w: Seq[A]) = op(w, algebra.times)
+    def *(w: Seq[A]) = each(w, algebra.times)
+
+
+    /** Add constant */
+    def +(x: A) = seq map (algebra.plus(x,_))
+
+    def *(x:A) = seq map (algebra.times(x,_))
   }
 
   /**

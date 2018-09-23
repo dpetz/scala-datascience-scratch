@@ -17,6 +17,12 @@ case class Gradient(atIndex:Int=>ScalarField) extends VectorField {
 
 object Gradient {
 
+  /**
+   * @param pd Partial Derivative
+   */
+  def apply( pd:(Int, Vec) => Double ):Gradient =
+    Gradient { (i:Int) => (v:Vec) => pd(i,v) }
+
   /** Estimates gradient. Computational expensive (2n function evaluations)
     * and estimation error can be substantial, see Gradient.test
     * @param h tiny constant to approximate limit for difference quotient

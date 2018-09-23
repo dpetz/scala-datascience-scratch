@@ -1,12 +1,10 @@
+
 import org.scalatest._
-import io._
-import ds.ana._
+import parser._
+import ds.calc._
 import scala.util.Random 
 
 class Gradient extends FlatSpec with OptionValues with Matchers {
-
-/** Call test to see it at work */
-
 
   "Gradient example " should "run" in {
 
@@ -17,7 +15,7 @@ class Gradient extends FlatSpec with OptionValues with Matchers {
       v.zipWithIndex.map { case (x,i) => Math.pow(x,i) } .sum
 
     val v = Seq.fill(10)(Random.nextInt(10) + 1.0)
-    val g = Gradient(sumPowersToIndex)(v)
+    val g = Gradient.estimate(sumPowersToIndex)(v)
 
     println("Vector=(" + v.map(_.toInt).mkString(",") +
       f"). Function value=${sumPowersToIndex(v)}%.2f\nv\tEstimate\tError")
@@ -28,4 +26,5 @@ class Gradient extends FlatSpec with OptionValues with Matchers {
 
     }
   }
+  
 
