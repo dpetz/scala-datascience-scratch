@@ -1,17 +1,25 @@
 package ds
 import ds.algebra._
+import Function.tupled
 // https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet
 
 
 /**
  * Implicit class declaration for inline methods [[Seq]]
- * (representing ''vectors'') and [[Matrix]]
+ * (representing ''vectors''), [[ds.lina.Elements]] or other matrix representations
  */
 package object lina {
 
-  type Vec = Seq[Double]
+  /** Just a shorthand for the common case of doubles.
+    * Methods in this class work for other types too if you provide a [[Group]] or [[Field]] where required
+    */
+
+  type Real = BigDecimal
+
+  type Vec = Seq[Real]
 
 
+  /** Defines [[Group]] operations (+ and -) for a double vectors. */
 implicit val vecGroup = new Group[Vec] {
   val zero = Nil
   
@@ -29,11 +37,16 @@ implicit val vecGroup = new Group[Vec] {
     else (l zip r) map { case (x,y) => x-y }
 }
 
+  case class Elem[A](x:A,i:Int)
 
   implicit class SequenceOps[A](seq:Seq[A]) {
 
     /** View sequence as [[Matrix]] with specified number of columns */
     def columnize(cols:Int):Matrix[A]=Columnized(seq,cols)
+
+    def json:String = seq.mkString("[", ",", "]")
+
+    def indexed:Seq[Elem[A]] = seq.zipWithIndex map tupled {(x,i) => Elem(x,i)}
 
 
     /** View sequence as [[Matrix]] with specified number of columns */
@@ -66,10 +79,10 @@ implicit val vecGroup = new Group[Vec] {
   implicit class SequenceMath[A:Field](seq:Seq[A]) {
 
     // context bound
-    val algebra = implicitly[Field[A]]
+    val alg = implicitly[Field[A]]
 
     // sum already used by [[Seq]]
-    def total = seq.fold(algebra.zero)(algebra.plus)
+    def total = seq.fold(alg.zero)(alg.plus)
 
     /** Dot product **/
     def dot(other:Seq[A]):A = (seq * other) total
@@ -81,23 +94,27 @@ implicit val vecGroup = new Group[Vec] {
     }
 
     /** Add elementwise */
-    def +(other: Seq[A]) = each(other, algebra.plus)
+    def +(other: Seq[A]) = each(other, alg.plus)
 
     /** Substract elementwise */
-    def -(other: Seq[A]) = each(other, algebra.minus)
+    def -(other: Seq[A]) = each(other, alg.minus)
 
 
-    def unary_- = seq map (algebra.negate(_))
+    def unary_- = seq map (alg.negate(_))
 
 
     /* Multiply elementwise */
-    def *(w: Seq[A]) = each(w, algebra.times)
+    def *(w: Seq[A]) = each(w, alg.times)
+
+    /* Divide elementwise */
+    def /(w: Seq[A]) = each(w, alg.divide)
+
 
 
     /** Add constant */
-    def +(x: A) = seq map (algebra.plus(x,_))
+    def +(x: A) = seq map (alg.plus(x,_))
 
-    def *(x:A) = seq map (algebra.times(x,_))
+    def *(x:A) = seq map (alg.times(x,_))
   }
 
   /**

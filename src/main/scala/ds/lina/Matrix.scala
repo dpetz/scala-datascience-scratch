@@ -5,13 +5,16 @@ import scala.util.{Try, Success, Failure}
 
 
 /**
-  * Minimal interface for a matrix. 
+  * Minimal interface for a matrix.
+  *
+  * @see [[Columns]], [[Rows]], [[Elements]]
   */
 trait Matrix[A] {
    
 
   /** Number of rows */
   def rows:Int
+
   /** Number of columns */
   def columns:Int
 
@@ -32,7 +35,7 @@ object Matrix {
   /** Implements [[Matrix]] as a vector (the rows) of vectors (the entries).  */
   case class VecOfRowVecs[A](data:Seq[Seq[A]]) extends Matrix[A] {
 
-    /** Checks all row vectors have equal length */
+    /** All row vectors to have equal length */
     require (data.forall( _.size == columns),
       s"$columns elements expected: ${data.find(_.size != columns).get}"
     )
