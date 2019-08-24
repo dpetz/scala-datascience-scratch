@@ -1,6 +1,5 @@
 package ds.calc
 
-import ds.algebra.Precision
 import ds.lina._
 
 
@@ -9,7 +8,7 @@ import ds.lina._
   * Estimated via difference quotient unless provided analytically
   * @param pd ith partial difference quotient of f at v
   * */
-case class Gradient(f:ScalarField)(pd:(Vec, Int) => Double) extends VectorField {
+case class Gradient(f:ScalarField)(pd:(Vec, Int) => Real) extends VectorField {
 
   /** Computes full gradient on v across all indices */
   def apply(v:Vec):Vec = (v indices) map (pd(v,_))
@@ -25,8 +24,7 @@ object Gradient {
     * and estimation error can be substantial, see Gradient.test
     * The tiny constant to approximate limit for difference quotient is taken from Precision.
     * */
-  def estimate(f:ScalarField)(implicit p:Precision[Double]) = Gradient(f) {
-    // val epsilon = implicitly[Precision[Double]].epsilon.toDouble
+  def estimate(f:ScalarField)(implicit p:Tolerance[Real]) = Gradient(f) {
     // https://www.scala-lang.org/api/2.12.4/scala/collection/SeqView.html
     (v:Vec,i:Int) => {
         val w = v.view.updated(i, (v(i) + p.epsilon))

@@ -1,5 +1,7 @@
 package ds
 import ds.algebra._
+import ds.calc._
+
 import Function.tupled
 // https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet
 
@@ -28,7 +30,7 @@ implicit val vecGroup = new Group[Vec] {
     else if (r==zero) l
     else (l zip r) map { case (x,y) => x+y }
   
-  def negate(v:Vec):Vec =
+  override def negate(v:Vec):Vec =
     if (v==zero) v else v.map { -_ }
 
   def minus(l:Vec, r:Vec):Vec =
@@ -76,10 +78,10 @@ implicit val vecGroup = new Group[Vec] {
 
   }
 
-  implicit class SequenceMath[A:Field](seq:Seq[A]) {
+  implicit class SequenceMath[A:RealMath](seq:Seq[A]) {
 
     // context bound
-    val alg = implicitly[Field[A]]
+    val alg = implicitly[RealMath[A]]
 
     // sum already used by [[Seq]]
     def total = seq.fold(alg.zero)(alg.plus)
@@ -107,7 +109,7 @@ implicit val vecGroup = new Group[Vec] {
     def *(w: Seq[A]) = each(w, alg.times)
 
     /* Divide elementwise */
-    def /(w: Seq[A]) = each(w, alg.divide)
+    def /(w: Seq[A]) = each(w, alg.div)
 
 
 
@@ -121,21 +123,18 @@ implicit val vecGroup = new Group[Vec] {
    * [[MatrixOps]] that require  you can calculate with the entries
    * via a `Field[A]]`
    */
-  implicit class MatrixMath[A:Field](matrix:Matrix[A])  {
+  implicit class MatrixMath[R:RealMath](matrix:Matrix[R])  {
 
     // context bound
-    val algebra = implicitly[Field[A]]
+    val math = implicitly[RealMath[R]]
 
-    def +(other:Matrix[A]) =
-      (matrix zip other) map algebra.plus
-    
-    def test(other:Matrix[A]) =
-      (matrix zip other) map algebra.plus
+    def +(other:Matrix[R]):Matrix[R] =
+      (matrix zip other) map { case (x,y) => math.plus(x,y) }
 
-    def *(x:A) =
-      matrix map { algebra.times(x,_) }
+    def *(x:R):Matrix[R] =
+      matrix map { math.times(x,_) }
 
-    def *(other:Matrix[A]):Matrix[A] = {
+    def *(other:Matrix[R]):Matrix[R] = {
       require (matrix.transpose aligned other,
         s"Cannot multiply $matrix and $other: Shapes do not fit.")
       Rows(matrix).flatMap {
