@@ -12,13 +12,7 @@ import Function.tupled
  */
 package object lina {
 
-  /** Just a shorthand for the common case of doubles.
-    * Methods in this class work for other types too if you provide a [[Group]] or [[Field]] where required
-    */
 
-  type Real = BigDecimal
-
-  type Vec = Seq[Real]
 
 
   /** Defines [[Group]] operations (+ and -) for a double vectors. */
