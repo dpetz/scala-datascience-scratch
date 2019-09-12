@@ -1,22 +1,16 @@
-import org.scalatest._
 import ds.calc._
 import ds.lina._
-import scala.language.implicitConversions
-
-import scala.math.Numeric.{BigDecimalIsFractional, DoubleIsFractional}
 
 
-class Descent[Real:RealMath] extends FlatSpec with OptionValues with Matchers {
+class Descent(implicit math:Real[Real]) extends ds.PropertySpec {
 
-  val math = implicitly[RealMath[Real]]
+  val dim:Int = 10
+  val dist:Int = 100
 
-  val dim:Real = math.fromInt(10)
-  val dist:Real = math.fromInt(100)
+  "$dim-dim v*v" should "descend towards (0,..,0)." in {
 
-  "Descending $dim-dimensional v*v" should "converge 0 at (0"+",0"* dim.toInt +")." in {
-
-    val v = Seq.fill(dim)(math.random).map(_ * math.fromInt(2) * dist - dist)
-    println(s"Random start coordinates in [-$dist,$dist): $v")
+    val v :Seq[Real] = Seq.fill(dim)(math.random).map(_ * 2 * dist - dist)
+    Given("Random start coordinates in [-$dist,$dist): $v")
 
     val g = Gradient {
       v => v dot v

@@ -1,7 +1,10 @@
 package ds.lina
 
+import ds.num.Real
 import parser.Json
-import scala.util.{Try, Success, Failure}
+import ds.lina.Vec
+
+import scala.util.{Failure, Success, Try}
 
 
 /**
@@ -24,13 +27,15 @@ trait Matrix[A] {
   override def equals(other:Any) =
     other.isInstanceOf[Matrix[A]] && (hashCode == other.hashCode)
 
-  override def hashCode = (this elements).hashCode + rows
+  override def hashCode = (this all).hashCode + rows
 
   override def toString = s"Matrix($rows rows, $columns‚ columns)"
 
 }
 
 object Matrix {
+
+
 
   /** Implements [[Matrix]] as a vector (the rows) of vectors (the entries).  */
   case class VecOfRowVecs[A](data:Seq[Seq[A]]) extends Matrix[A] {
@@ -50,7 +55,7 @@ object Matrix {
   def apply[A](json:Json,parse:Json=>A):Try[Matrix[A]]= {
     try {
         Success(VecOfRowVecs[A](
-          json.toArr.get.values.map {  // rows              
+          json.toArr.get.values.map {  // rows
                 _.toArr.get.values.map { // row
                   parse(_)      // values
                 }.toVector
@@ -66,7 +71,68 @@ object Matrix {
   /** Parses matrix of doubles from json string.
    *  Shortcut to ``apply(Json(jsonStr),parseDouble)´´. */
   def apply(jsonStr:String):Matrix[Double]=
-    apply[Double](Json(jsonStr),parseDouble).get 
+    apply[Double](Json(jsonStr),parseDouble).get
+
+
+
+
+  /** [[Matrix]] utility methods such as [[map]]. */
+  implicit class Ops[A](matrix:Matrix[A]) {
+
+    def all = Elements(matrix)
+
+    def zip[B](other:Matrix[B]):Matrix[(A,B)]={
+      require (matrix aligned other)
+      (matrix all) zip (other all) align matrix.columns
+    }
+
+
+
+    def map[B](f:A=>B):Matrix[B] =
+      (matrix all) map(f) align (matrix.columns)
+
+    def transpose:Matrix[A] = Transposed(matrix)
+
+    def aligned[B](other:Matrix[B]) =
+      (matrix.rows == other.rows) && (matrix.columns == other.columns)
+
+    private case class Transposed[A](matrix:Matrix[A]) extends Matrix[A] {
+      def rows = matrix.columns
+      def columns = matrix.rows
+      def apply(i:Int,j:Int)=matrix(j,i)
+    }
+
+  }
+
+  /**
+    * [[MatrixOps]] that require  you can calculate with the entries
+    * via a `Field[A]]`
+    */
+  implicit class Math[R:Real](matrix:Matrix[R])  {
+
+    // context bound
+
+    val real = implicitly[Real[R]]
+
+    def +(other:Matrix[R]):Matrix[R] =
+      (matrix zip other) map { case (x,y) => real.plus(x,y) }
+
+    def *(x:R):Matrix[R] =
+      matrix map { real.times(x,_) }
+
+    def *(other:Matrix[R]):Matrix[R] = {
+      require (matrix.transpose aligned other,
+        s"Cannot multiply $matrix and $other: Shapes do not fit.")
+      Rows(matrix).flatMap {
+        r => Columns(other).map {
+          c => r dot c
+        }} columnize other.columns
+    }
+  }
+
+
+
+
 
 }
 

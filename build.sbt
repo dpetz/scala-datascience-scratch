@@ -1,3 +1,5 @@
+// cp parser/out/artifacts/Combinatorial_Parser_jar/Combinatorial\ Parser.jar scratch/lib/
+
 // The simplest possible sbt build file is just one line:
 
 scalaVersion := "2.12.8"
@@ -78,3 +80,8 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
 
 logBuffered in Test := false
+
+//lazy val projectIDependOn = RootProject(uri("https://github.com/dpetz/scratch"))
+
+//lazy val myProject = project in file("my-project").dependsOn(projectIDependOn)
+
