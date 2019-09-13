@@ -1,6 +1,9 @@
 package ds.calc
 
 import ds.lina._
+import ds.num.Real
+
+object Test {
 
 
 
@@ -8,14 +11,18 @@ import ds.lina._
   * Estimated via difference quotient unless provided analytically
   * @param pd ith partial difference quotient of f at v
   * */
-case class Gradient(f:ScalarField)(pd:(Vec, Int) => Real) extends VectorField {
+case class Gradient[R:Real](f:ScalarField)(pd:(Vec[R], Int) => R) extends VectorField {
+
+  type Vec[R] = Seq[R]
 
   /** Computes full gradient on v across all indices */
-  def apply(v:Vec):Vec = (v indices) map (pd(v,_))
+  def apply(v:Vec[R]):Vec[R] = (v indices) map (pd(v,_))
 
   def negate:Gradient = Gradient(f) { (v:Vec,i:Int) => -pd(v,i) }
 
 }
+
+
 
 object Gradient {
 
@@ -32,4 +39,5 @@ object Gradient {
     }
   }
 
+}
 }

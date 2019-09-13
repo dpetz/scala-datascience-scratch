@@ -2,21 +2,36 @@ package ds.lina
 
 import ds.num.Real
 import ds.num.Real.Infix
+
 import scala.Function.tupled
-import ds.lina.Matrix.Elem
+import ds.lina.Elem
+import parser.{Arr, Json, Num, Parser}
+
 
 
 object Vec {
 
+  lazy val parser = Json.Parsers.arrOf(Json.Parsers.num)
+
+  /** Parse from json string */
+  def apply[R:Real](s:String) : Seq[R]  = {
+    val real = implicitly[Real[R]]
+    Json(s,parser).toArr.values.map {
+      j:Json => real.json(j.toNum)
+    }
+  }
+
+  /** Infix operations for sequences */
   implicit class Ops[A](seq:Seq[A]) {
 
     /** View sequence as [[Matrix]] with specified number of columns */
     def align(cols:Int):Matrix[A]=Columnized(seq,cols)
 
+    /** Convert to Json string. */
     def json:String = seq.mkString("[", ",", "]")
 
+    /** Zip with indices and map to [[Elem]] */
     def indexed:Seq[Elem[A]] = seq.zipWithIndex map tupled {(x,i) => Elem(x,i)}
-
 
     /** View sequence as [[Matrix]] with specified number of columns */
     private case class Columnized[A](seq:Seq[A],columns:Int) extends Matrix[A] {
@@ -25,7 +40,7 @@ object Vec {
       def apply(i:Int, j:Int) = seq(i*rows+j)
     }
 
-    /* Returns random slices of given size.
+    /** Returns random slices of given size.
      * Each element returned once except remainder which is ignored */
     def randomSlices(size:Int=1):TraversableOnce[Seq[A]]={
       import scala.util.Random

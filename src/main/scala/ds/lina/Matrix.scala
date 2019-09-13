@@ -1,10 +1,6 @@
 package ds.lina
 
 import ds.num.Real
-import parser.Json
-import ds.lina.Vec
-
-import scala.util.{Failure, Success, Try}
 
 
 /**
@@ -35,46 +31,7 @@ trait Matrix[A] {
 
 object Matrix {
 
-
-
-  /** Implements [[Matrix]] as a vector (the rows) of vectors (the entries).  */
-  case class VecOfRowVecs[A](data:Seq[Seq[A]]) extends Matrix[A] {
-
-    /** All row vectors to have equal length */
-    require (data.forall( _.size == columns),
-      s"$columns elements expected: ${data.find(_.size != columns).get}"
-    )
-
-    def apply(i:Int,j:Int)=data(i)(j)
-    def rows=data.size
-    def columns=data(0).size
-
-  }
-
-  /** Copies [[Json]] array of number arrays into scala vector of vectors */
-  def apply[A](json:Json,parse:Json=>A):Try[Matrix[A]]= {
-    try {
-        Success(VecOfRowVecs[A](
-          json.toArr.get.values.map {  // rows
-                _.toArr.get.values.map { // row
-                  parse(_)      // values
-                }.toVector
-          }.toVector
-        ))
-    } catch {
-        case e:Exception => Failure(e)
-    }
-  }
-
-  def parseDouble(json:Json):Double = json.toNum.get.value
-
-  /** Parses matrix of doubles from json string.
-   *  Shortcut to ``apply(Json(jsonStr),parseDouble)´´. */
-  def apply(jsonStr:String):Matrix[Double]=
-    apply[Double](Json(jsonStr),parseDouble).get
-
-
-
+  def apply[R:Real](jsonRows:String) = SeqOfRows(jsonRows)
 
   /** [[Matrix]] utility methods such as [[map]]. */
   implicit class Ops[A](matrix:Matrix[A]) {

@@ -1,9 +1,11 @@
 package ds.num
 
-import parser.Json
+import parser.Json.Parsers
+import parser.{Num, Parser}
 
 import scala.math.Numeric.BigDecimalIsFractional
 import scala.util.Random
+
 
 package object Big {
 
@@ -18,13 +20,13 @@ package object Big {
 
     def random = BigDecimal(Random.nextDouble)
 
-    def vec(s:String) = Json(s).toArr.get.values.map { _.toNum.get.value}
+    def json(n:Num):Parser[BigDecimal] = n.asBigDecimal
 
     def power(x:BigDecimal, y: BigDecimal):BigDecimal = x.pow(y.toIntExact)
 
   }
 
-
+  // def toBigDecimal(n:json.Num) =
 
   implicit val Tolerance = new ds.num.Tolerance[BigDecimal] {
     val epsilon = BigDecimal("0.00001")

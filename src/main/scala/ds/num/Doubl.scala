@@ -1,5 +1,7 @@
 package ds.num
 
+import parser.Num
+
 import scala.math.Numeric.DoubleIsFractional
 import scala.util.Random
 
@@ -16,7 +18,7 @@ package object Doubl {
 
     def random:Double = Random.nextDouble
 
-    def vec(s:String) : Vec = ds.num.Big.Real.vec(s).map { _.toDouble}
+    def json(n:Num): Double = n.asDouble
 
     def power(x:Double, y: Double):Double = Math.pow(x,y)
 
