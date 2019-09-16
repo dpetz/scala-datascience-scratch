@@ -20,7 +20,7 @@ package object Big {
 
     def random = BigDecimal(Random.nextDouble)
 
-    def json(n:Num):Parser[BigDecimal] = n.asBigDecimal
+    def json(n:Num):BigDecimal = n.asBigDecimal
 
     def power(x:BigDecimal, y: BigDecimal):BigDecimal = x.pow(y.toIntExact)
 

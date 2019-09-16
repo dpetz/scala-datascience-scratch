@@ -1,31 +1,43 @@
-package ds
+package ds.calc
 
-import ds.lina.Vec.Math
+import ds.lina.Vec._
 import ds.num.Real
 import ds.num.Real.Infix
 
-// https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet
+
 // https://www.scala-lang.org/api/current/scala/math/index.html
 // https://www.scala-lang.org/api/current/scala/Double$.html
 // https://www.scala-lang.org/api/current/scala/math/Numeric.html
 // https://www.scala-lang.org/api/current/scala/math/Ordered.html
 
-package object calc {
-
+ object Func {
 
   /** https://en.wikipedia.org/wiki/Scalar_field */
-  //type ScalarField[R] = Vec[R] => Real[R]
+  type ScalarField[R] = Vec[R] => R
   /** https://en.wikipedia.org/wiki/Vector_field */
-  //type VectorField[R] = Vec[R] => Vec[R]
+  type VectorField[R] = Vec[R] => Vec[R]
 
-  implicit class Function1Math[X, Y: Real](function: X => Y) {
+  implicit class RealValuedFunction[X, R:Real](f: X => R) {
 
-    val real = implicitly[Real[Y]]
+    val real = implicitly[Real[R]]
+
+    def -(y:R):X => R = { x: X => real.minus(f(x), y) }
+
+    def /(y:R):X => R = { x: X => real.div(f(x), y) }
 
     /** Negate real function (one argument) */
-    def negate: X => Y = { x: X => real.negate(function(x)) }
+    def unary_- : X => R = { x: X => real.negate(f(x)) }
 
   }
+
+   implicit class VecValuedFunction[X, R: Real](function: X => Vec[R]) {
+
+     val real = implicitly[Real[R]]
+
+     /** Negate real function (one argument) */
+     def unary_- : X => Vec[R] = { x: X => -function(x) }
+
+   }
 
   implicit class FunctionOps[A, B](f: A => B) {
 

@@ -4,12 +4,18 @@ import ds.num.Real
 import ds.num.Real.Infix
 
 import scala.Function.tupled
-import ds.lina.Elem
-import parser.{Arr, Json, Num, Parser}
+import parser.Json
+import ds.lina.Vec._
 
-
-
+/**
+  *
+  * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet
+  */
 object Vec {
+
+  type Vec[R] = Seq[R]
+
+  case class Elem[A](x:A,i:Int)
 
   lazy val parser = Json.Parsers.arrOf(Json.Parsers.num)
 
@@ -21,7 +27,11 @@ object Vec {
     }
   }
 
-  /** Infix operations for sequences */
+  /** Parse sequence of doubles via [[Real.double]] */
+  def apply[R](doubles:Seq[Double])(implicit real:Real[R]):Vec[R] =
+    doubles.map(real.double(_))
+
+  /** Infix operations for sequences that does not require a [[Rea]]l*/
   implicit class Ops[A](seq:Seq[A]) {
 
     /** View sequence as [[Matrix]] with specified number of columns */
@@ -61,48 +71,44 @@ object Vec {
   }
 
   /** Infix operations to apply Real[R] operations elementwise to Seq[R] */
-  implicit class Math[R:Real](v:Seq[R]) {
+  implicit class Math[R](v:Seq[R])(implicit real:Real[R]) {
 
-    // context bound
-    val real = implicitly[Real[R]]
+    type Vec = Seq[R]
 
     // sum already used by [[Seq]]
     def total = v.fold(real.zero)(real.plus)
 
     /** Dot product **/
-    def dot(other:Seq[R]):R = (v * other) total
+    def dot(other:Vec):R = (v * other) total
 
     /** Calculates the p-norm */
     def norm(p:R):R = (v dot(v)) ** p
 
     /** zips and applies binary operation */
-    private def each(other: Seq[R], f: (R,R)=>R) = {
+    private def each(other: Vec, f: (R,R)=>R): Vec = {
       require (v.size == other.size)
       (v zip other) map (x => f(x._1, x._2))
     }
 
     /** Add elementwise */
-    def +(other: Seq[R]) = each(other, real.plus)
+    def +(other: Vec): Vec = each(other, real.plus)
 
     /** Substract elementwise */
-    def -(other: Seq[R]) = each(other, real.minus)
+    def -(other: Vec): Vec = each(other, real.minus)
 
+    def unary_- : Vec = v map (real.negate(_))
 
-    def unary_- = v map (real.negate(_))
+    /** Multiply elementwise */
+    def *(w: Vec): Vec = each(w, real.times)
 
-
-    /* Multiply elementwise */
-    def *(w: Seq[R]) = each(w, real.times)
-
-    /* Divide elementwise */
-    def /(w: Seq[R]) = each(w, real.div)
-
-
+    /** Divide elementwise */
+    def /(w: Vec): Vec = each(w, real.div)
 
     /** Add constant */
-    def +(x: R) = v map (real.plus(x,_))
+    def +(x: R): Vec = v map (real.plus(x,_))
 
-    def *(x:R) = v map (real.times(x,_))
+    /** Multiply constant */
+    def *(x:R): Vec = v map (real.times(x,_))
   }
 
 }

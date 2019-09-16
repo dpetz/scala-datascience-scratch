@@ -1,6 +1,7 @@
 package ds.lina
 
 import ds.num.Real
+import ds.lina.Vec._
 
 
 /**
@@ -9,7 +10,6 @@ import ds.num.Real
   * @see [[Columns]], [[Rows]], [[Elements]]
   */
 trait Matrix[A] {
-   
 
   /** Number of rows */
   def rows:Int
@@ -40,10 +40,8 @@ object Matrix {
 
     def zip[B](other:Matrix[B]):Matrix[(A,B)]={
       require (matrix aligned other)
-      (matrix all) zip (other all) align matrix.columns
+      (matrix all) zip (other all) align (matrix.columns)
     }
-
-
 
     def map[B](f:A=>B):Matrix[B] =
       (matrix all) map(f) align (matrix.columns)
@@ -83,7 +81,7 @@ object Matrix {
       Rows(matrix).flatMap {
         r => Columns(other).map {
           c => r dot c
-        }} columnize other.columns
+        }} align other.columns
     }
   }
 

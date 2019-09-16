@@ -1,71 +1,57 @@
 package ds.calc
 
-import scala.util.Random
 import ds.lina._
-import ds.algebra._
-
 import scala.annotation.tailrec
+import ds.lina.Vec.{Math, Vec}
+import ds.num.{Real, Tolerance}
 
-import Descent._
 
 
 
 /**
   * Gradient descent algorithms. Each instance represents a single immutable step.
-  * Algorithm can be advanced step-wise via [[step]] or until convergence via [[minimize]] and [[maximize]].
+  * Algorithm can be advanced step-wise via [[next]] or until convergence via [[minimize]] and [[maximize]].
   * [[history]] collects all steps so far as sequence .
   *
   * @param gradient gradient including function
   * @param x Current x/coordinates
-  * @param steps Sequence of possible step sizes. Defaults to [[Grid]].
-  * @param stop Predicate if continue. Defaults to [[Neighborhood]]
   * @param previous Previous descent step (if any)
   */
-case class Descent(gradient:Gradient,x:Vec,steps:Steps = log10Steps, stop:Stop = new WithinTolerance,
-                   previous:Option[Descent]=None) {
+ class Descent[R:Real] (val gradient:Gradient[R], val x:Vec[R], val previous:Option[Descent[R]]=None)
+                       (implicit t:Tolerance[R]){
 
   /** Current value at */
-  def v:Real=gradient.f(x)
+  def value:R=gradient.f(x)
 
-  def step():Vec =
-    steps(this) map { x - gradient(x) * _ } minBy { gradient.f } //recode (NaN, PositiveInfinity) }
+  /** New [[Descent]] object at location x. Overwrite to create instance of subclass. */
+  def next(x:Vec[R])= new Descent(gradient,x,Some(this))
+
+  /** Explore steps and return position with lowest value. */
+  def explore():Vec[R] =
+    steps map { (x - gradient(x)) * _ } minBy { gradient.f } //recode (NaN, PositiveInfinity) }
+
+
+  /** Possible step widths in this iteration.
+    * Overwrite for different (incl dynamic) values */
+  val steps:Vec[R]=Vec(List(100,10,1,.1,.01,.001,.0001,.00001))
+
+  /** Accept next candidate location?
+    * Overwrite for different (incl. dynamic) tolerance levels. */
+  def stop(nextV:Vec[R]):Boolean=t.approx(value, gradient.f(nextV))
 
   /** Recursively descent
     * @return last step
     */
-  @tailrec final def minimize:Descent={
-    val next = step()
-    if ( stop(this,next) ) return this
-    Descent(gradient,next,steps,stop,Some(this)).minimize
+  @tailrec final def minimize:Descent[R]={
+    val smallest = explore()
+    if ( stop(smallest) ) return this
+    next(smallest).minimize
   }
 
-  def maximize:Descent={
-    Descent(gradient.negate,x,steps,stop,None).minimize
+  def maximize:Descent[R]={
+    new Descent(-gradient,x,None).minimize
   }
 
   /* Iterate beginning first until this step */
-  def history:List[Descent]= this :: ( previous map (_.history) getOrElse Nil )
+  def history:List[Descent[R]]= this :: ( previous map (_.history) getOrElse Nil )
 }
-
-object Descent {
-
-  type Steps = (Descent => Vec)
-  type Stop = ((Descent, Vec) => Boolean)
-
-  /** Standard implementation of [[Steps]] returning same grid for all steps. */
-  val log10Steps = Grid(List(100,10,1,.1,.01,.001,.0001,.00001))
-
-  /** For a requesting gradient descent iteration returns eligible step sizes. */
-  case class Grid(values:Vec) extends Steps {
-    def apply(g:Descent)=values
-  }
-
-  /** For a calling gradient descent decides if to stop because objective
-    * does not improve beyond tolerance. */
-  case class WithinTolerance(implicit t:Tolerance[Real]) extends Stop {
-    def apply(gd:Descent, nextV:Vec)=
-      t.approx(gd.v,gd.gradient.f(nextV))
-  }
-}
-
-

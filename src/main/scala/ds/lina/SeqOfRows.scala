@@ -34,7 +34,7 @@ object SeqOfRows {
 
     Json(json, parser).toArr.values.map {
       _.toArr.values.map {
-        j:Json => real.json(j.toNum.raw)
+        j:Json => real.json(j.toNum)
       } toVector
     }.toVector
   }
