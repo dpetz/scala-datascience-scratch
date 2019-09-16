@@ -5,7 +5,6 @@ import ds.num.Real.Infix
 
 import scala.Function.tupled
 import parser.Json
-import ds.lina.Vec._
 
 /**
   *
@@ -27,12 +26,12 @@ object Vec {
     }
   }
 
-  /** Parse sequence of doubles via [[Real.double]] */
+  /** Parse sequence of doubles via [[Real.apply]] */
   def apply[R](doubles:Seq[Double])(implicit real:Real[R]):Vec[R] =
-    doubles.map(real.double(_))
+    doubles.map(real(_))
 
   /** Infix operations for sequences that does not require a [[Rea]]l*/
-  implicit class Ops[A](seq:Seq[A]) {
+  implicit class VecOps[A](seq:Seq[A]) {
 
     /** View sequence as [[Matrix]] with specified number of columns */
     def align(cols:Int):Matrix[A]=Columnized(seq,cols)
@@ -71,7 +70,7 @@ object Vec {
   }
 
   /** Infix operations to apply Real[R] operations elementwise to Seq[R] */
-  implicit class Math[R](v:Seq[R])(implicit real:Real[R]) {
+  implicit class VecMath[R](v:Seq[R])(implicit real:Real[R]) {
 
     type Vec = Seq[R]
 

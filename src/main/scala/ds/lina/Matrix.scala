@@ -1,7 +1,8 @@
 package ds.lina
 
 import ds.num.Real
-import ds.lina.Vec._
+import ds.lina.Vec.{VecOps,VecMath}
+
 
 
 /**
@@ -36,7 +37,9 @@ object Matrix {
   /** [[Matrix]] utility methods such as [[map]]. */
   implicit class Ops[A](matrix:Matrix[A]) {
 
-    def all = Elements(matrix)
+    /** Sequence off all elements.
+      * @see Elements */
+    def all:Seq[A] = Elements(matrix)
 
     def zip[B](other:Matrix[B]):Matrix[(A,B)]={
       require (matrix aligned other)

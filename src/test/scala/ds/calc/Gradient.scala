@@ -1,6 +1,9 @@
 import ds.calc._
-import ds.lina._
+import ds.num.DoubleReal._
+import ds.num.DoubleReal.Vec
 import org.scalacheck.Gen
+import ds.lina.Vec._
+import ds.num.Real.RealInfix
 
 // https://github.com/rickynils/scalacheck/blob/master/doc/UserGuide.md
 
@@ -8,8 +11,8 @@ import org.scalacheck.Gen
 
 class Gradient extends ds.PropertySpec {
 
-    val polynomial_gradient = Gradient {
-      v => v.indexed map { e => e.x ** e.i } sum
+    val polynomial_gradient:ds.calc.Gradient[Real] = ds.calc.Gradient {
+      v:Vec => v.indexed map { e:Elem[Real] => e.x.+(Real(e.i.toDouble)) } total
     } {
       (x,i) => i* ( x(i) ** (i-1) )
     }
