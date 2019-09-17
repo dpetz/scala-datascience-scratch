@@ -5,7 +5,7 @@ class Descent extends ds.PropertySpec {
 
   import ds.num.BigReal._
   import ds.num.BigReal.Vec
-  import ds.lina.Vec._
+  import ds.lina.VectorUtil._
   import ds.calc.{Descent,Gradient}
 
 

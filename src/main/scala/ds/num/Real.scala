@@ -27,7 +27,7 @@ object Real {
     */
 
   /** Infix operators based on ds.math.Real */
-  implicit class RealInfix[R:Real] (x:R) (implicit real:Real[R]) {
+  implicit class Infix[R:Real](x:R)(implicit real:Real[R]) {
 
     def **(y: R): R = real.power(x,y)
     def +(y: R): R = real.minus(x,y)
@@ -35,13 +35,15 @@ object Real {
     def *(y: R): R = real.times(x,y)
     def /(y: R): R = real.div(x,y)
 
+  }
 
-    def **(y: Double): R = **(real(y))
-    def +(y: Double): R = this.+(real(y))
-    def -(y: Double): R = this.-(real(y))
-    def *(y: Double): R = *(real(y))
-    def /(y: Double): R = /(real(y))
+  implicit class DoubleInfix [R:Real](x:R)(implicit real:Real[R]) {
 
+    def **(y: Double): R = real.power(x,real(y))
+    def +(y: Double): R = real.plus(x,real(y))
+    def -(y: Double): R = real.minus(x,real(y))
+    def *(y: Double): R = real.times(x,real(y))
+    def /(y: Double): R = real.div(x,real(y))
   }
 
   /** @toto How to support for BigDecimal? */

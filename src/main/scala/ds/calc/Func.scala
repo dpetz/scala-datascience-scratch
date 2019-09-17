@@ -1,8 +1,7 @@
 package ds.calc
 
-import ds.lina.Vec._
+import ds.lina.VectorUtil._
 import ds.num.Real
-import ds.num.Real.Infix
 
 
 // https://www.scala-lang.org/api/current/scala/math/index.html

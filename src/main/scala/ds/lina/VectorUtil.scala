@@ -10,7 +10,7 @@ import parser.Json
   *
   * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet
   */
-object Vec {
+object VectorUtil {
 
   type Vec[R] = Seq[R]
 

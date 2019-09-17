@@ -25,7 +25,7 @@ object SeqOfRows {
     *  Shortcut to ``apply(Json(jsonStr),parseDouble)´´. */
   def apply[R:Real](jsonStr:String):Matrix[R] = apply(parse(jsonStr))
 
-  lazy val parser = Json.Parsers.arrOf(Vec.parser)
+  lazy val parser = Json.Parsers.arrOf(VectorUtil.parser)
 
   /** Parses Json array of arrays into a {{{Seq[Seq[R]]}}} */
   def parse[R:Real](json:String):Seq[Seq[R]]= {

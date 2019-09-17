@@ -1,7 +1,7 @@
 package ds.lina
 
 import ds.num.Real
-import ds.lina.Vec.{VecOps,VecMath}
+import ds.lina.VectorUtil.{VecOps,VecMath}
 
 
 

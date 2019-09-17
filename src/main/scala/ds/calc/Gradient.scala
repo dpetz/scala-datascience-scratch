@@ -2,7 +2,7 @@ package ds.calc
 
 import ds.calc.Func._//{RealValuedFunction, ScalarField, VectorField}
 import ds.calc.Gradient.Direction
-import ds.lina.Vec._
+import ds.lina.VectorUtil._
 import ds.num.{Real, Tolerance}
 import ds.num.Real.Infix
 
