@@ -2,7 +2,7 @@ package ds.calc
 
 import ds.lina._
 import scala.annotation.tailrec
-import ds.lina.VectorUtil.{VecMath, Vec}
+import ds.lina.Vec.{VecMath, Vec}
 import ds.num.{Real, Tolerance}
 
 
@@ -33,7 +33,7 @@ import ds.num.{Real, Tolerance}
 
   /** Possible step widths in this iteration.
     * Overwrite for different (incl dynamic) values */
-  val steps:Vec[R]=VectorUtil(List(100,10,1,.1,.01,.001,.0001,.00001))
+  val steps:Vec[R]=Vec(List(100,10,1,.1,.01,.001,.0001,.00001))
 
   /** Accept next candidate location?
     * Overwrite for different (incl. dynamic) tolerance levels. */

@@ -1,6 +1,6 @@
 package ds.calc
 
-import ds.lina.VectorUtil._
+import ds.lina.Vec._
 import ds.num.Real
 
 

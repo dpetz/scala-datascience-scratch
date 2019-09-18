@@ -8,28 +8,28 @@ import scala.util.Random
 /** Implements [[Real]] with [[Double]] precision. */
 package object DoubleReal {
 
-  type D = Double
-  type Real = D
-  type Vec = Seq[D]
+  type R = Double
 
-  implicit val Real = new ds.num.Real[D] with DoubleIsFractional {
+  implicit val Real = new ds.num.Real[R] with DoubleIsFractional {
 
-    def compare(x:D, y:D): Int = (x - y).toInt
+    def compare(x:R, y:R): Int = (x - y).toInt
 
-    def random:D = Random.nextDouble
+    def random:R = Random.nextDouble
 
-    def json(n:Num): D = n.asDouble
+    def json(n:Num): R = n.asDouble
 
-    def power(x:D, y: D):D = Math.pow(x,y)
+    def power(x:R, y: R):R = Math.pow(x,y)
 
-    def apply(d:D):D = d
+    def apply(d:R):R = d
+
+    def apply(i:Int):R = i.toDouble
 
   }
 
 
-  implicit val Tolerance = new ds.num.Tolerance[D] {
-    val epsilon = 0.00001
-    def approx(x: D, y: D):Boolean = (x - y).abs < epsilon
+  implicit val Tolerance = new ds.num.Tolerance[R] {
+    val epsilon = 0.0000001
+    def approx(x: R, y: R):Boolean = (x - y).abs < epsilon
   }
 
 

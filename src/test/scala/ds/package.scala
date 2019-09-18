@@ -9,4 +9,6 @@ package object ds {
     with ScalaCheckPropertyChecks
     with GivenWhenThen
 
+  trait SimpleSpec extends FlatSpec with OptionValues with Matchers
+
 }

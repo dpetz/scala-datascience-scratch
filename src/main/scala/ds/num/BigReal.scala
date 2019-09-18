@@ -9,27 +9,27 @@ import scala.util.Random
   */
 package object BigReal {
 
-  type BD = BigDecimal
-  type Real = BD
-  type Vec = Seq[BD]
+  type R = BigDecimal
+  
+  implicit val Real = new ds.num.Real[R]() with BigDecimalIsFractional {
 
-  implicit val Real = new ds.num.Real[BD]() with BigDecimalIsFractional {
-
-    def compare(x:BD, y:BD):Int = (x - y).toInt
+    def compare(x:R, y:R):Int = (x - y).toInt
 
     def random = BigDecimal(Random.nextDouble)
 
-    def json(n:parser.Num):BD = n.asBigDecimal
+    def json(n:parser.Num):R = n.asBigDecimal
 
-    def power(x:BD, y: BD):BD = x.pow(y.toIntExact)
+    def power(x:R, y: R):R = x.pow(y.toIntExact)
 
-    def apply(d:Double):BD = BigDecimal(d)
+    def apply(d:Double):R = BigDecimal(d)
+
+    def apply(i:Int):R = BigDecimal(i)
 
   }
 
-  implicit val Tolerance = new ds.num.Tolerance[BD] {
-    val epsilon = BigDecimal("0.00001")
-    def approx(x: BD, y: BD): Boolean = (x - y).abs < epsilon
+  implicit val Tolerance = new ds.num.Tolerance[R] {
+    val epsilon = BigDecimal("0.0000001")
+    def approx(x: R, y: R): Boolean = (x - y).abs < epsilon
   }
 
 }

@@ -1,7 +1,7 @@
 package ds.lina
 
 import ds.num.Real
-import ds.num.Real.Infix
+import ds.num.Real.RealInfix
 
 import scala.Function.tupled
 import parser.Json
@@ -10,7 +10,7 @@ import parser.Json
   *
   * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet
   */
-object VectorUtil {
+object Vec {
 
   type Vec[R] = Seq[R]
 
