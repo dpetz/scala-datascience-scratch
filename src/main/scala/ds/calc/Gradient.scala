@@ -3,7 +3,7 @@ package ds.calc
 import ds.calc.Func._//{RealValuedFunction, ScalarField, VectorField}
 import ds.calc.Gradient.Direction
 import ds.lina.Vec._
-import ds.num.{Real, Tolerance}
+import ds.num.Real
 import ds.num.Real.RealInfix
 
 
@@ -30,11 +30,10 @@ object Gradient {
     * and estimation error can be substantial, see Gradient.test
     * The tiny constant to approximate limit for difference quotient is taken from Precision.
     * */
-  def estimate[R:Real](f:ScalarField[R])(implicit p:Tolerance[R]) =
+  def estimate[R](f:ScalarField[R])(implicit real:Real[R]) =
     Gradient(f) { case Direction(v,i) =>
-    // https://www.scala-lang.org/api/2.12.4/scala/collection/SeqView.html
-      val w = v.view.updated (i, (v(i) + p.epsilon) )
-      ((f (w) ) - f (v) ) / p.epsilon
-  }
+      val w = v.view.updated (i, (v(i) + real.precision) )  // https://www.scala-lang.org/api/2.12.4/scala/collection/SeqView.html
+      ((f (w) ) - f (v) ) / real.precision
+    }
 
 }

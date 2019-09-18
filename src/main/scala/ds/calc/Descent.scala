@@ -3,9 +3,8 @@ package ds.calc
 import ds.lina._
 import scala.annotation.tailrec
 import ds.lina.Vec.{VecMath, Vec}
-import ds.num.{Real, Tolerance}
-
-
+import ds.num.Real._
+import ds.num.Real
 
 
 /**
@@ -17,8 +16,7 @@ import ds.num.{Real, Tolerance}
   * @param x Current x/coordinates
   * @param previous Previous descent step (if any)
   */
- class Descent[R:Real] (val gradient:Gradient[R], val x:Vec[R], val previous:Option[Descent[R]]=None)
-                       (implicit t:Tolerance[R]){
+ class Descent [R:Real] (val gradient:Gradient[R], val x:Vec[R], val previous:Option[Descent[R]]=None) {
 
   /** Current value at */
   def value:R=gradient.f(x)
@@ -37,7 +35,7 @@ import ds.num.{Real, Tolerance}
 
   /** Accept next candidate location?
     * Overwrite for different (incl. dynamic) tolerance levels. */
-  def stop(nextV:Vec[R]):Boolean=t.approx(value, gradient.f(nextV))
+  def stop(nextV:Vec[R]):Boolean= value ~ gradient.f(nextV)
 
   /** Recursively descent
     * @return last step

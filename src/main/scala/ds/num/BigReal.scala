@@ -25,11 +25,15 @@ package object BigReal {
 
     def apply(i:Int):R = BigDecimal(i)
 
-  }
 
-  implicit val Tolerance = new ds.num.Tolerance[R] {
-    val epsilon = BigDecimal("0.0000001")
-    def approx(x: R, y: R): Boolean = (x - y).abs < epsilon
+    val precision = BigDecimal("0.0000001")
+
+    def approx(x: R, y: R):Boolean = this.abs(x - y) < precision
+
+    def MAX:R = BigDecimal(Double.MaxValue)
+
+    def MIN:R = BigDecimal(Double.MinValue)
+
   }
 
 }

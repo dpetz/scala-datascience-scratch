@@ -24,12 +24,18 @@ package object DoubleReal {
 
     def apply(i:Int):R = i.toDouble
 
-  }
+    val precision = 0.0000001
 
+    def approx(x: R, y: R):Boolean = this.abs(x - y) < precision
 
-  implicit val Tolerance = new ds.num.Tolerance[R] {
-    val epsilon = 0.0000001
-    def approx(x: R, y: R):Boolean = (x - y).abs < epsilon
+    def MAX:R = Double.MaxValue
+
+    def MIN:R = Double.MinValue
+
+    /** Exception when dividing by zero for consistency with [[BigDecimal]] */
+    override def div(x:R,y:R):R =
+      if (y != 0.0) DoubleIsFractional.div(x,y) else throw new ArithmeticException()
+
   }
 
 

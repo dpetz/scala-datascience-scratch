@@ -19,9 +19,27 @@ trait Real[R] extends scala.math.Fractional[R] {
   /** Convert from integer */
   def apply(i:Int):R
 
+  /** Tiny constant used in approximations.
+    * @see ~, ds.calc.Gradient
+    */
+  def precision:R
+
+  /** Approximately equal
+    * @return Difference is at most [[precision]] */
+  def approx(x:R,y:R):Boolean
+
+  /** Huge number treated as biggest possible
+    * For a [[Double]] it is the actual highest possible number.
+    * For [[BigDecimal]] it is treated as if for consistency */
+  def MAX:R
+
+  /** Opposite of [[MAX]] */
+  def MIN:R
+
 }
 
 object Real {
+
 
   /** Infix operators based on ds.math.Real */
   implicit class RealInfix[R:Real](x:R)(implicit real:Real[R]) {
@@ -31,6 +49,8 @@ object Real {
     def -(y: R): R = real.minus(x,y)
     def *(y: R): R = real.times(x,y)
     def /(y: R): R = real.div(x,y)
+    def ~(y: R): Boolean = real.approx(x,y)
+
   }
 
   /** Overload [[RealInfix]] operations by converting [[Double]] parameters to [[R]]
@@ -43,6 +63,7 @@ object Real {
     def -(y: Double): R = real.minus(x,real(y))
     def *(y: Double): R = real.times(x,real(y))
     def /(y: Double): R = real.div(x,real(y))
+    def ~(y: Double): Boolean = real.approx(x,real(y))
   }
 
   /** Overload [[RealInfix]] operations by converting [[Int]] parameters to [[R]]
@@ -55,6 +76,7 @@ object Real {
     def -(y: Int): R = real.minus(x,real(y))
     def *(y: Int): R = real.times(x,real(y))
     def /(y: Int): R = real.div(x,real(y))
+    def ~(y: Int): Boolean = real.approx(x,real(y))
   }
 
   /** @toto How to support for BigDecimal? */

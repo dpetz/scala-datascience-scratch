@@ -26,7 +26,7 @@ class Gradient extends ds.PropertySpec {
       val g_est_v = g_est(v)
       Then("gradient estimated:" + g_est_v)
 
-      val err = ( (g_v - g_est_v + Tolerance.epsilon) / (g_v + Tolerance.epsilon))
+      val err = ( (g_v - g_est_v + Real.precision) / (g_v + Real.precision))
       And("% errors: " + err.json)
       val err_avg = err norm (1)
       And("average % errors: " + err_avg + "\n")
