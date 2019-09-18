@@ -40,7 +40,6 @@ trait Real[R] extends scala.math.Fractional[R] {
 
 object Real {
 
-
   /** Infix operators based on ds.math.Real */
   implicit class RealInfix[R:Real](x:R)(implicit real:Real[R]) {
 
@@ -53,37 +52,9 @@ object Real {
 
   }
 
-  /** Overload [[RealInfix]] operations by converting [[Double]] parameters to [[R]]
-    * @see Real.apply(Double)
-    */
-  implicit class DoubleInfix [R:Real] (x:R) (implicit real:Real[R]) {
-
-    def **(y: Double): R = real.power(x,real(y))
-    def +(y: Double): R = real.plus(x,real(y))
-    def -(y: Double): R = real.minus(x,real(y))
-    def *(y: Double): R = real.times(x,real(y))
-    def /(y: Double): R = real.div(x,real(y))
-    def ~(y: Double): Boolean = real.approx(x,real(y))
-  }
-
-  /** Overload [[RealInfix]] operations by converting [[Int]] parameters to [[R]]
-    * @see Real.apply(Int)
-    */
-  implicit class IntInfix [R:Real] (x:R) (implicit real:Real[R]) {
-
-    def **(y: Int): R = real.power(x,real(y))
-    def +(y: Int): R = real.plus(x,real(y))
-    def -(y: Int): R = real.minus(x,real(y))
-    def *(y: Int): R = real.times(x,real(y))
-    def /(y: Int): R = real.div(x,real(y))
-    def ~(y: Int): Boolean = real.approx(x,real(y))
-  }
-
-  /** @toto How to support for BigDecimal? */
-  trait NotDefined[R] {
-    val NaN: R
-    val PositiveInfinity: R
-    val NegativeInfinity: R
-  }
+  /** Extend [[RealInfix]] (and elsewhere) operations extend to integer parameters. */
+  implicit def int2Real[R](x: Int)(implicit real:Real[R]):R = real(x)
+  /** Extend [[RealInfix]] (and elsewhere) operations to double parameters. */
+  implicit def double2Real[R](x: Double)(implicit real:Real[R]):R = real(x)
 
 }
