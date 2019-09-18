@@ -1,12 +1,8 @@
-
-
+import ds.num.DoubleReal._
+import ds.lina.Vec._
+import ds.calc.Gradient
 
 class Descent extends ds.PropertySpec {
-
-  import ds.num.BigReal._
-  import ds.lina.Vec._
-  import ds.calc.Gradient
-
 
   val dim:Int = 10
   val dist:Int = 100

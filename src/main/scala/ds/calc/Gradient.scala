@@ -4,7 +4,7 @@ import ds.calc.Func._//{RealValuedFunction, ScalarField, VectorField}
 import ds.calc.Gradient.Direction
 import ds.lina.Vec._
 import ds.num.Real
-import ds.num.Real.RealInfix
+import ds.num.Real.Infix
 
 
 /** Gradient of real-valued function
@@ -32,8 +32,8 @@ object Gradient {
     * */
   def estimate[R](f:ScalarField[R])(implicit real:Real[R]) =
     Gradient(f) { case Direction(v,i) =>
-      val w = v.view.updated (i, (v(i) + real.precision) )  // https://www.scala-lang.org/api/2.12.4/scala/collection/SeqView.html
-      ((f (w) ) - f (v) ) / real.precision
+      val w = v.view.updated (i, v(i) + real.precision )  // https://www.scala-lang.org/api/2.12.4/scala/collection/SeqView.html
+      ( f(w) - f(v) ) / real.precision
     }
 
 }

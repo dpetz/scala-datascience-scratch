@@ -28,9 +28,9 @@ trait Real[R] extends scala.math.Fractional[R] {
     * @return Difference is at most [[precision]] */
   def approx(x:R,y:R):Boolean
 
-  /** Huge number treated as biggest possible
+  /** Huge number treated as largest possible
     * For a [[Double]] it is the actual highest possible number.
-    * For [[BigDecimal]] it is treated as if for consistency */
+    * For [[BigDecimal]] it is treated as if it where for consistency */
   def MAX:R
 
   /** Opposite of [[MAX]] */
@@ -40,21 +40,27 @@ trait Real[R] extends scala.math.Fractional[R] {
 
 object Real {
 
-  /** Infix operators based on ds.math.Real */
-  implicit class RealInfix[R:Real](x:R)(implicit real:Real[R]) {
+  /** Wrap `Real` functions as infix operators*/
+  implicit class Infix[R:Real](x:R)(implicit real:Real[R]) {
 
+    /** @see Real.power */
     def **(y: R): R = real.power(x,y)
-    def +(y: R): R = real.minus(x,y)
+    /** @see Real.plus */
+    def +(y: R): R = real.plus(x,y)
+    /** @see Real.minus */
     def -(y: R): R = real.minus(x,y)
+    /** @see Real.times */
     def *(y: R): R = real.times(x,y)
+    /** @see Real.div */
     def /(y: R): R = real.div(x,y)
+    /** @see Real.approx */
     def ~(y: R): Boolean = real.approx(x,y)
 
   }
 
-  /** Extend [[RealInfix]] (and elsewhere) operations extend to integer parameters. */
+  /** Extends ``Real operations, eg. in [[Infix]], to `Int` parameters. */
   implicit def int2Real[R](x: Int)(implicit real:Real[R]):R = real(x)
-  /** Extend [[RealInfix]] (and elsewhere) operations to double parameters. */
+  /** Extends ``Real operations, eg. in [[Infix]], to `Double` parameters. */
   implicit def double2Real[R](x: Double)(implicit real:Real[R]):R = real(x)
 
 }

@@ -1,7 +1,5 @@
 package ds.num
 
-import parser.Num
-
 import scala.math.Numeric.DoubleIsFractional
 import scala.util.Random
 
@@ -16,11 +14,11 @@ package object DoubleReal {
 
     def random:R = Random.nextDouble
 
-    def json(n:Num): R = n.asDouble
+    def json(n:parser.Num): R = n.asDouble
 
     def power(x:R, y: R):R = Math.pow(x,y)
 
-    def apply(d:R):R = d
+    def apply(d:Double):R = d
 
     def apply(i:Int):R = i.toDouble
 
@@ -28,9 +26,9 @@ package object DoubleReal {
 
     def approx(x: R, y: R):Boolean = this.abs(x - y) < precision
 
-    def MAX:R = Double.MaxValue
+    val MAX:R = Double.MaxValue
 
-    def MIN:R = Double.MinValue
+    val MIN:R = Double.MinValue
 
     /** Exception when dividing by zero for consistency with [[BigDecimal]] */
     override def div(x:R,y:R):R =

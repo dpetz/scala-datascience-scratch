@@ -1,7 +1,7 @@
 package ds.lina
 
 import ds.num.Real
-import ds.num.Real.RealInfix
+import ds.num.Real.Infix
 
 import scala.Function.tupled
 import parser.Json
@@ -81,7 +81,11 @@ object Vec {
     def dot(other:Vec):R = (v * other) total
 
     /** Calculates the p-norm */
-    def norm(p:R):R = (v dot(v)) ** p
+    def norm(p:R):R =
+      if (p == 1)
+        (v map {real.abs(_)}).total
+      else
+        (v map { _ ** p } total) ** (real.one / p)
 
     /** zips and applies binary operation */
     private def each(other: Vec, f: (R,R)=>R): Vec = {

@@ -19,20 +19,21 @@ package object BigReal {
 
     def json(n:parser.Num):R = n.asBigDecimal
 
-    def power(x:R, y: R):R = x.pow(y.toIntExact)
+    /**  `x` to the power of `y` with `Double` precision.
+      * @todo Consider {@link https://arxiv.org/abs/0908.3030v3} for higher precision. */
+    def power(x:R, y: R):R = BigDecimal(scala.math.pow(x.toDouble,y.toDouble))//x.pow(y.toInt)
 
     def apply(d:Double):R = BigDecimal(d)
 
     def apply(i:Int):R = BigDecimal(i)
 
-
-    val precision = BigDecimal("0.0000001")
+    val precision = BigDecimal(0.0000001)
 
     def approx(x: R, y: R):Boolean = this.abs(x - y) < precision
 
-    def MAX:R = BigDecimal(Double.MaxValue)
+    val MAX:R = BigDecimal(Double.MaxValue)
 
-    def MIN:R = BigDecimal(Double.MinValue)
+    val MIN:R = BigDecimal(Double.MinValue)
 
   }
 
