@@ -15,7 +15,7 @@ package object BigReal {
 
     def compare(x:R, y:R):Int = (x - y).toInt
 
-    def random = BigDecimal(Random.nextDouble)
+    def random(min:R=zero, max:R=one): R = min + ((max - min) * Random.nextDouble)
 
     def json(n:parser.Num):R = n.asBigDecimal
 

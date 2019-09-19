@@ -12,7 +12,7 @@ package object DoubleReal {
 
     def compare(x:R, y:R): Int = (x - y).toInt
 
-    def random:R = Random.nextDouble
+    def random(min:R=0.0,max:R=1.0):R = min + ((max - min) * Random.nextDouble)
 
     def json(n:parser.Num): R = n.asDouble
 

@@ -53,3 +53,7 @@ import ds.num.Real
   /* Iterate beginning first until this step */
   def history:List[Descent[R]]= this :: ( previous map (_.history) getOrElse Nil )
 }
+
+object Descent {
+ def apply [R:Real] (gradient:Gradient[R], x:Vec[R]) = new Descent[R](gradient,x)
+}

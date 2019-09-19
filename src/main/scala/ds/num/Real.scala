@@ -4,8 +4,8 @@ package ds.num
   * such as Double or BigDecimal. */
 trait Real[R] extends scala.math.Fractional[R] {
 
-  /** Create random number within [0,1) */
-  def random:R
+  /** Create random number within `[min,max)` */
+  def random(min:R,max:R):R
 
   /** Parse from json number. */
   def json(n:parser.Num):R

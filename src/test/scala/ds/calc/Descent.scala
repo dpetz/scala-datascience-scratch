@@ -1,6 +1,6 @@
 import ds.num.DoubleReal._
 import ds.lina.Vec._
-import ds.calc.Gradient
+import ds.calc.{Descent, Gradient}
 
 class Descent extends ds.PropertySpec {
 
@@ -9,16 +9,12 @@ class Descent extends ds.PropertySpec {
 
   "$dim-dim v*v" should "descend towards (0,..,0)." in {
 
-    val v :Vec[R] = Seq.fill(dim)(Real.random).map(_ * 2 * dist - dist)
+    val v :Vec[R] = Seq.fill(dim)(Real.random(-dist,dist))
     Given("Random start coordinates in [-$dist,$dist): $v")
 
-    val g = Gradient {
-      v => v dot v
-    } {
-      d:Gradient.Direction[R] => 2 * d.v(d.i)
-    }
+    val g = Gradient { v => v dot v } { d => 2 * d.v(d.i) }
       
-    val min = new ds.calc.Descent(g,v).minimize
+    val min = Descent(g,v).minimize
     
     println("i\tValue\tPosition\n" + "="*30)
     min.history.reverse.foreach {
