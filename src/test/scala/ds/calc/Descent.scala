@@ -17,9 +17,9 @@ class Descent extends ds.PropertySpec {
     val min = Descent(g,v).minimize
     
     println("i\tValue\tPosition\n" + "="*30)
-    min.history.reverse.foreach {
-      gd => printf("%s\t%.4f\t",gd.history.size,gd.value)
-        println(gd.x.format("%.4f"))
+    min.history.reverse.foreach {  gd =>
+      printf("%s\t%.4f\t",gd.history.size,gd.value)
+      println(gd.x.format("%.4f"))
     }
    
     min.value.toDouble should equal  (0.0 +- 0.1)

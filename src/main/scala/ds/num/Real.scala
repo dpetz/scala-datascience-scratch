@@ -5,7 +5,7 @@ package ds.num
 trait Real[R] extends scala.math.Fractional[R] {
 
   /** Create random number within `[min,max)` */
-  def random(min:R,max:R):R
+  def random(min:R=zero,max:R=one):R
 
   /** Parse from json number. */
   def json(n:parser.Num):R

@@ -12,7 +12,7 @@ class AnyReal[R] (implicit real:Real[R])  extends ds.SimpleSpec  {
     (real(1) ~ ((real(1) / 3) * 3)) shouldBe true
   }
 
-  val x:R = real.random
+  val x:R = real.random()
 
   s"$x" should "equal zero when multiplied with zero" in {
     (x * real.zero ) shouldBe real(0)

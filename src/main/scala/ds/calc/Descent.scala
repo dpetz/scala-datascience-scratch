@@ -26,8 +26,7 @@ import ds.num.Real
 
   /** Explore steps and return position with lowest value. */
   def explore():Vec[R] =
-    steps map { (x - gradient(x)) * _ } minBy { gradient.f } //recode (NaN, PositiveInfinity) }
-
+    steps map { (x + gradient(x)) * _ } minBy { gradient.f } //recode (NaN, PositiveInfinity) }
 
   /** Possible step widths in this iteration.
     * Overwrite for different (incl dynamic) values */
@@ -56,4 +55,5 @@ import ds.num.Real
 
 object Descent {
  def apply [R:Real] (gradient:Gradient[R], x:Vec[R]) = new Descent[R](gradient,x)
+
 }
