@@ -1,6 +1,8 @@
+// cp parser/out/artifacts/Combinatorial_Parser_jar/Combinatorial\ Parser.jar scratch/lib/
+
 // The simplest possible sbt build file is just one line:
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.8"
 // That is, to create a valid sbt build, all you've got to do is define the
 // version of Scala you'd like your project to use.
 
@@ -13,7 +15,7 @@ scalaVersion := "2.12.4"
 // It's possible to define many kinds of settings, such as:
 
 name := "Scala Data Science form Scratch"
-organization := "https://www.linkedin.com/in/dirkpetzoldt/"
+organization := "https://github.com/dpetz"
 version := "0.1"
 
 // Note, it's not required for you to define these three settings. These are
@@ -73,5 +75,13 @@ version := "0.1"
 // To learn more about multi-project builds, head over to the official sbt
 // documentation at http://www.scala-sbt.org/documentation.html
 
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.8"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
+
+logBuffered in Test := false
+
+//lazy val projectIDependOn = RootProject(uri("https://github.com/dpetz/scratch"))
+
+//lazy val myProject = project in file("my-project").dependsOn(projectIDependOn)
+

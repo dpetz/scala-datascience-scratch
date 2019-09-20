@@ -1,5 +1,10 @@
 package ds.lina
 
+/**
+  * Views [[Matrix]] as a sequence of [[Column]]s.
+  * @param matrix
+  * @tparam A
+  */
 case class Columns[A](matrix:Matrix[A]) extends  Seq[Column[A]] {
 
   def length = matrix.columns

@@ -4,6 +4,7 @@
 project/
 target/
 lib/
+doc/
 
 # ignore all hidden files (such as .DS_Store)
 # and hidden folders except this file
