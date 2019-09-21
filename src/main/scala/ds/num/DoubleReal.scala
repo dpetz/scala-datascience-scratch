@@ -5,7 +5,7 @@ import scala.util.Random
 
 /** Implements [[Real]] with [[Double]] precision. */
 package object DoubleReal {
-
+/*
   type R = Double
 
   implicit val Real = new ds.num.Real[R] with DoubleIsFractional {
@@ -36,6 +36,6 @@ package object DoubleReal {
 
   }
 
-
+*/
 }
 

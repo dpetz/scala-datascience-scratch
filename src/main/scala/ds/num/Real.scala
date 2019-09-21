@@ -1,5 +1,7 @@
 package ds.num
 
+import ds.expr.{Computable, Engine, Expr}
+
 /** Abstracts numeric operations from a specifc number representation
   * such as Double or BigDecimal. */
 trait Real[R] extends scala.math.Fractional[R] {
@@ -40,27 +42,32 @@ trait Real[R] extends scala.math.Fractional[R] {
 
 object Real {
 
+  import ds.expr.Expr._
+
   /** Wrap `Real` functions as infix operators*/
-  implicit class Infix[R:Real](x:R)(implicit real:Real[R]) {
+  implicit class RealExpr[R](x:Expr[R]) {
 
     /** @see Real.power */
-    def **(y: R): R = real.power(x,y)
+    def **(y: E[R]): E[R] = Power(x,y)
     /** @see Real.plus */
-    def +(y: R): R = real.plus(x,y)
+    def +(y: E[R]): E[R] = Plus(x,y)
     /** @see Real.minus */
-    def -(y: R): R = real.minus(x,y)
+    def -(y: E[R]): E[R] = Minus(x,y)
     /** @see Real.times */
-    def *(y: R): R = real.times(x,y)
+    def *(y: E[R]): E[R] = Times(x,y)
     /** @see Real.div */
-    def /(y: R): R = real.div(x,y)
+    def /(y: E[R]): E[R] = Divide(x,y)
     /** @see Real.approx */
-    def ~(y: R): Boolean = real.approx(x,y)
+    def ~(y: E[R]): E[Boolean] = Approx(x,y)
 
   }
 
   /** Extends ``Real operations, eg. in [[Infix]], to `Int` parameters. */
-  implicit def int2Real[R](x: Int)(implicit real:Real[R]):R = real(x)
+  implicit def int2Expr[R](x: Int):E[R] = IntExpr(x)
   /** Extends ``Real operations, eg. in [[Infix]], to `Double` parameters. */
-  implicit def double2Real[R](x: Double)(implicit real:Real[R]):R = real(x)
+  implicit def double2Expr[R](x: Double):E[R] = DoubleExpr(x)
+
+
+
 
 }
