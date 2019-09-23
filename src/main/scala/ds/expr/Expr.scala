@@ -9,9 +9,11 @@ object Expr {
 
   type E[R] = Expr[R]
 
-  /** References a function in [[Real]] of type `(R,R) => R` */
+  /** References [[Real]] function of type `(R,R) => R` such as ``Real.plus` */
   abstract class Arithmetic[R] (val f:Real[R] => (R,R) => R) extends Expr[R] {
+    /** Left hand side argument */
     val x:E[R]
+    /** Right hand side argument */
     val y:E[R]
   }
 
