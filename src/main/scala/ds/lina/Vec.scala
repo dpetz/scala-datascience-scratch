@@ -16,28 +16,28 @@ object vec {
 
   type E[R] = Expr[R]
 
-  abstract class VecExpr[R](eval:Engine[R] => Vec[R]) extends E[Vec[R]]
 
-   case class VecVec2Vec[R:Real] (v:Vec[R],w:Vec[R])(f:(Vec[R],Vec[R],Real[R]) => Vec[R])
-      extends Vec[R](e => f(e(v),e(w),e.real))
-
-
-  case class SeqVec[R:Real](s:Seq[R]) extends Vec[R](_ => s)
+  /** Wraps ``Seq`` as [[Expr]]*/
+  case class SeqVec[R](s:Seq[R]) extends Vec[R](_ => s)
 
 
-  case class Sum[R](v:Vec[R]) extends RealExpr[R] ( e =>
-    e(v).fold(e.real.zero)(e.real.plus)
+  case class Sum[R](v:Vec[R]) extends RealValued[R] (e =>
+    e(v).fold(e.zero)(e.plus)
   )
 
+  case class Size[R](v:Vec[R]) extends RealValued[R](e => e.real(e(v).size) )
 
-  //class Vec2Vec[R](val v:Vec[R])(eval:Engine[R] => Vec[R] ) extends Vec[R]
 
-  case class Map[R,S](v:Vec[R])(f:R=>S) extends Vec(v) {
+  case class Map[R](v:Vec[R])(f:R=>R) extends Vec[R](
     e => e(v).map(f)
-  }
+  )
 
-    /** Wraps ``Seq`` as [[Expr]]*/
-   class Vec[R](val eval:Engine[R] => E[Seq[R]])(implicit real:Real[R]) extends E[Seq[R]] {
+  case class Dot[R](v:Vec[R],w:Vec[R]) extends Composed[R](
+    _ => (v * w) sum
+  )
+
+    /** ``Expr`` evaluating to ``Seq[R]`` */
+   class Vec[R](val eval:Engine[R] => Seq[R]) extends E[Seq[R]] {
 
     /*--------------------------------------------------------------------*/
     /* Infix operations to apply Real[R] operations elementwise to Seq[R] */
@@ -45,38 +45,30 @@ object vec {
 
       def sum:E[R] = Sum(this)
 
-    def map[S:Real](f:R=>R) = Vec(toSeq.map(f))
+      def map(f:R=>R):Vec[R] = Map(this)(f)
 
-    def size:Int = toSeq.size
+      def size= Size(this)
 
-    /** Dot product **/
-    def dot(other:Vec[R]):R = new VecVec(this,other)({_ * _) sum})
+      /** Dot product **/
+    def dot(w:Vec[R]):Expr[R] = Dot(this,w)
 
     /** Calculates the p-norm */
     def norm(p:E[R]):E[R] = Norm(this,p)
 
-
-    /** zips and applies binary operation */
-    private def each(w: Vec[R], f: (R,R)=>R)(implicit e:Engine[R]): Vec[R] = Vec[R] {
-      require (size == w.size)
-      (e(this) zip e(w)) map (x => f(x._1, x._2))
-    }
-
     /** Add elementwise */
-    def +(w: Vec[R]): Vec[R] = VecVec2Vec[R](this,w)( (x,y,r) => x.each(y, r.plus) )
+    def +(w: Vec[R]): Vec[R] = new Vec[R]( e => Vec.each(e(this), e(w), e.plus))
 
     /** Substract elementwise */
-    def -(w: Vec[R]): Vec[R] = VecVec2Vec[R](this,w)( (x,y,r) => x.each(y, r.minus) )
+    def -(w: Vec[R]): Vec[R] = new Vec[R]( e => Vec.each(e(this), e(w), e.minus))
 
-    def unary_- : Vec[R] = map (real.negate(_))
-
+    def unary_- : Vec[R] = map (e.negate(_))
 
 
     /** Multiply elementwise */
-    def *(w: Vec[R]): Vec[R] = VecVec2Vec[R](this,w)( (x,y,r) => x.each(y, r.times) )
+    def *(w: Vec[R]): Vec[R] = Vec.Times(this,w)
 
     /** Divide elementwise */
-    def /(w: Vec[R]): Vec[R] = VecVec2Vec[R](this,w)( (x,y,r) => x.each(y, r.div) )
+    def /(w: Vec[R]): Vec[R] = new Vec[R]( e => Vec.each(e(this), e(w), real.div))
 
     /** Add constant */
     def +(x: E[R]): Vec[R] = map (real.plus(x,_))
@@ -86,7 +78,17 @@ object vec {
 
   }
 
+object Vec {
+  /** zips and applies binary operation */
+  def each[R](v:Seq[R], w: Seq[R], f: (R,R)=>R): Seq[R] = {
+    require (v.size == w.size)
+    (v zip w) map (x => f(x._1, x._2))
+  }
 
+  case class Times[R](v:Vec[R], w: Vec[R]) extends Vec[R]( e => Vec.each(e(v), e(w), e.times))
+
+
+}
 
   implicit def seq2Vec[R](s:Seq[R]) = new Vec[R](s)
 

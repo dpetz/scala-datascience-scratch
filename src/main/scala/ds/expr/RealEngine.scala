@@ -1,23 +1,23 @@
 package ds.expr
 
-import ds.expr.Expr._
-import ds.num.Real
+import ds.lina.vec._
+import ds.num.real._
+
 
 /** Engine for `Real` arithmetic*/
-class RealEngine[R](implicit real:Real[R]) extends Engine[R]{
+class RealEngine[R:Real](implicit real:Real[R]) extends Engine[R]{
 
+  def apply(v:Vec[R]): Seq[R] = v.eval(this)
 
   def apply(expr:E[Boolean]):Boolean = expr match {
-    case a:Relation[R] => a.f(real)(this(a.x),this(a.y))
+    case r:Relation[R] => r.eval(this)
     case _ => throw EngineException(this,expr)
   }
 
   def apply(expr:E[R]):R = expr match {
-    case a:Arithmetic[R] => a.f(real)(this(a.x),this(a.y))
-    case b:BigDecimalExpr[R] => real(b.x)
-    case i:IntExpr[R] => real(i.x)
-    case i:DoubleExpr[R] => real(i.x)
-    case c:Computable[R] => c.compute(this)
+    case r:RealValued[R] => r.eval(this)
+    case c:Composed[R] => this(c.expr())
+    case t:Terminal[R] => t.eval()
     case _ => throw EngineException(this,expr)
   }
 
