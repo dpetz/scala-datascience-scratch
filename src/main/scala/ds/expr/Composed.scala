@@ -1,3 +1,3 @@
 package ds.expr
 
-case class Composed[R](expr:()=>E[R]) extends Expr[R]
+case class Composed[R](expr:Engine[R]=>E[R]) extends Expr[R]

@@ -1,3 +1,3 @@
 package ds.expr
 
-trait Expr[R]
+abstract class Expr[A]

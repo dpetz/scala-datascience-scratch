@@ -1,8 +1,15 @@
 package ds.lina
 
-import ds.num.Real
-import ds.lina.Vec.{VecOps,VecMath}
+import ds.expr.Expr
+import ds.num.real._
+import ds.lina.Vec._
+import ds.num.real.Real
+import ds.expr.Engine
+import ds.lina.Matrix._
 
+
+
+abstract class Row
 
 
 /**
@@ -10,16 +17,26 @@ import ds.lina.Vec.{VecOps,VecMath}
   *
   * @see [[Columns]], [[Rows]], [[Elements]]
   */
-trait Matrix[A] {
+abstract class Matrix[R:Real] extends Expr[Seq[Seq[R]]] {
 
-  /** Number of rows */
-  def rows:Int
 
-  /** Number of columns */
-  def columns:Int
+  /** Evaluate to sequence of rows */
+  def rows(e: Engine[R]): Seq[Seq[R]] //= Transposed(this).columns(e)
 
-  /** Gets entry by index*/
-  def apply(i:Int,j:Int):A
+  /** Evaluate to sequence of columns */
+  def columns(e: Engine[R]): Columns[R]
+
+  abstract class Elementwise[R: Real](m1: Matrix[R], m2: Matrix[R])(f: (R, R) => R) extends Matrix {
+
+  def rows(e: Engine[R]) = {
+    e.rows(m1).zip(e.rows(m2).map{ case (row1:Seq[R], row2:Seq[R]) => row1.zip(row2).map(x => f(x._1,x._2)}
+  }
+
+}
+
+  case class Plus[R](m1:Matrix[R],m2:Matrix[R](implicit r:Real[R]) extends Elementwise(m1,m2)(real.plus)
+
+  def +(other:Matrix[R]):Matrix[R] = Plus(this,other)
 
   override def equals(other:Any) =
     other.isInstanceOf[Matrix[A]] && (hashCode == other.hashCode)
@@ -27,6 +44,24 @@ trait Matrix[A] {
   override def hashCode = (this all).hashCode + rows
 
   override def toString = s"Matrix($rows rows, $columns‚ columns)"
+
+
+  // context bound
+
+  val real = implicitly[Real[R]]
+
+
+  def *(x:R):Matrix[R] =
+  matrix map { real.times(x,_) }
+
+  def *(other:Matrix[R]):Matrix[R] = {
+  require (matrix.transpose aligned other,
+  s"Cannot multiply $matrix and $other: Shapes do not fit.")
+  Rows(matrix).flatMap {
+  r => Columns(other).map {
+  c => r dot c
+}} align other.columns
+}
 
 }
 
@@ -54,39 +89,22 @@ object Matrix {
     def aligned[B](other:Matrix[B]) =
       (matrix.rows == other.rows) && (matrix.columns == other.columns)
 
-    private case class Transposed[A](matrix:Matrix[A]) extends Matrix[A] {
+    private case class Transposed[R:Real](m:Matrix[R]) extends Matrix[R] {
       def rows = matrix.columns
       def columns = matrix.rows
       def apply(i:Int,j:Int)=matrix(j,i)
     }
+  }
+
+
 
   }
 
-  /**
-    * [[MatrixOps]] that require  you can calculate with the entries
-    * via a `Field[A]]`
-    */
-  implicit class Math[R:Real](matrix:Matrix[R])  {
 
-    // context bound
 
-    val real = implicitly[Real[R]]
 
-    def +(other:Matrix[R]):Matrix[R] =
-      (matrix zip other) map { case (x,y) => real.plus(x,y) }
 
-    def *(x:R):Matrix[R] =
-      matrix map { real.times(x,_) }
 
-    def *(other:Matrix[R]):Matrix[R] = {
-      require (matrix.transpose aligned other,
-        s"Cannot multiply $matrix and $other: Shapes do not fit.")
-      Rows(matrix).flatMap {
-        r => Columns(other).map {
-          c => r dot c
-        }} align other.columns
-    }
-  }
 
 
 

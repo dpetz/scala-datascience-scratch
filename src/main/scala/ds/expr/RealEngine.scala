@@ -1,6 +1,6 @@
 package ds.expr
 
-import ds.lina.vec._
+import ds.lina.Vec
 import ds.num.real._
 
 
@@ -15,9 +15,8 @@ class RealEngine[R:Real](implicit real:Real[R]) extends Engine[R]{
   }
 
   def apply(expr:E[R]):R = expr match {
-    case r:RealValued[R] => r.eval(this)
+    case r:Really[R] => r.eval(this)
     case c:Composed[R] => this(c.expr())
-    case t:Terminal[R] => t.eval()
     case _ => throw EngineException(this,expr)
   }
 
