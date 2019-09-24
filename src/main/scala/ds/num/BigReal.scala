@@ -1,5 +1,6 @@
 package ds.num
 
+
 import scala.math.Numeric.BigDecimalIsFractional
 import scala.util.Random
 
@@ -26,6 +27,8 @@ package object BigReal {
     def apply(d:Double):R = BigDecimal(d)
 
     def apply(i:Int):R = BigDecimal(i)
+
+    def apply(b:BigDecimal):R = b
 
     val precision = BigDecimal(0.0000001)
 

@@ -13,6 +13,6 @@ class Matrix extends ds.SimpleSpec {
 	}
 
 	it should "(M * M) elements sum equal 54" in {
-		((matrix * matrix all) total) should equal (54)
+		((matrix * matrix all) sum) should equal (54)
 	}
 }

@@ -1,18 +1,95 @@
 package ds.lina
 
-import ds.num.Real
-import ds.num.Real.Infix
+import ds.expr.Engine
+import ds.expr._
+import ds.num.real._
 
 import scala.Function.tupled
 import parser.Json
+
 
 /**
   *
   * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet
   */
-object Vec {
+object vec {
 
-  type Vec[R] = Seq[R]
+  type E[R] = Expr[R]
+
+  abstract class VecExpr[R](eval:Engine[R] => Vec[R]) extends E[Vec[R]]
+
+   case class VecVec2Vec[R:Real] (v:Vec[R],w:Vec[R])(f:(Vec[R],Vec[R],Real[R]) => Vec[R])
+      extends Vec[R](e => f(e(v),e(w),e.real))
+
+
+  case class SeqVec[R:Real](s:Seq[R]) extends Vec[R](_ => s)
+
+
+  case class Sum[R](v:Vec[R]) extends RealExpr[R] ( e =>
+    e(v).fold(e.real.zero)(e.real.plus)
+  )
+
+
+  //class Vec2Vec[R](val v:Vec[R])(eval:Engine[R] => Vec[R] ) extends Vec[R]
+
+  case class Map[R,S](v:Vec[R])(f:R=>S) extends Vec(v) {
+    e => e(v).map(f)
+  }
+
+    /** Wraps ``Seq`` as [[Expr]]*/
+   class Vec[R](val eval:Engine[R] => E[Seq[R]])(implicit real:Real[R]) extends E[Seq[R]] {
+
+    /*--------------------------------------------------------------------*/
+    /* Infix operations to apply Real[R] operations elementwise to Seq[R] */
+    /*--------------------------------------------------------------------*/
+
+      def sum:E[R] = Sum(this)
+
+    def map[S:Real](f:R=>R) = Vec(toSeq.map(f))
+
+    def size:Int = toSeq.size
+
+    /** Dot product **/
+    def dot(other:Vec[R]):R = new VecVec(this,other)({_ * _) sum})
+
+    /** Calculates the p-norm */
+    def norm(p:E[R]):E[R] = Norm(this,p)
+
+
+    /** zips and applies binary operation */
+    private def each(w: Vec[R], f: (R,R)=>R)(implicit e:Engine[R]): Vec[R] = Vec[R] {
+      require (size == w.size)
+      (e(this) zip e(w)) map (x => f(x._1, x._2))
+    }
+
+    /** Add elementwise */
+    def +(w: Vec[R]): Vec[R] = VecVec2Vec[R](this,w)( (x,y,r) => x.each(y, r.plus) )
+
+    /** Substract elementwise */
+    def -(w: Vec[R]): Vec[R] = VecVec2Vec[R](this,w)( (x,y,r) => x.each(y, r.minus) )
+
+    def unary_- : Vec[R] = map (real.negate(_))
+
+
+
+    /** Multiply elementwise */
+    def *(w: Vec[R]): Vec[R] = VecVec2Vec[R](this,w)( (x,y,r) => x.each(y, r.times) )
+
+    /** Divide elementwise */
+    def /(w: Vec[R]): Vec[R] = VecVec2Vec[R](this,w)( (x,y,r) => x.each(y, r.div) )
+
+    /** Add constant */
+    def +(x: E[R]): Vec[R] = map (real.plus(x,_))
+
+    /** Multiply constant */
+    def *(x:E[R]): Vec[R] = map (real.times(x,_))
+
+  }
+
+
+
+  implicit def seq2Vec[R](s:Seq[R]) = new Vec[R](s)
+
 
   case class Elem[A](x:A,i:Int)
 
@@ -69,49 +146,6 @@ object Vec {
 
   }
 
-  /** Infix operations to apply Real[R] operations elementwise to Seq[R] */
-  implicit class VecMath[R](v:Seq[R])(implicit real:Real[R]) {
-
-    type Vec = Seq[R]
-
-    // sum already used by [[Seq]]
-    def total = v.fold(real.zero)(real.plus)
-
-    /** Dot product **/
-    def dot(other:Vec):R = (v * other) total
-
-    /** Calculates the p-norm */
-    def norm(p:R):R =
-      if (p == 1)
-        (v map {real.abs(_)}).total
-      else
-        (v map { _ ** p } total) ** (real.one / p)
-
-    /** zips and applies binary operation */
-    private def each(other: Vec, f: (R,R)=>R): Vec = {
-      require (v.size == other.size)
-      (v zip other) map (x => f(x._1, x._2))
-    }
-
-    /** Add elementwise */
-    def +(other: Vec): Vec = each(other, real.plus)
-
-    /** Substract elementwise */
-    def -(other: Vec): Vec = each(other, real.minus)
-
-    def unary_- : Vec = v map (real.negate(_))
-
-    /** Multiply elementwise */
-    def *(w: Vec): Vec = each(w, real.times)
-
-    /** Divide elementwise */
-    def /(w: Vec): Vec = each(w, real.div)
-
-    /** Add constant */
-    def +(x: R): Vec = v map (real.plus(x,_))
-
-    /** Multiply constant */
-    def *(x:R): Vec = v map (real.times(x,_))
-  }
 
 }
+
