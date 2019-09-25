@@ -1,6 +1,6 @@
 package ds.expr
 
-import ds.lina.{Matrix, Vec}
+import ds.lina.{Matrix, Query, Vec}
 import ds.num.real._
 
 
@@ -9,7 +9,7 @@ class RealEngine[R:Real](implicit real:Real[R]) extends Engine[R]{
 
   def apply(v:Vec[R]): Seq[R] = v.eval(this)
 
-  def apply(m:Matrix[R]): Matrix[R] = m.eval(this)
+  def apply(m:Matrix[R],q:Query): Seq[Seq[R]] = m.eval(this,q)
 
 
   def apply(expr:E[Boolean]):Boolean = expr match {

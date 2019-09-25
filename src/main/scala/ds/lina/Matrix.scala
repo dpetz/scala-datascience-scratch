@@ -5,122 +5,99 @@ import ds.num.real._
 import ds.lina.Vec._
 import ds.num.real.Real
 import ds.lina.Matrix._
+import ds.lina.Query._
 
 
 
-abstract class Row
+
+
+
+
+
 
 
 /**
   * Minimal interface for a matrix
   * Evaluates to itself in the sense that all operations that might have stacked up are performed.
   *
-  * @see [[Columns]], [[Rows]], [[Elements]]
+  * @see [[ColumnsOld]], [[RowsOld]], [[Elements]]
   */
-abstract class Matrix[R:Real](val size:(Int,Int)) extends Expr[Matrix[R]]{
+abstract class Matrix[R:Real](val shape:Shape) extends Expr[SS[R]]{
 
   /** Gets entry by index */
-  def apply(i: Int, j: Int)(implicit e:Engine[R]): R
+  //def apply(i: Int, j: Int)(implicit e:Engine[R]): R
 
   //** Overwrite to change default implementation to just return this (ie. no evaluation required)  */
-  def eval(e:Engine[R]):Matrix[R]
-
-  def rows:Int = size._1
-  val columns:Int = size._2
-
+  def eval(e:Engine[R], q:Query):SS[R]
 
   override def equals(other:Any) =
-    other.isInstanceOf[Matrix[R]] && (hashCode == other.hashCode)
+    other.isInstanceOf[M[R]] && (hashCode == other.hashCode)
 
-  override def hashCode = (this all).hashCode + rows
+  // override def hashCode = (this all).hashCode + shape.rows @todo Hascode w/o engine?
 
-  override def toString = s"Matrix($rows rows, $columns‚ columns)"
+  override def toString = s"Matrix(${shape.rows} rows, ${shape.cols}‚ columns)"
 
-  def all:Seq[R] = Elements(this)
+  def elementwise(other:M[R],f:(R,R)=>R):M[R] = new Elementwise(this,other)(f)
 
-  def zip(other:Matrix[R],f:(R,R)=>R):Matrix[R]={
-    require (this aligned other)
-    all zip (other all) map (x => f(x._1,x._2)) align columns
-  }
+  def map(f:R=>R):M[R] = Map(this)(_ => f)
 
-  def map[B](f:R=>R):Matrix[R] =
-    all map f align columns
+  def transpose:M[R] = Transpose(this)
 
-  def transpose:Matrix[R] = Transposed(this)
+  def aligned[R](other:M[R]):Boolean =
+    (shape.rows == other.shape.rows) && (shape.cols == other.shape.cols)
 
-  def aligned[R](other:Matrix[R]):Boolean =
-    (rows == other.rows) && (columns == other.columns)
+  def +(other:M[R]):M[R] = Plus(this,other)
 
-  def +(other:Matrix[R]):Matrix[R] = Plus(this,other)
+  def +(x:Really[R]):M[R] = PlusReal(this,x)
 
 
+  def *(other:M[R]):M[R] = Times(this,other)
+
+  def *(x:Really[R]):M[R] = TimesReal(this,x)
+  
 }
-
 
 object Matrix {
-
-
+  
   type M[R] = Matrix[R]
+  type S[R] = Seq[R]
+  type SS[R] = Seq[S[R]]
 
-  private case class Transposed[R:Real](m:Matrix[R]) extends Matrix[R](m.size) {
-
-    def eval(e:Engine[R]):Matrix[R] = this
-    def apply(i:Int,j:Int):R = m(j,i)
+  private case class Transpose[R: Real](m: M[R]) extends M[R](m.shape.transpose) {
+    def eval(e: Engine[R], q: Query): SS[R] = e(m, q.transpose)
   }
 
-
-  abstract class Zip[R: Real](m1: Matrix[R], m2: Matrix[R])(f: (R, R) => R)
-    extends Matrix[R](m1.size) {
-     override def eval(e:Engine[R]):Matrix[R] = e(m1) zip (e(m2), f)
+  class Elementwise[R: Real](m1: M[R], m2: M[R])(f: (R, R) => R) extends M[R](m1.shape) {
+    def eval(e: Engine[R], q: Query): SS[R] =
+      (e(m1, q) zip (e(m2, q)) map (vv => (vv._1 zip vv._2) map (xx => f(xx._1, xx._2))))
   }
 
-  case class Plus[R](m1:Matrix[R],m2:Matrix[R])(implicit r:Real[R])
-    extends Zip(m1,m2)(r.plus)
+  case class Plus[R](m1: M[R], m2: M[R])(implicit r: Real[R])
+    extends Elementwise(m1, m2)(r.plus)
 
-  case class Map[R](m:Matrix[R])(f:R=>R)(implicit r:Real[R])
-    extends Matrix[R](m.rows, m.columns)(e => e(m).map(f))
-
-  case class PlusReal[R](m:Matrix[R],x:Really[R])(implicit r:Real[R])
-    extends Map(m)(r.plus(_,e(x)))
-
-
-
-  implicit def matrix2Expr[R:Real](m:Matrix[R]) = new Matrix[R](_ => m)
-
-
-
-  def *(x:R):Matrix[R] =
-    matrix map { real.times(x,_) }
-
-  def *(other:Matrix[R]):Matrix[R] = {
-    require (matrix.transpose aligned other,
-      s"Cannot multiply $matrix and $other: Shapes do not fit.")
-    Rows(matrix).flatMap {
-      r => Columns(other).map {
-        c => r dot c
-      }} align other.columns
+  case class Map[R: Real](m: M[R])(f: Engine[R] => R => R) extends M[R](m.shape) {
+    def eval(e: Engine[R], q: Query): SS[R] = e(m, q) map (v => v map f(e))
   }
 
-  def apply[R:Real](jsonRows:String) = SeqOfRows(jsonRows)
+  case class PlusReal[R](override val m: M[R], x: Really[R])(implicit r: Real[R])
+    extends Map[R](m)(e => r.plus(_, e(x)))
 
-  /** [[Matrix]] utility methods such as [[map]]. */
-  implicit class Ops[A](matrix:Matrix[A]) {
-
-
-
+  case class TimesReal[R](override val m: M[R], x: Really[R])(implicit r: Real[R])
+    extends Map[R](m)(e => r.times(_, e(x)))
 
 
+  case class Times[R](m1: M[R], m2: M[R])(implicit r: Real[R])
+    extends Matrix(Shape(m1.shape.rows, m2.shape.cols)) {
+
+    def eval(e: Engine[R], q: Query): SS[R] = {
+
+      require(m1.shape.transpose == m2.shape,
+        s"Cannot multiply $m1 and $m2: Shapes do not fit.")
+
+      // assume m1 has rows layout. other case symmetric
+      val m2_cols = e(m2, q.turn)
+      e(m1, q) map (m1_row => m2_cols map (m2_col => e(m1_row dot m2_col)))
+
+    }
   }
-
-
-
-
-
-
-
-
-
-
-
 }
-

@@ -16,7 +16,7 @@ class Vec[R:Real](val eval:Engine[R] => Seq[R]) extends E[Seq[R]] {
 
   def map(f: R => R): Map[R] = Map(this)(f)
 
-  def size: Size[R] = Size(this)
+  def size: Shape[R] = Size(this)
 
   /** Dot product **/
   def dot(w: Vec[R]): Dot[R] = Dot(this, w)
