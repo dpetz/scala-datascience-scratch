@@ -1,14 +1,51 @@
 package ds.expr
 
-import ds.lina.{Matrix, Query, Vec}
+import ds.expr.Engine._
 import ds.num.real._
 
-abstract class Engine[R:Real] {
+abstract class Engine[R:Real](val layout:Layout=Rows())  {
 
-  def apply(e:Expr[Boolean]): Boolean
-  def apply(e:Expr[R]): R
-  def apply(e:Vec[R]): Seq[R]
-  def apply(e:Matrix[R],q:Query): Seq[Seq[R]]
+  def apply[A](e:Expr[R,A]): A
+
+  /* Matrix parameters */
+  val rows:Filter = All()
+
+  val cols:Filter = All()
+
+  def transpose:Engine[R] =  layout(layout.transpose)
+
+  def layout(l:Layout):Engine[R]
+
+  def turn:Engine[R] = layout(layout.transpose)
+
 
 }
 
+
+
+object Engine {
+
+
+  trait Filter {
+    def apply(i:Int):Boolean
+  }
+
+  case class All() extends Filter {
+    def apply(i:Int):Boolean = true
+  }
+
+  sealed abstract class Layout {
+    def transpose:Layout
+  }
+
+  case class Rows() extends Layout {
+    def transpose = Columns()
+  }
+  case class Columns() extends Layout {
+    def transpose = Rows()
+  }
+
+
+
+
+}

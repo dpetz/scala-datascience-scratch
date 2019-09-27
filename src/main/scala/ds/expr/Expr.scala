@@ -1,3 +1,3 @@
 package ds.expr
 
-abstract class Expr[A]
+trait Expr[R,A] extends (Engine[R] => A)

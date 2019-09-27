@@ -4,7 +4,9 @@ import ds.expr.Really._
 import ds.num.real._
 
 /** Expression evaluating to a real number. */
-class Really[R:Real](val eval:Engine[R] => R) extends E[R] {
+class Really[R:Real](val f:Engine[R] => R) extends E[R] with (() => R) {
+
+  def apply(e:Engine[R]):R=f(e)
 
   /** @see Real.power */
   def **(y: E[R]): Power[R] = Power(this,y)

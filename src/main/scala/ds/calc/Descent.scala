@@ -1,10 +1,11 @@
 package ds.calc
 
 import ds.lina._
+
 import scala.annotation.tailrec
-import ds.lina.Vec.{VecMath, Vec}
-import ds.num.Real._
-import ds.num.Real
+import ds.lina.Vec._
+import ds.num.real._
+
 
 
 /**

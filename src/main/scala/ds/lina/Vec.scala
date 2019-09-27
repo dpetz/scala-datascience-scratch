@@ -10,13 +10,11 @@ import scala.Function.tupled
 
 /** ``Expr`` evaluating to ``Seq[R]``
   * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet */
-class Vec[R:Real](val eval:Engine[R] => Seq[R]) extends E[Seq[R]] {
+class Vec[R:Real](val eval:Engine[R] => Seq[R]) extends E[R,Seq[R]] {
 
   def sum: Sum[R] = Sum(this)
 
   def map(f: R => R): Map[R] = Map(this)(f)
-
-  def size: Shape[R] = Size(this)
 
   /** Dot product **/
   def dot(w: Vec[R]): Dot[R] = Dot(this, w)
@@ -52,7 +50,7 @@ object Vec {
   implicit class SeqOp[A](seq:Seq[A]) {
 
     /** View sequence as [[Matrix]] with specified number of columns */
-    def align(cols: Int): Matrix[A] = Columnized(seq, cols)
+    //def align(cols: Int): Matrix[A] = Columnized(seq, cols)
 
     /** Convert to Json string. */
     def json: String = seq.mkString("[", ",", "]")

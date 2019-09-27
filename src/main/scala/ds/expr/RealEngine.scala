@@ -1,7 +1,7 @@
 package ds.expr
 
-import ds.lina.{Matrix, Query, Vec}
 import ds.num.real._
+import ds.expr.Engine.Layout
 
 
 /** Engine for `Real` arithmetic*/
@@ -22,6 +22,8 @@ class RealEngine[R:Real](implicit real:Real[R]) extends Engine[R]{
     case c:Composed[R] => this(c.expr())
     case _ => throw EngineException(this,expr)
   }
+
+  def layout(l:Layout) = new RealEngine(layout)
 
 }
 

@@ -1,20 +1,25 @@
 package ds.calc
 
-import ds.calc.Func._//{RealValuedFunction, ScalarField, VectorField}
+import ds.calc.Func._
 import ds.calc.Gradient.Direction
-import ds.lina.Vec._
-import ds.num.Real
-import ds.num.Real.Infix
+import ds.expr.{Engine, Func, Really}
+import ds.lina.Vec
+import ds.num.real._
+
+
+abstract class VectorField[R:Real] extends Func[Vec[R],Vec[R]]
+abstract class ScalarField[R:Real] extends Really[R] with Func[Vec[R],R]
 
 
 /** Gradient of real-valued function
   * Estimated via difference quotient unless provided analytically
   * @param pd ith partial difference quotient of f at v
   * */
-case class Gradient[R:Real](f:ScalarField[R])(pd:Direction[R] => R) extends VectorField[R] {
+case class Gradient[R:Real](f:ScalarField[R])(pd:Direction[R] => R) extends VectorField  {
 
   /** Computes full gradient on v across all indices */
-  def apply(v:Vec[R]):Vec[R] = (v indices) map { i:Int => pd(Direction(v,i)) }
+  def apply(v:Vec[R])(implicit e:Engine[R]):Vec[R] =
+    (e(v) indices) map { i:Int => pd(Direction(v,i)) }
 
   /** Negate function and partial derivatives */
   def unary_- : Gradient[R] = Gradient(-f)(-pd)

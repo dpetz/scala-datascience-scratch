@@ -1,14 +1,15 @@
 package ds.num
 
+import ds.num.real.Real
 import scala.math.Numeric.DoubleIsFractional
 import scala.util.Random
 
-/** Implements [[Real]] with [[Double]] precision. */
+/**  [[Real]] with [[Double]] precision. */
 package object DoubleReal {
 
   type R = Double
 
-  implicit val Real = new ds.num.Real[R] with DoubleIsFractional {
+  implicit val Real = new Real[R] with DoubleIsFractional {
 
     def compare(x:R, y:R): Int = (x - y).toInt
 
@@ -37,7 +38,5 @@ package object DoubleReal {
       if (y != 0.0) DoubleIsFractional.div(x,y) else throw new ArithmeticException()
 
   }
-
-
 }
 
