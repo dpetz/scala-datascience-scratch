@@ -1,16 +1,14 @@
 package ds.lina
-
+import parser.Json
 import ds.expr.Engine
 import ds.expr._
 import ds.lina.Vec._
 import ds.num.real._
-import parser.Json
-
 import scala.Function.tupled
 
 /** ``Expr`` evaluating to ``Seq[R]``
   * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet */
-class Vec[R:Real](val eval:Engine[R] => Seq[R]) extends E[R,Seq[R]] {
+class Vec[R:Real](val eval:Engine[R] => Seq[R]) extends Expr[R,Seq[R]] {
 
   def sum: Sum[R] = Sum(this)
 
@@ -41,8 +39,6 @@ class Vec[R:Real](val eval:Engine[R] => Seq[R]) extends E[R,Seq[R]] {
 
   /** Multiply constant */
   def *(x: Really[R])(implicit r: Real[R]): Vec[R] = Constant(this, x)(r.times)
-
-
 }
 
 object Vec {

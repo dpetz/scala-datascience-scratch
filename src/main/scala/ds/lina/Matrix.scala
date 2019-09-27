@@ -1,5 +1,6 @@
 package ds.lina
 
+import ds.expr.Engine.{Layout, Rows}
 import ds.expr.{Engine, Expr, Really}
 import ds.num.real._
 import ds.lina.Vec._
@@ -60,7 +61,7 @@ object Matrix {
 
   /** Transpose matrix */
   private case class Transpose[R: Real](m: M[R]) extends M[R](m.shape.transpose) {
-    def apply(e: Engine[R]): SS[R] = e.transpose(m)
+    def apply(e: Engine[R]): SS[R] = e.update(e.config[Layout]("Layout"))(m)
   }
 
   /** Zip to matrices and map entries to real */
@@ -95,7 +96,7 @@ object Matrix {
         s"Cannot multiply $m1 and $m2: Shapes do not fit.")
 
       // in var names assume m1 has rows layout. Columns case symmetric
-      val m2_cols = e.turn(m2)
+      val m2_cols = e.update(Rows())(m2)
       e(m1) map (m1_row => m2_cols map (m2_col => e(m1_row dot m2_col))) // @todo support filters
 
     }

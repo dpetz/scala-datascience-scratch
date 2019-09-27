@@ -3,6 +3,7 @@ package ds.num
 import ds.num.real.Real
 import scala.math.Numeric.DoubleIsFractional
 import scala.util.Random
+import parser.Json
 
 /**  [[Real]] with [[Double]] precision. */
 package object DoubleReal {
@@ -15,7 +16,7 @@ package object DoubleReal {
 
     def random(min:R=0.0,max:R=1.0):R = min + ((max - min) * Random.nextDouble)
 
-    def json(n:parser.Num): R = n.asDouble
+    def json(n:Json.Num): R = n.asDouble
 
     def power(x:R, y: R):R = Math.pow(x,y)
 

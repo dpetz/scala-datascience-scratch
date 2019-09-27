@@ -1,7 +1,9 @@
 package ds.calc
 
+import ds.expr.{Engine, Expr}
+import ds.lina.Vec
 import ds.lina.Vec._
-import ds.num.Real
+import ds.num.real._
 
 
 // https://www.scala-lang.org/api/current/scala/math/index.html
@@ -11,33 +13,36 @@ import ds.num.Real
 
  object Func {
 
-  /** https://en.wikipedia.org/wiki/Scalar_field */
-  type ScalarField[R] = Vec[R] => R
-  /** https://en.wikipedia.org/wiki/Vector_field */
-  type VectorField[R] = Vec[R] => Vec[R]
+   import ds.lina.Vec
 
-  implicit class RealValuedFunction[X, R:Real](f: X => R) {
+   /** https://en.wikipedia.org/wiki/Scalar_field */
+   class ScalarField[R:Real](f:Seq[R]=>R) extends RealValuedFunc[Seq[R],R](f)
+   /** https://en.wikipedia.org/wiki/Vector_field */
+   trait VectorField[R] extends Expr[R,(Seq[R]=>Seq[R])]
 
-    val real = implicitly[Real[R]]
 
-    def -(y:R):X => R = { x: X => real.minus(f(x), y) }
+  /** Function of one argument evaluating to Real */
+  implicit class RealValuedFunc[X,R](f:X=>R)(implicit real:Real[R]) extends Expr[R,(X=>R)] {
 
-    def /(y:R):X => R = { x: X => real.div(f(x), y) }
+    def apply(e:Engine[R]):(X=>R) = f
+
+    //def -(y:R):RealFunc[A,R] => R = { x: X => real.minus(f(x), y) }
+
+    //def /(y:R):X => R = { x: X => real.div(f(x), y) }
 
     /** Negate real function (one argument) */
-    def unary_- : X => R = { x: X => real.negate(f(x)) }
+    def unary_- : RealValuedFunc[X,R] = -f(_)
 
   }
 
-   implicit class VecValuedFunction[X, R: Real](function: X => Vec[R]) {
-
-     val real = implicitly[Real[R]]
+   implicit class VecValuedFunction[X, R](f: X => Seq[R])(implicit real:Real[R]) {
 
      /** Negate real function (one argument) */
-     def unary_- : X => Vec[R] = { x: X => -function(x) }
+     def unary_- : VecValuedFunction[X,R] = -f(_)
 
    }
 
+   /*
   implicit class FunctionOps[A, B](f: A => B) {
 
     def recode(before: B, after: B): A => B = { x: A =>
@@ -45,6 +50,8 @@ import ds.num.Real
       if (y == before) after else y
     }
   }
+  */
+
 
 }
 

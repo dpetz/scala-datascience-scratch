@@ -1,6 +1,6 @@
 package ds.num
 
-import ds.expr._
+import parser.Json
 
 object real {
   /** Abstracts numeric operations from a specifc number representation
@@ -11,7 +11,7 @@ object real {
     def random(min:R=zero,max:R=one):R
 
     /** Parse from json number. */
-    def json(n:parser.Num):R
+    def json(n:Json.Num):R
 
     /** x to the power of y */
     def power(x:R,y:R):R
@@ -64,6 +64,8 @@ object real {
     def ~(y: R): Boolean = real.approx(x,y)
 
     def abs: R = real.abs(x)
+
+    def unary_-(): R = real.negate(x)
 
   }
 

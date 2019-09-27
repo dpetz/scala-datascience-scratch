@@ -3,21 +3,18 @@ package ds.expr
 import ds.expr.Engine._
 import ds.num.real._
 
+import scala.collection.immutable.ListMap
+import scala.collection.mutable
+
 abstract class Engine[R:Real](val layout:Layout=Rows())  {
 
   def apply[A](e:Expr[R,A]): A
 
-  /* Matrix parameters */
-  val rows:Filter = All()
+  /** Gets (last added) configuration by type */
+  def config[C <: Config](s:String):C
 
-  val cols:Filter = All()
-
-  def transpose:Engine[R] =  layout(layout.transpose)
-
-  def layout(l:Layout):Engine[R]
-
-  def turn:Engine[R] = layout(layout.transpose)
-
+  /** Reconfigure engine. */
+  def update(c:Config):Engine[R]
 
 }
 
@@ -25,16 +22,29 @@ abstract class Engine[R:Real](val layout:Layout=Rows())  {
 
 object Engine {
 
+  def defaults: List[Config] = List (All(true), All(false), Rows())
 
-  trait Filter {
+  trait Config {
+    val name:String
+  }
+
+  val MATRIX_LAYOUT = "Matrix Layout"
+  val ROW_FILTER = "Row Filter"
+  val COLUMN_FILTER = "Column Layout"
+
+
+
+  abstract class Filter(rows:Boolean = true) extends Config {
+    val name:String = if (rows) ROW_FILTER else COLUMN_FILTER
     def apply(i:Int):Boolean
   }
 
-  case class All() extends Filter {
+  case class All(rows:Boolean) extends Filter(rows) {
     def apply(i:Int):Boolean = true
   }
 
-  sealed abstract class Layout {
+  sealed abstract class Layout() extends Config {
+    val name:String = MATRIX_LAYOUT
     def transpose:Layout
   }
 

@@ -4,7 +4,7 @@ import ds.num.real._
 
 package object expr {
 
-  type E[R] = Expr[R]
+  type E[R] = Expr[R,R]
 
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
   implicit def big2Expr[R](x: BigDecimal)(implicit real:Real[R]):E[R] = new Really(_ => real(x))
