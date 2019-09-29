@@ -22,7 +22,7 @@ case class Gradient[R:Real](f:ScalarField[R], pd:Direction[R] => R)(v:Vec[R]) ex
     (e(v) indices) map { i:Int => pd(Direction(v,i)) }
 
   /** Negate function and partial derivatives */
-  def unary_- : Gradient[R] = Gradient(-f)(-pd)
+  def unary_- : Gradient[R] = Gradient(-f,-pd)
 
 }
 

@@ -35,10 +35,16 @@ import ds.num.real._
 
   }
 
+   implc
+
+   case class Then[R,X,A,B](f:Expr[R,(X=>A)], g:Expr[R,(A=>B)]) extends Expr[R,(X=>B)]{
+     def apply(e:Engine[R]):X=>B = { x:X => e(g)(e(f)(x)) }
+   }
+
    implicit class VecValuedFunction[X, R](f: X => Seq[R])(implicit real:Real[R]) {
 
      /** Negate real function (one argument) */
-     def unary_- : VecValuedFunction[X,R] = -f(_)
+     def unary_- : VecValuedFunction[X,R] = Then(f, Vec.Map(_,real.negate())
 
    }
 

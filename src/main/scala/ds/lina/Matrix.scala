@@ -25,7 +25,7 @@ abstract class Matrix[R:Real](val shape:Shape) extends Expr[R,SS[R]]{
 
   // override def hashCode = (this all).hashCode + rows @todo Hashcode w/o engine?
 
-  override def toString = s"Matrix(${rows} rows, ${cols}‚ columns)"
+  override def toString = s"Matrix(${rows} rows, ${cols}‚ cols)"
 
   def zip(other:M[R],f:(R,R)=>R):M[R] = new Elementwise(this,other)(f)
 
