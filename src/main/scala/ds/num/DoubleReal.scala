@@ -24,7 +24,7 @@ package object DoubleReal {
 
     def apply(x:AnyVal):R = x match {
       case i: Int => i.toDouble
-      case _ => throw IllegalArgumentException
+      case _ => throw new IllegalArgumentException
     }
 
     def apply(b:BigDecimal):R = b.toDouble

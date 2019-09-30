@@ -1,10 +1,10 @@
 package ds.calc
 
-import ds.calc.Func._
+import ds.func.Func._
 import ds.calc.Gradient.Direction
 import ds.expr.Engine
 import ds.vec.Vec
-import ds.num.Real._
+import ds.num.Real
 
 
 //abstract class VectorField[R:Real] extends Func[Vec[R],Vec[R]]
@@ -18,7 +18,7 @@ import ds.num.Real._
 case class Gradient[R:Real](f:ScalarField[R], pd:Direction[R] => R)(v:Vec[R]) extends VectorField[R]  {
 
   /** Computes full gradient on v across all indices */
-  def apply(e:Engine[R]):Vec[R] =
+  def apply(e:Engine):Vec[R] =
     (e(v) indices) map { i:Int => pd(Direction(v,i)) }
 
   /** Negate function and partial derivatives */
