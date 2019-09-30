@@ -1,9 +1,6 @@
 package ds.expr
 
-
-
-trait Expr[R,A] extends (Engine[R] => A)
-
-
+/** Evaluates via  [[Engine]] to result of type ``T``*/
+trait Expr[T] extends (Engine => T)
 
 

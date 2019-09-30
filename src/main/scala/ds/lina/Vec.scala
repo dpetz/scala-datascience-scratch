@@ -1,18 +1,21 @@
 package ds.lina
-import parser.Json
+import parser.{Json,Parser}
 import ds.expr.Engine
 import ds.expr._
 import ds.lina.Vec._
-import ds.num.real._
+import ds.num.Real
+
 import scala.Function.tupled
 
 /** ``Expr`` evaluating to ``Seq[R]``
   * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet */
-class Vec[R:Real](val eval:Engine[R] => Seq[R]) extends Expr[R,Seq[R]] {
+abstract class Vec[R:Real] extends Expr[Seq[R]] {
+
+  def apply(e:Engine):Seq[R]
 
   def sum: Sum[R] = Sum(this)
 
-  def map(f: R => R): Map[R] = Map(this)(f)
+  def map(f: E[R => R]): Map[R] = Map(this)(f)
 
   /** Dot product **/
   def dot(w: Vec[R]): Dot[R] = Dot(this, w)
@@ -27,21 +30,32 @@ class Vec[R:Real](val eval:Engine[R] => Seq[R]) extends Expr[R,Seq[R]] {
   def *(w: Vec[R]): Times[R] = Times(this, w)
 
   /** Divide elementwise */
-  def /(w: Vec[R]): Div[R] = Div(this, w)
+  def /(w: Vec[R]): Divide[R] = Divide(this, w)
 
   /** Substract elementwise */
   def -(w: Vec[R]): Minus[R] = Minus(this, w)
 
-  def unary_- : Vec[R] = Negate(this)
+  def unary_- : Vec[R] = ds.lina.Negate(this)
 
   /** Add constant */
-  def +(x: Really[R])(implicit r: Real[R]): Vec[R] = Constant(this, x)(r.plus)
+  def +(x: E[R])(implicit r: Real[R]): Vec[R] = Map(this)( e => r.plus(_,e(x)))
 
   /** Multiply constant */
-  def *(x: Really[R])(implicit r: Real[R]): Vec[R] = Constant(this, x)(r.times)
+  def *(x: E[R])(implicit r: Real[R]): Vec[R] = Map(this)( e => r.times(_,e(x)))
 }
 
 object Vec {
+
+  type E[R] = Expr[R]
+
+  def apply[R:Real](s: Seq[R]): Vec[R] = SeqVec(s)
+
+  /** Wraps ``Seq`` as [[Expr]] */
+  case class SeqVec[R: Real](s: Seq[R]) extends Vec[R] {
+    def apply(e:Engine):Seq[R] = s
+  }
+
+
 
   implicit class SeqOp[A](seq:Seq[A]) {
 
@@ -53,6 +67,8 @@ object Vec {
 
     /** Zip with indices and map to [[Elem]] */
     def indexed: Seq[Elem[A]] = seq.zipWithIndex map tupled { (x, i) => Elem(x, i) }
+
+    case class Elem[A](x: A, i: Int)
 
 
     /** Returns random slices of given size.
@@ -77,7 +93,7 @@ object Vec {
   }
 
 
-  lazy val parser = Json.Parsers.arrOf(Json.Parsers.num)
+  lazy val parser: Parser[Json.Arr] = Json.Parsers.arrOf(Json.Parsers.num)
 
   /** Parse from json string */
   def apply[R: Real](s: String)(implicit r: Real[R]): Vec[R] = seq2Vec(
@@ -89,9 +105,8 @@ object Vec {
   def apply[R](doubles: Seq[Double])(implicit real: Real[R]): Vec[R] =
     doubles.map(real(_))
 
-  implicit def seq2Vec[R: Real](s: Seq[R]): Vec[R] = new Vec[R](_ => s)
+  implicit def seq2Vec[R: Real](s: Seq[R]): Vec[R] = new SeqVec[R](s)
 
-  case class Elem[A](x: A, i: Int)
 
   /** zips and applies binary operation */
   def each[R](v: Seq[R], w: Seq[R], f: (R, R) => R): Seq[R] = {
@@ -99,56 +114,6 @@ object Vec {
     (v zip w) map (x => f(x._1, x._2))
   }
 
-  /** Wraps ``Seq`` as [[Expr]] */
-  case class SeqVec[R: Real](s: Seq[R]) extends Vec[R](_ => s)
-
-  case class Sum[R](v: Vec[R])(implicit r: Real[R]) extends Really[R](
-    e => e(v).fold(r.zero)(r.plus)
-  )
-
-  case class Size[R](v: Vec[R])(implicit r: Real[R]) extends Really[R](
-    e => r(e(v).size)
-  )
-
-
-  case class Map[R: Real](v: Vec[R])(f: R => R) extends Vec[R](
-    e => e(v).map(f)
-  )
-
-  case class Dot[R](v: Vec[R], w: Vec[R]) extends Composed[R](
-    _ => (v * w) sum
-  )
-
-  case class Negate[R](v: Vec[R])(implicit r: Real[R]) extends Vec[R](e => e(v).map(r.negate))
-
-  class Elementwise[R](v: Vec[R], w: Vec[R])(f: (R, R) => R)(implicit r: Real[R])
-    extends Vec[R](e => each(e(v), e(w), f))
-
-
-  case class Times[R](v: Vec[R], w: Vec[R])(implicit r: Real[R])
-    extends Elementwise[R](v, w)(r.times)
-
-  case class Plus[R](v: Vec[R], w: Vec[R])(implicit r: Real[R])
-    extends Elementwise[R](v, w)(r.plus)
-
-  case class Minus[R](v: Vec[R], w: Vec[R])(implicit r: Real[R])
-    extends Elementwise[R](v, w)(r.minus)
-
-  case class Div[R](v: Vec[R], w: Vec[R])(implicit r: Real[R])
-    extends Elementwise[R](v, w)(r.div)
-
-  case class Norm[R: Real](v: Vec[R], p: Expr[R]) extends Composed[R](e =>
-    e(p) match {
-      case 1 => v map (_.abs) sum
-      case p_ => (v map (_ ** p_) sum) ** (1 / p_)
-    })
-
-  /** Map constant to each ``Vec`` element. */
-  case class Constant[R: Real](v: Vec[R], x: Really[R])(f: (R, R) => R)
-    extends Vec[R](e => {
-      val x_ = e(x)
-      e(v).map(f(_, x_))
-    })
 
 }
 //}

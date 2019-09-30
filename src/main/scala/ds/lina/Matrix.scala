@@ -1,8 +1,8 @@
 package ds.lina
 
 import ds.expr.Engine.{Layout, Rows}
-import ds.expr.{Engine, Expr, Really}
-import ds.num.real._
+import ds.expr.{Engine, Expr}
+import ds.num.Real
 import ds.lina.Vec._
 import ds.lina.Matrix._
 
@@ -10,17 +10,16 @@ import ds.lina.Matrix._
   * Minimal interface for a matrix
   * Evaluates to itself in the sense that all operations that might have stacked up are performed.
   */
-abstract class Matrix[R:Real](val shape:Shape) extends Expr[R,SS[R]]{
+abstract class Matrix[R:Real](val shape:Shape) extends Expr[SS[R]]{
 
   //** Overwrite to change default implementation to just return this (ie. no evaluation required)  */
-  def apply(e:Engine[R]):SS[R]
+  def apply(e:Engine):SS[R]
   
   def rows: Int = shape.rows
 
   def cols: Int = shape.cols
-
-
-  override def equals(other:Any) =
+  
+  override def equals(other:Any):Boolean =
     other.isInstanceOf[M[R]] && (hashCode == other.hashCode)
 
   // override def hashCode = (this all).hashCode + rows @todo Hashcode w/o engine?
@@ -38,11 +37,11 @@ abstract class Matrix[R:Real](val shape:Shape) extends Expr[R,SS[R]]{
 
   def +(other:M[R]):M[R] = Plus(this,other)
 
-  def +(x:Really[R]):M[R] = PlusReal(this,x)
+  def +(x:Expr[R]):M[R] = PlusReal(this,x)
 
   def *(other:M[R]):M[R] = Times(this,other)
 
-  def *(x:Really[R]):M[R] = TimesReal(this,x)
+  def *(x:Expr[R]):M[R] = TimesReal(this,x)
 
 }
 
@@ -61,36 +60,32 @@ object Matrix {
 
   /** Transpose matrix */
   private case class Transpose[R: Real](m: M[R]) extends M[R](m.shape.transpose) {
-    def apply(e: Engine[R]): SS[R] = e.update(e.config[Layout]("Layout"))(m)
+    def apply(e: Engine): SS[R] = e.update(e.config[Layout]("Layout"))(m)
   }
 
-  /** Zip to matrices and map entries to real */
-  class Elementwise[R: Real](m1: M[R], m2: M[R])(f: (R, R) => R) extends M[R](m1.shape) {
-    def apply(e: Engine[R]): SS[R] =
-      (e(m1) zip (e(m2)) map (vv => (vv._1 zip vv._2) map (xx => f(xx._1, xx._2))))
-  }
+
 
   /** Add matrices */
   case class Plus[R](m1: M[R], m2: M[R])(implicit r: Real[R])
     extends Elementwise(m1, m2)(r.plus)
 
   /** Map matrix entries. */
-  case class Map[R: Real](m: M[R])(f: Engine[R] => R => R) extends M[R](m.shape) {
-    def apply(e: Engine[R]): SS[R] = e(m) map (v => v map f(e))
+  case class Map[R: Real](m: M[R])(f: Engine => R => R) extends M[R](m.shape) {
+    def apply(e: Engine): SS[R] = e(m) map (v => v map f(e))
   }
 
-  case class PlusReal[R](override val m: M[R], x: Really[R])(implicit r: Real[R])
+  case class PlusReal[R](override val m: M[R], x: Expr[R])(implicit r: Real[R])
     extends Map[R](m)(e => r.plus(_, e(x)))
 
   /** Multiply matrix with real */
-  case class TimesReal[R](override val m: M[R], x: Really[R])(implicit r: Real[R])
+  case class TimesReal[R](override val m: M[R], x: Expr[R])(implicit r: Real[R])
     extends Map[R](m)(e => r.times(_, e(x)))
 
   /** Multiply matrices */
   case class Times[R:Real](m1: M[R], m2: M[R])
     extends Matrix[R](Shape(m1.rows, m2.cols)) {
 
-    def eval(e: Engine[R]): SS[R] = {
+    def eval(e: Engine): SS[R] = {
 
       require(m1.shape.transpose == m2.shape,
         s"Cannot multiply $m1 and $m2: Shapes do not fit.")

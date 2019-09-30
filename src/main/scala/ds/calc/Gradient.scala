@@ -2,9 +2,9 @@ package ds.calc
 
 import ds.calc.Func._
 import ds.calc.Gradient.Direction
-import ds.expr.{Engine, Really}
+import ds.expr.Engine
 import ds.lina.Vec
-import ds.num.real._
+import ds.num.Real._
 
 
 //abstract class VectorField[R:Real] extends Func[Vec[R],Vec[R]]

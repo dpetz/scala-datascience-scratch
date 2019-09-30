@@ -4,7 +4,7 @@ import ds.lina._
 
 import scala.annotation.tailrec
 import ds.lina.Vec._
-import ds.num.real._
+import ds.num.Real._
 
 
 

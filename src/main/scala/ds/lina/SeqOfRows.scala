@@ -3,7 +3,7 @@ package ds.lina
 import ds.expr.Engine
 import ds.expr.Engine._
 import ds.lina.Matrix.{SS, Shape}
-import ds.num.real._
+import ds.num.Real._
 import parser.Json
 
 

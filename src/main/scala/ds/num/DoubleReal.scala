@@ -1,6 +1,6 @@
 package ds.num
 
-import ds.num.real.Real
+
 import scala.math.Numeric.DoubleIsFractional
 import scala.util.Random
 import parser.Json
@@ -22,7 +22,10 @@ package object DoubleReal {
 
     def apply(d:Double):R = d
 
-    def apply(i:Int):R = i.toDouble
+    def apply(x:AnyVal):R = x match {
+      case i: Int => i.toDouble
+      case _ => throw IllegalArgumentException
+    }
 
     def apply(b:BigDecimal):R = b.toDouble
 

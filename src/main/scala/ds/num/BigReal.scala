@@ -3,7 +3,7 @@ package ds.num
 
 import scala.math.Numeric.BigDecimalIsFractional
 import scala.util.Random
-
+import parser.Json
 
 /**
   * @see https://www.scala-lang.org/api/current/scala/math/BigDecimal.html
@@ -18,17 +18,18 @@ package object BigReal {
 
     def random(min:R=zero, max:R=one): R = min + ((max - min) * Random.nextDouble)
 
-    def json(n:parser.Num):R = n.asBigDecimal
+    def json(n:Json.Num):R = n.asBigDecimal
 
     /**  `x` to the power of `y` with `Double` precision.
       * @todo Consider {@link https://arxiv.org/abs/0908.3030v3} for higher precision. */
     def power(x:R, y: R):R = BigDecimal(scala.math.pow(x.toDouble,y.toDouble))//x.pow(y.toInt)
 
-    def apply(d:Double):R = BigDecimal(d)
+    def apply(x:AnyVal):R = x match {
+      case d: Double => BigDecimal(d)
+      case i: Int => BigDecimal(i)
+    }
 
-    def apply(i:Int):R = BigDecimal(i)
-
-    def apply(b:BigDecimal):R = b
+    def apply(b:R):R = b
 
     val precision = BigDecimal(0.0000001)
 

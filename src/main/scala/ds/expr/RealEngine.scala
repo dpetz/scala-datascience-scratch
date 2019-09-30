@@ -1,6 +1,6 @@
 package ds.expr
 
-import ds.num.real._
+import ds.num.Real._
 import ds.expr.Engine.{Config, Layout}
 import ds.lina.Vec
 

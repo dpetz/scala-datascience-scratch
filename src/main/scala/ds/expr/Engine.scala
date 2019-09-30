@@ -1,23 +1,24 @@
 package ds.expr
 
 import ds.expr.Engine._
-import ds.num.real._
+import ds.num.Real
 
 import scala.collection.immutable.ListMap
 import scala.collection.mutable
 
-abstract class Engine[R:Real](val layout:Layout=Rows())  {
+abstract class Engine(val layout:Layout=Rows())  {
 
-  def apply[A](e:Expr[R,A]): A
+  def apply[T](e:Expr[T]): T
 
   /** Gets (last added) configuration by type */
   def config[C <: Config](s:String):C
 
   /** Reconfigure engine. */
-  def update(c:Config):Engine[R]
+  def update(c:Config):Engine
+
+  // def real[R]:Real[R]
 
 }
-
 
 
 object Engine {
