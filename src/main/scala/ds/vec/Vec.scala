@@ -1,8 +1,8 @@
-package ds.lina
-import parser.{Json,Parser}
+package ds.vec
+import parser.{Json, Parser}
 import ds.expr.Engine
 import ds.expr._
-import ds.lina.Vec._
+import ds.vec.Vec._
 import ds.num.Real
 
 import scala.Function.tupled
@@ -35,7 +35,7 @@ abstract class Vec[R:Real] extends Expr[Seq[R]] {
   /** Substract elementwise */
   def -(w: Vec[R]): Minus[R] = Minus(this, w)
 
-  def unary_- : Vec[R] = ds.lina.Negate(this)
+  def unary_- : Vec[R] = ds.vec.Negate(this)
 
   /** Add constant */
   def +(x: E[R])(implicit r: Real[R]): Vec[R] = Map(this)( e => r.plus(_,e(x)))
@@ -55,11 +55,9 @@ object Vec {
     def apply(e:Engine):Seq[R] = s
   }
 
-
-
   implicit class SeqOp[A](seq:Seq[A]) {
 
-    /** View sequence as [[Matrix]] with specified number of columns */
+    /** View sequence as [[ds.matrix.Matrix]] with specified number of columns */
     //def align(cols: Int): Matrix[A] = Columnized(seq, cols)
 
     /** Convert to Json string. */
@@ -69,7 +67,6 @@ object Vec {
     def indexed: Seq[Elem[A]] = seq.zipWithIndex map tupled { (x, i) => Elem(x, i) }
 
     case class Elem[A](x: A, i: Int)
-
 
     /** Returns random slices of given size.
       * Each element returned once except remainder which is ignored */
@@ -84,14 +81,13 @@ object Vec {
 
     /** String interpolate vector elements */
     def format(ipol: String, start: String = "(", end: String = ")"): String = {
-      (seq /:) (start) { (s, d) =>
+      (seq /:) (start) { (s:String, d:A) =>
         s + {
           if (s != start) "," else ""
         } + (ipol formatLocal(locale, d))
       } + end
     }
   }
-
 
   lazy val parser: Parser[Json.Arr] = Json.Parsers.arrOf(Json.Parsers.num)
 
@@ -107,14 +103,11 @@ object Vec {
 
   implicit def seq2Vec[R: Real](s: Seq[R]): Vec[R] = new SeqVec[R](s)
 
-
   /** zips and applies binary operation */
   def each[R](v: Seq[R], w: Seq[R], f: (R, R) => R): Seq[R] = {
     require(v.size == w.size)
     (v zip w) map (x => f(x._1, x._2))
   }
 
-
 }
-//}
 

@@ -1,6 +1,6 @@
-package ds.lina
+package ds.vec
 
-import ds.lina.Vec.E
+import ds.vec.Vec.E
 import ds.num.Real
 
 case class Size[R](v: Vec[R])(implicit r: Real[R]) extends E[R](

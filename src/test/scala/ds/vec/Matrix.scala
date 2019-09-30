@@ -1,8 +1,9 @@
 
-import ds.lina._
+import ds.matrix.Matrix
+import ds.vec._
 import ds.num.DoubleReal._
-import ds.lina.Matrix.Math
-import ds.lina.Vec._
+import ds.matrix.Matrix.Math
+import ds.vec.Vec._
 
 class Matrix extends ds.SimpleSpec {
 

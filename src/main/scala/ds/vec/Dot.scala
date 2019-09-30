@@ -1,4 +1,4 @@
-package ds.lina
+package ds.vec
 
 import ds.expr.Composed
 

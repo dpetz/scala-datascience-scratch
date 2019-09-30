@@ -1,7 +1,7 @@
-package ds.lina
+package ds.vec
 
 import ds.expr.{Composed, Engine, Expr}
-import ds.lina.Vec.E
+import ds.vec.Vec.E
 import ds.num.Real
 
 case class Divide[R](v: Vec[R], w: Vec[R])(implicit r: Real[R])

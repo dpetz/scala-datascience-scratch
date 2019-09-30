@@ -3,7 +3,7 @@ package ds.calc
 import ds.calc.Func._
 import ds.calc.Gradient.Direction
 import ds.expr.Engine
-import ds.lina.Vec
+import ds.vec.Vec
 import ds.num.Real._
 
 

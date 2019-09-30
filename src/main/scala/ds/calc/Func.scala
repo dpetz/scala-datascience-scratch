@@ -1,7 +1,7 @@
 package ds.calc
 
 import ds.expr.{Composed, Engine, Expr}
-import ds.lina
+import ds.vec
 import ds.num.Real
 import ds.calc.Func._
 
@@ -11,9 +11,10 @@ import ds.calc.Func._
 // https://www.scala-lang.org/api/current/scala/math/Numeric.html
 // https://www.scala-lang.org/api/current/scala/math/Ordered.html
 
+
  object Func {
 
-   import ds.lina.Vec
+   import ds.vec.Vec
 
    /** https://en.wikipedia.org/wiki/Scalar_field */
    class ScalarField[R:Real](f:Seq[R]=>R) extends RealValuedFunc[Seq[R],R](f)
@@ -36,7 +37,9 @@ import ds.calc.Func._
 
   }
 
-   implicit def expr[X,T](f:X=>T):Expr[X=>T]= (e: Engine) => f
+   def apply[X,T](f:X=>T):Expr[X=>T]= (e: Engine) => f
+
+   implicit def expr[X,T](f:X=>T):Expr[X=>T]= apply(f)
 
    case class Negate[X,R](f:Expr[X=>R])(implicit r:Real[R])
      extends Composed[X=>R] ( _ =>  Then[X,R,R](f,expr(r.negate)) )

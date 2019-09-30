@@ -1,7 +1,7 @@
-package ds.lina
+package ds.vec
 
 import ds.expr.Engine
-import ds.lina.Vec.E
+import ds.vec.Vec.E
 import ds.num.Real
 
 case class Sum[R:Real](v: Vec[R])(implicit r: Real[R]) extends E[R] {

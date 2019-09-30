@@ -1,9 +1,9 @@
 package ds.calc
 
-import ds.lina._
+import ds.vec._
 
 import scala.annotation.tailrec
-import ds.lina.Vec._
+import ds.vec.Vec._
 import ds.num.Real._
 
 

@@ -1,8 +1,9 @@
 package ds
 
 import parser.Json
-import ds.lina._
+import ds.vec._
 import ds.calc._
+import ds.matrix.Matrix
 
 object Main extends App {
 

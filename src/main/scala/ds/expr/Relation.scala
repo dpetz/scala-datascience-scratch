@@ -1,6 +1,6 @@
 package ds.expr
 
-import ds.num.Real.Real
+import ds.num.Real
 
 /** Expression in two arguments evaluating to a ``Boolean`` */
- class Relation[R:Real](val x:E[R], val y:E[R])(val eval:Engine[R] => Boolean) extends Expr[Boolean]
+ abstract class Relation[R:Real](val x:Expr[R], val y:Expr[R]) extends Expr[Boolean]

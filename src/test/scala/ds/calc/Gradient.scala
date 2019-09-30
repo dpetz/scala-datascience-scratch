@@ -1,9 +1,9 @@
 import ds.num.BigReal._
 import ds.num.Real._
 import ds.calc.Gradient.Direction
-import ds.lina.Vec
+import ds.vec.Vec
 import org.scalacheck.Gen
-import ds.lina.Vec._
+import ds.vec.Vec._
 
 /**
   * Works surprisingly well for `ds.num.BigReal._` and surprisingly bad for `ds.num.DoubleReal._`

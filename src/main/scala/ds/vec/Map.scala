@@ -1,4 +1,4 @@
-package ds.lina
+package ds.vec
 
 import ds.expr.{Engine, Expr}
 import ds.num.Real

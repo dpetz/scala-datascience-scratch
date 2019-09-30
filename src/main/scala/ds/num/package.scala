@@ -8,7 +8,7 @@ package object num {
 
   /** Must be extended by all expressions evaluating to a real number
     * to provide infix operation, such as ``+`` */
-  implicit class RealInfix[R: Real](x: E[R]) {
+  implicit class ExprInfix[R: Real](x: E[R]) {
 
     /** @see Real.plus */
     def +(y: E[R]): Plus[R] = Plus(x, y)
@@ -29,13 +29,17 @@ package object num {
     def **(y: E[R]): Power[R] = Power(x, y)
   }
 
-  /** Convert ``Ìnt`` to ``Expr`` on the fly */
-  implicit def big2Expr[R: Real](x: BigDecimal): BigExpr[R] = BigExpr(x)
+  implicit class ValInfix[R:Real](x:AnyVal) extends ExprInfix(ValExpr(x))
+  implicit class BigInfix[R:Real](x:BigDecimal) extends ExprInfix(BigExpr(x))
+  implicit class RealInfix[R:Real](x:R) extends ExprInfix(RealExpr(x))
 
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
-  implicit def val2Expr[R: Real](x: Double): ValExpr[R] = ValExpr(x)
+  implicit def big2Expr[R: Real](x: BigDecimal): Expr[R] = BigExpr(x)
 
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
-  implicit def real2Expr[R: Real](x: R): RealExpr[R] = RealExpr(x)
+  implicit def val2Expr[R: Real](x: AnyVal): Expr[R] = ValExpr(x)
+
+  /** Convert ``Ìnt`` to ``Expr`` on the fly */
+  implicit def real2Expr[R: Real](x: R): Expr[R] = RealExpr(x)
 }
 

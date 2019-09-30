@@ -2,7 +2,7 @@ package ds.expr
 
 import ds.num.Real._
 import ds.expr.Engine.{Config, Layout}
-import ds.lina.Vec
+import ds.vec.Vec
 
 
 /** Engine for `Real` arithmetic*/
