@@ -1,6 +1,7 @@
 package ds.expr
 
 import ds.expr.Engine._
+import ds.func.{Assign, Func, Var}
 import ds.num.Real
 
 import scala.collection.immutable.ListMap
@@ -16,7 +17,8 @@ abstract class Engine(val layout:Layout=Rows())  {
   /** Reconfigure engine. */
   def update(c:Config):Engine
 
-  // def real[R]:Real[R]
+  def apply[T](e:Func[T], x:T): T
+
 
 }
 

@@ -6,6 +6,11 @@ import ds.num.Real
 package object func {
 
 
+  implicit class Assign[T](x:T) extends {
+    def >>(f:Func[T])(implicit e:Engine):T = e.assign(f.x,x)(f)
+  }
+
+
   import ds.vec.Vec
 
   /** https://en.wikipedia.org/wiki/Scalar_field */

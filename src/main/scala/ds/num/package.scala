@@ -11,12 +11,12 @@ package object num {
   //implicit class RealInfix[R:Real](x:R) extends ExprInfix(RealExpr(x))
 
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
-  implicit class Big2Expr[R: Real](x: BigDecimal)(implicit real:Real[R])  extends RealExpr[R] {
+  implicit class Big2Expr[R: Real](x: BigDecimal)(implicit real: Real[R]) extends RealExpr[R] {
     def apply(e: Engine): R = real(x)
   }
 
   /** Convert ``Ìnt``, ``Double`` etc. to ``Expr`` on the fly */
-  implicit class Val2Expr[R: Real](x: AnyVal)(implicit real:Real[R]) extends RealExpr[R] {
+  implicit class Val2Expr[R: Real](x: AnyVal)(implicit real: Real[R]) extends RealExpr[R] {
     def apply(e: Engine): R = real(x)
   }
 
@@ -24,5 +24,8 @@ package object num {
   implicit class Real2Expr[R: Real](x: R) extends RealExpr[R] {
     def apply(e: Engine): R = x
   }
-}
 
+  implicit def realExpr[R:Real](expr: Expr[R]):RealExpr[R] = new RealExpr[R] {
+    def apply(e: Engine): R = e(expr)
+  }
+}

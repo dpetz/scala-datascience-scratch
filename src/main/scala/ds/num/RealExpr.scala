@@ -1,9 +1,10 @@
 package ds.num
 
-import ds.expr.Expr
+import ds.expr.{Engine, Expr}
+import ds.func.Assign
 
-/** Must be extended by all expressions evaluating to a real number
-  * to provide infix operation, such as ``+`` */
+/** Infix operations for ``Expr`` evaluating to real numbers.
+  * Extend to remove need for implicit conversion via [[ds.num.realExpr]]. */
 abstract class RealExpr[R: Real] extends E[R]{
 
   /** @see Real.plus */
