@@ -2,6 +2,7 @@ package ds.vec
 import parser.{Json, Parser}
 import ds.expr.Engine
 import ds.expr._
+import ds.func.Func
 import ds.vec.Vec._
 import ds.num.Real
 
@@ -15,7 +16,7 @@ abstract class Vec[R:Real] extends Expr[Seq[R]] {
 
   def sum: Sum[R] = Sum(this)
 
-  def map(f: E[R => R]): Map[R] = Map(this)(f)
+  def map(f: Func[R]): MapVec[R] = MapVec(this)(f)
 
   /** Dot product **/
   def dot(w: Vec[R]): Dot[R] = Dot(this, w)

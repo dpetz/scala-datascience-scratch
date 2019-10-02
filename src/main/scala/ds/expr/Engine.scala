@@ -1,7 +1,7 @@
 package ds.expr
 
 import ds.expr.Engine._
-import ds.func.{Assign, Func, Var}
+import ds.func.{Assign, Func, Symbol}
 import ds.num.Real
 
 import scala.collection.immutable.ListMap
