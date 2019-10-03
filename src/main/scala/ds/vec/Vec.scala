@@ -2,7 +2,7 @@ package ds.vec
 import parser.{Json, Parser}
 import ds.expr.Engine
 import ds.expr._
-import ds.func.Func
+import ds.func.F1
 import ds.vec.Vec._
 import ds.num.Real
 
@@ -18,7 +18,7 @@ abstract class Vec[R:Real] extends Expr[Seq[R]] {
 
   def sum: Sum[R] = Sum(this)
 
-  def map(f: Func[R,R]): MapVec[R] = MapVec(this)(f)
+  def map(f: F1[R,R]): Map[R] = Map(this)(f)
 
   /** Dot product **/
   def dot(w: Vec[R]): Dot[R] = Dot(this, w)
@@ -41,7 +41,7 @@ abstract class Vec[R:Real] extends Expr[Seq[R]] {
   def unary_- : Vec[R] = ds.vec.Negate(this)
 
   /** Add constant */
-  def +(x: E[R])(implicit r: Real[R]): Vec[R] = Map(this)( e => r.plus(_,e(x)))
+  def +(x: E[R])(implicit r: Real[R]): Vec[R] = Map(this)( ds.num.Plus('v',x))
 
   /** Multiply constant */
   def *(x: E[R])(implicit r: Real[R]): Vec[R] = Map(this)( e => r.times(_,e(x)))

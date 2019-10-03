@@ -2,7 +2,7 @@ package ds.expr
 
 import ds.num.Real
 import ds.expr.Engine.Config
-import ds.func.{Assign, Func, Symbol}
+import ds.func.{Assign, F1, Func}
 
 
 /** Engine for `Real` arithmetic*/
@@ -20,9 +20,7 @@ class Engine(private val configs:List[Config]=Engine.defaults,
     case _ => e(this)
   }
 
-
-
-  def apply[T](f:Func[T], x:T): T = (new Engine(configs, vars(f.x)=x))(f)
+  def apply[I,O](f:F1[I,O], x:I): O = (new Engine(configs, vars(f.x)=x))[O](f)
 
 }
 

@@ -1,7 +1,5 @@
 package ds.expr
 
-import ds.func.Symbol
-
 /** Evaluates via  [[Engine]] to result of type ``T``*/
 trait Expr[T] extends (Engine => T) {
   def inputs:Seq[Expr[_]]

@@ -5,7 +5,7 @@ import ds.num.Real
 
 package object func {
 
-  implicit def str2Sym(s:String) = Symbol(s)
+
 
   implicit def func[R:Real](f:R=>Expr[R]): Func[R] = Func(f)
 
