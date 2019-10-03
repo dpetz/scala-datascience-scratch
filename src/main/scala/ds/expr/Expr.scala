@@ -2,7 +2,7 @@ package ds.expr
 
 /** Evaluates via  [[Engine]] to result of type ``T``*/
 trait Expr[+T] extends (Engine => T) {
-  def inputs:Seq[Expr[_]]
+  def parts:Seq[Expr[_]]
 
 
   /* All free [[Symbol]]s recursively
@@ -11,7 +11,12 @@ trait Expr[+T] extends (Engine => T) {
   */
   def free:Seq[Symbol[_]] = this match {
     case s:Symbol[_] => List(s)
-    case _ => inputs.flatMap(_.free)
+    case _ => parts.flatMap(_.free)
     // @todo resolve Expressibles?
   }
+}
+
+object Expr {
+  case class Exception(msg:String, e:Expr[_])
+    extends RuntimeException(msg + " in: " + e)
 }

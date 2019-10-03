@@ -41,4 +41,3 @@ trait Real[R] extends scala.math.Fractional[R] {
   def MIN:R
 
 }
-

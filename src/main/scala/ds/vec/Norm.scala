@@ -7,7 +7,7 @@ import ds.num._
 case class Norm[R](v: Vec[R], p: Expr[R])(implicit real:Real[R])
   extends RealExpr[R] with Expressible[R] {
 
-  def inputs:Seq[Expr[_]] = List(v, p)
+  def parts:Seq[Expr[_]] = List(v, p)
 
   def expr(e: Engine): Expr[R] = e(p) match {
     case 1 => (v map F1(real.abs _)) sum

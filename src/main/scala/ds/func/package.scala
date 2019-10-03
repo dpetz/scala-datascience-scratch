@@ -1,6 +1,6 @@
 package ds
 
-import ds.expr.{Composed, Engine, Expr}
+import ds.expr.{Expressible, Engine, Expr, Func}
 import ds.num.Real
 
 package object func {

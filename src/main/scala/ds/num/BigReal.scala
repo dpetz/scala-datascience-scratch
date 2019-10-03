@@ -12,7 +12,7 @@ package object BigReal {
 
   type R = BigDecimal
   
-  implicit val Real = new ds.num.Real[R]() with BigDecimalIsFractional {
+  implicit val Real: Real[R] with BigDecimalIsFractional = new ds.num.Real[R]() with BigDecimalIsFractional {
 
     def compare(x:R, y:R):Int = (x - y).toInt
 
@@ -21,7 +21,7 @@ package object BigReal {
     def json(n:Json.Num):R = n.asBigDecimal
 
     /**  `x` to the power of `y` with `Double` precision.
-      * @todo Consider {@link https://arxiv.org/abs/0908.3030v3} for higher precision. */
+      * @todo Consider [[https://arxiv.org/abs/0908.3030v3]] for higher precision. */
     def power(x:R, y: R):R = BigDecimal(scala.math.pow(x.toDouble,y.toDouble))//x.pow(y.toInt)
 
     def apply(x:AnyVal):R = x match {

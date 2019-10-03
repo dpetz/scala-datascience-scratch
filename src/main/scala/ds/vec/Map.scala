@@ -9,6 +9,6 @@ case class Map[R: Real](v: Vec[R])(f: F1[R,R]) extends Vec[R] {
   def apply( e:Engine):Seq[R] = e(v).map { e(f,_) }
   def size: Int = v.size
   /** Returns vector and function. */
-  lazy val inputs = List(v,f)
+  lazy val parts = List(v,f)
 
 }

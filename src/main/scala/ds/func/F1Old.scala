@@ -4,18 +4,18 @@ import ds.expr._
 import ds.num.Real
 
 
-case class F1[I,O](x:Symbol[I], e:Expr[O]) extends Expr[O] {
-  lazy val inputs = List(x,e)
+case class F1Old[I,O](x:Symbol[I], e:Expr[O]) extends Func[O] {
+  lazy val parts = List(x,e)
 }
 
-object F1 {
+object F1Old {
 
   /** Wrap scala function as expression. */
   def apply[I,O](f:I=>O):F1[I,O] = {
     val s = Symbol[I]("x")
     F1(s, new Expr[O] {
       def apply(e:Engine):O =  f(e(s))
-      def inputs = List(s)
+      def parts = List(s)
     })
   }
 

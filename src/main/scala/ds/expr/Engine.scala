@@ -2,12 +2,14 @@ package ds.expr
 
 import ds.num.Real
 import ds.expr.Engine.Config
-import ds.func.{Assign, F1, Func}
+import ds.func.{Assign, F1}
 
 
 /** Engine for `Real` arithmetic*/
 class Engine(private val configs:List[Config]=Engine.defaults,
              private val vars:Map[Symbol[_],_] = Map.empty) extends Engine{
+
+  def real[R:Real]: Real[R] = implicitly[Real[R]]
 
   /** Gets (last added) configuration by type */
   def config[C <: Config](s:String):C = configs.find(_.name == s).asInstanceOf[C]
