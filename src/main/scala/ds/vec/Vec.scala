@@ -1,9 +1,8 @@
 package ds.vec
 import parser.{Json, Parser}
 import ds.expr.Engine
-import ds.expr.Func.F3
+import ds.expr.Func.{F1, F3}
 import ds.expr._
-import ds.func.F1
 import ds.vec.Vec._
 import ds.num.Real
 
@@ -11,7 +10,9 @@ import scala.Function.tupled
 
 /** ``Expr`` evaluating to ``Seq[R]``
   * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet */
-trait Vec[R:Real] extends Expr[Seq[R]] {
+class Vec[R:Real](val expr:Expr[Seq[R]]) extends Expr[Seq[R]] {
+
+  val real: Real[R] = implicitly[Real[R]]
 
   def apply(e:Engine):Seq[R]
 
@@ -28,16 +29,16 @@ trait Vec[R:Real] extends Expr[Seq[R]] {
   def norm(p: E[R]): Norm[R] = Norm(this, p)
 
   /** Add elementwise */
-  def +(w: Vec[R]): Vec[R] = Plus(this, w)
+  def +(w: Vec[R]): Vec[R] = new Vec(elementwise(real.Plus, this, w))
 
   /** Multiply elementwise */
-  def *(w: Vec[R]): Times[R] = Times(this, w)
+  def *(w: Vec[R]): Vec[R] = new Vec(elementwise(real.Times, this, w))
 
   /** Divide elementwise */
-  def /(w: Vec[R]): Divide[R] = Divide(this, w)
+  def /(w: Vec[R]): Vec[R] = new Vec(elementwise(real.Div, this, w))
 
   /** Substract elementwise */
-  def -(w: Vec[R]): Minus[R] = Minus(this, w)
+  def -(w: Vec[R]): Vec[R] = new Vec(elementwise(real.Minus, this, w))
 
   def unary_- : Vec[R] = ds.vec.Negate(this)
 
@@ -47,9 +48,9 @@ trait Vec[R:Real] extends Expr[Seq[R]] {
   /** Multiply constant */
   def *(x: E[R])(implicit r: Real[R]): Vec[R] = Map(this)( e => r.times(_,e(x)))
 
-  def elementwise: F3[Seq[R], Seq[R], (R, R) => R, Seq[R]] = Func("Elementwise", {
-      (v:Seq[R],w:Seq[R],f:(R,R)=>R) => ( v zip w) map (x => f(x._1, x._2))
-    })
+  def elementwise: F3[(R, R) => R, Seq[R], Seq[R], Seq[R]] = Func("Elementwise",
+      (f,v,w) => ( v zip w) map (x => f(x._1, x._2))
+    )
 
 }
 

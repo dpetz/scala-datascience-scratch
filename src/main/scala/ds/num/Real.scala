@@ -1,5 +1,7 @@
 package ds.num
 
+import ds.expr.Func
+import ds.expr.Func.{F1, F2}
 import parser.Json
 
 /** Abstracts numeric operations from a specific number representation
@@ -39,5 +41,16 @@ trait Real[R] extends scala.math.Fractional[R] {
 
   /** Opposite of [[MAX]] */
   def MIN:R
+
+  // --------------
+
+  val Plus : F2[R, R, R] = Func[R,R,R]("+", plus)
+  val Minus : F2[R, R, R] = Func[R,R,R]("-", minus)
+  val Times : F2[R, R, R] = Func[R,R,R]("*", times)
+  val Div : F2[R, R, R] = Func[R,R,R]("/", div)
+  val Approx : F2[R, R, Boolean] = Func[R,R,Boolean]("~", approx)
+  val Power : F2[R, R, R] = Func[R,R,R]("**",power)
+  val Abs : F1[R, R] = Func[R,R]("+", abs)
+´
 
 }

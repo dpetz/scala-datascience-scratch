@@ -12,45 +12,47 @@ package object num {
   //implicit class RealInfix[R:Real](x:R) extends ExprInfix(RealExpr(x))
 
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
-  implicit class Big2Expr[R: Real](x: BigDecimal)(implicit real: Real[R]) extends RealExpr[R] {
+  implicit class Big2Expr[R: Real](x: BigDecimal)(implicit real: Real[R]) extends RealInfix[R] {
     def apply(e: Engine): R = real(x)
   }
 
   /** Convert ``Ìnt``, ``Double`` etc. to ``Expr`` on the fly */
-  implicit class Val2Expr[R: Real](x: AnyVal)(implicit real: Real[R]) extends RealExpr[R] {
+  implicit class Val2Expr[R: Real](x: AnyVal)(implicit real: Real[R]) extends RealInfix[R] {
     def apply(e: Engine): R = real(x)
   }
 
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
-  implicit class Real2Expr[R: Real](x: R) extends RealExpr[R] {
+  implicit class Real2Expr[R: Real](x: R) extends RealInfix[R] {
     def apply(e: Engine): R = x
   }
 
-  implicit def realExpr[R:Real](expr: Expr[R]):RealExpr[R] = new RealExpr[R] {
+  implicit def realExpr[R:Real](expr: Expr[R]):RealInfix[R] = new RealInfix[R] {
     def apply(e: Engine): R = e(expr)
   }
 
+
+
   /** Defines common functions for real valued ``Expr`` and binds them to their inputs */
-  implicit class RealExpr[R](x:Expr[R]) (implicit real:Real[R]) {
+  implicit class RealInfix[R](x:Expr[R])(implicit real:Real[R]) {
 
     /** @see Real.plus */
-    def +(y: E[R]):Expr[R] = Func[R,R,R]("+", real.plus )(x,y)
+    def +(y: E[R]):Expr[R] = real.Plus(x,y)
 
     /** @see Real.minus */
-    def -(y: E[R]): Expr[R] = Func[R,R,R]("-", real.minus )(x,y)
+    def -(y: E[R]): Expr[R] = real.Minus(x,y)
 
     /** @see Real.times */
-    def *(y: E[R]): Expr[R] =Func [R,R,R]("*", real.times)(x,y)
+    def *(y: E[R]): Expr[R] =real.Times(x,y)
 
     /** @see Real.div */
-    def /(y: E[R]): Expr[R] = Func[R,R,R]("/", real.div)(x,y)
+    def /(y: E[R]): Expr[R] = real.Div(x,y)
 
     /** @see Real.approx */
-    def ~(y: E[R]): Expr[Boolean] = Func[R,R,Boolean]("~", real.approx)(x,y)
+    def ~(y: E[R]): Expr[Boolean] = real.Approx(x,y)
 
     /** @see Real.power */
-    def **(y: E[R]): Expr[R] = Func[R,R,R]("**", real.power)(x,y)
+    def **(y: E[R]): Expr[R] = real.Power(x,y)
 
-    def abs: Expr[R] = Func[R,R]("abs", real.abs)(x)
+    def abs: Expr[R] = real.Abs(x)
   }
 }

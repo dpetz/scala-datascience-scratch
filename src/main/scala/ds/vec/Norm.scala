@@ -5,7 +5,7 @@ import ds.func.F1
 import ds.num._
 
 case class Norm[R](v: Vec[R], p: Expr[R])(implicit real:Real[R])
-  extends RealExpr[R] with Expressible[R] {
+  extends RealInfix[R] with Expressible[R] {
 
   def parts:Seq[Expr[_]] = List(v, p)
 
