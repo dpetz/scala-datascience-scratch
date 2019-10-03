@@ -1,16 +1,16 @@
 package ds.vec
 
-import ds.expr.Func.{F2, F3}
-import ds.expr.{Engine, Func}
-import ds.vec.Vec.each
+import ds.expr.Func.F3
+import ds.expr.Engine
 import ds.num.Real
 
-class Elementwise[R:Real] extends F3[F2[R,R,R],Vec[R],Vec[R],Vec[R]]("Elementwise",
-  {  e => (f:F2[R,R,R],v:Seq[R],w:Seq[R]) => (v zip w) map (x => f.f(x._1, x._2)) }
-) with Vec[R] {
-  def apply(e:Engine):Seq[R] = each(e(v), e(w), f)
-  def size:Int = v.size
-  lazy val parts = List(v,w)
+class Elementwise[R:Real] extends F3[Seq[R],Seq[R],(R,R)=>R,Seq[R]] {
+
+  def apply(e:Engine): (Seq[R], Seq[R], (R, R) => R) => Seq[R] =
+    (v:Seq[R],w:Seq[R],f:(R,R)=>R) =>( v zip w) map (x => f(x._1, x._2))
+
+  val name:String = "Elementwise"
+
 }
 
 

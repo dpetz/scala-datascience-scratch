@@ -1,6 +1,7 @@
 package ds.vec
 import parser.{Json, Parser}
 import ds.expr.Engine
+import ds.expr.Func.F3
 import ds.expr._
 import ds.func.F1
 import ds.vec.Vec._
@@ -45,6 +46,11 @@ trait Vec[R:Real] extends Expr[Seq[R]] {
 
   /** Multiply constant */
   def *(x: E[R])(implicit r: Real[R]): Vec[R] = Map(this)( e => r.times(_,e(x)))
+
+  def elementwise: F3[Seq[R], Seq[R], (R, R) => R, Seq[R]] = Func("Elementwise", {
+      (v:Seq[R],w:Seq[R],f:(R,R)=>R) => ( v zip w) map (x => f(x._1, x._2))
+    })
+
 }
 
 object Vec {

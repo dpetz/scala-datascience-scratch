@@ -1,7 +1,7 @@
 package ds
 
 import ds.expr.Func.{F1, F2}
-import ds.expr.{Engine, Expr}
+import ds.expr.{Engine, Expr, Func}
 
 package object num {
 
@@ -30,29 +30,27 @@ package object num {
     def apply(e: Engine): R = e(expr)
   }
 
-  /** Infix operations for ``Expr`` evaluating to real numbers.
-    * Extend to remove need for implicit conversion via [[ds.num.realExpr]]. */
-  implicit class Infix[R: Real] extends E[R]{
-
+  /** Defines common functions for real valued ``Expr`` and binds them to their inputs */
+  implicit class RealExpr[R](x:Expr[R]) (implicit real:Real[R]) {
 
     /** @see Real.plus */
-    def +(y: E[R]):Expr[R] = new F2[R,R,R]("+", _.real.plus)
+    def +(y: E[R]):Expr[R] = Func[R,R,R]("+", real.plus )(x,y)
 
     /** @see Real.minus */
-    def -(y: E[R]): Expr[R] = new F2[R,R,R]("-", _.real.minus)
+    def -(y: E[R]): Expr[R] = Func[R,R,R]("-", real.minus )(x,y)
 
     /** @see Real.times */
-    def *(y: E[R]): Expr[R] =new F2[R,R,R]("*", _.real.times)
+    def *(y: E[R]): Expr[R] =Func [R,R,R]("*", real.times)(x,y)
 
     /** @see Real.div */
-    def /(y: E[R]): Expr[R] = new F2[R,R,R]("/", _.real.div)
+    def /(y: E[R]): Expr[R] = Func[R,R,R]("/", real.div)(x,y)
 
     /** @see Real.approx */
-    def ~(y: E[R]): Expr[Boolean] = new F2[R,R,Boolean]("~", _.real.approx)
+    def ~(y: E[R]): Expr[Boolean] = Func[R,R,Boolean]("~", real.approx)(x,y)
 
     /** @see Real.power */
-    def **(y: E[R]): Expr[R] = new F2[R,R,R]("**", _.real.power)
+    def **(y: E[R]): Expr[R] = Func[R,R,R]("**", real.power)(x,y)
 
-    def abs: Expr[R] = new F1[R,R]("abs", _.real.abs)
+    def abs: Expr[R] = Func[R,R]("abs", real.abs)(x)
   }
 }
