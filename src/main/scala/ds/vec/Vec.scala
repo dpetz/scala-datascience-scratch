@@ -10,7 +10,7 @@ import scala.Function.tupled
 
 /** ``Expr`` evaluating to ``Seq[R]``
   * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet */
-abstract class Vec[R:Real] extends Expr[Seq[R]] {
+trait Vec[R:Real] extends Expr[Seq[R]] {
 
   def apply(e:Engine):Seq[R]
 
