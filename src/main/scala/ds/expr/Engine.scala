@@ -1,26 +1,31 @@
 package ds.expr
 
-import ds.expr.Engine._
-import ds.func.{Assign, Func, Symbol}
 import ds.num.Real
+import ds.expr.Engine.Config
+import ds.func.{Assign, Func, Symbol}
 
-import scala.collection.immutable.ListMap
-import scala.collection.mutable
 
-abstract class Engine(val layout:Layout=Rows())  {
-
-  def apply[T](e:Expr[T]): T
+/** Engine for `Real` arithmetic*/
+class Engine(private val configs:List[Config]=Engine.defaults,
+             private val vars:Map[Symbol[_],_] = Map.empty) extends Engine{
 
   /** Gets (last added) configuration by type */
-  def config[C <: Config](s:String):C
+  def config[C <: Config](s:String):C = configs.find(_.name == s).asInstanceOf[C]
 
   /** Reconfigure engine. */
-  def update(c:Config):Engine
+  def update(c:Config):Engine = new Engine(c :: configs, vars)
 
-  def apply[T](e:Func[T], x:T): T
+  def apply[A](e:Expr[A]): A = e match {
+    case v:Symbol[A] => vars(v).asInstanceOf[A]
+    case _ => e(this)
+  }
 
+
+
+  def apply[T](f:Func[T], x:T): T = (new Engine(configs, vars(f.x)=x))(f)
 
 }
+
 
 
 object Engine {
@@ -61,4 +66,8 @@ object Engine {
 
 
 
+}
+
+case class EngineException[R](eng:Engine[R], expr:Expr[R]) extends Exception {
+  override def toString = s"Engine $this cannot evaluate $expr"
 }

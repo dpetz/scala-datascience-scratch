@@ -14,9 +14,11 @@ abstract class Vec[R:Real] extends Expr[Seq[R]] {
 
   def apply(e:Engine):Seq[R]
 
+  def size:Int
+
   def sum: Sum[R] = Sum(this)
 
-  def map(f: Func[R]): MapVec[R] = MapVec(this)(f)
+  def map(f: Func[R,R]): MapVec[R] = MapVec(this)(f)
 
   /** Dot product **/
   def dot(w: Vec[R]): Dot[R] = Dot(this, w)

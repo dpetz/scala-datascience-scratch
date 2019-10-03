@@ -7,4 +7,5 @@ case class Approx[R:Real](override val x:E[R],
   extends Relation[R](x,y) {
 
     def apply(e:Engine): Boolean = real.approx(e(x),e(y))
+    lazy val inputs = List(x,y)
 }
