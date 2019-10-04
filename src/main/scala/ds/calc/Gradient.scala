@@ -3,7 +3,7 @@ package ds.calc
 import ds.expr.Func._
 import ds.calc.Gradient.Direction
 import ds.expr.Engine
-import ds.vec.Vec
+import ds.vec.VecInfix
 import ds.num.Real
 
 
@@ -15,10 +15,10 @@ import ds.num.Real
   * Estimated via difference quotient unless provided analytically
   * @param pd ith partial difference quotient of f at v
   * */
-case class Gradient[R:Real](f:ScalarField[R], pd:Direction[R] => R)(v:Vec[R]) extends VectorField[R]  {
+case class Gradient[R:Real](f:ScalarField[R], pd:Direction[R] => R)(v:VecInfix[R]) extends VectorField[R]  {
 
   /** Computes full gradient on v across all indices */
-  def apply(e:Engine):Vec[R] =
+  def apply(e:Engine):VecInfix[R] =
     (e(v) indices) map { i:Int => pd(Direction(v,i)) }
 
   /** Negate function and partial derivatives */
@@ -29,7 +29,7 @@ case class Gradient[R:Real](f:ScalarField[R], pd:Direction[R] => R)(v:Vec[R]) ex
 object Gradient {
 
   /** A position vector + a direction index to request a partial derivative */
-  case class Direction[R](v:Vec[R],i:Int)
+  case class Direction[R](v:VecInfix[R], i:Int)
 
   /** Estimates gradient. Computational expensive (2n function evaluations)
     * and estimation error can be substantial, see Gradient.test

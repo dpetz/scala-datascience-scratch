@@ -30,29 +30,27 @@ package object num {
     def apply(e: Engine): R = e(expr)
   }
 
-
-
   /** Defines common functions for real valued ``Expr`` and binds them to their inputs */
   implicit class RealInfix[R](x:Expr[R])(implicit real:Real[R]) {
 
     /** @see Real.plus */
-    def +(y: E[R]):Expr[R] = real.Plus(x,y)
+    def +(y: E[R]):Expr[R] = real.func.Plus(x,y)
 
     /** @see Real.minus */
-    def -(y: E[R]): Expr[R] = real.Minus(x,y)
+    def -(y: E[R]): Expr[R] = real.func.Minus(x,y)
 
     /** @see Real.times */
-    def *(y: E[R]): Expr[R] =real.Times(x,y)
+    def *(y: E[R]): Expr[R] =real.func.Times(x,y)
 
     /** @see Real.div */
-    def /(y: E[R]): Expr[R] = real.Div(x,y)
+    def /(y: E[R]): Expr[R] = real.func.Div(x,y)
 
     /** @see Real.approx */
-    def ~(y: E[R]): Expr[Boolean] = real.Approx(x,y)
+    def ~(y: E[R]): Expr[Boolean] = real.func.Approx(x,y)
 
     /** @see Real.power */
-    def **(y: E[R]): Expr[R] = real.Power(x,y)
+    def **(y: E[R]): Expr[R] = real.func.Power(x,y)
 
-    def abs: Expr[R] = real.Abs(x)
+    def abs: Expr[R] = real.func.Abs(x)
   }
 }

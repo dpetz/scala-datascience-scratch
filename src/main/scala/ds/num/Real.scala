@@ -1,12 +1,12 @@
 package ds.num
 
-import ds.expr.Func
-import ds.expr.Func.{F1, F2}
+import ds.vec.VecFunctions
 import parser.Json
 
 /** Abstracts numeric operations from a specific number representation
   * such as Double or BigDecimal. */
 trait Real[R] extends scala.math.Fractional[R] {
+
 
   /** Create random number within `[min,max)` */
   def random(min:R=zero,max:R=one):R
@@ -23,7 +23,6 @@ trait Real[R] extends scala.math.Fractional[R] {
 
   /** Convert from BigDecimal */
   def apply(b:BigDecimal):R
-
 
   /** Tiny constant used in approximations.
     * @see ~, ds.calc.Gradient
@@ -42,15 +41,10 @@ trait Real[R] extends scala.math.Fractional[R] {
   /** Opposite of [[MAX]] */
   def MIN:R
 
-  // --------------
 
-  val Plus : F2[R, R, R] = Func[R,R,R]("+", plus)
-  val Minus : F2[R, R, R] = Func[R,R,R]("-", minus)
-  val Times : F2[R, R, R] = Func[R,R,R]("*", times)
-  val Div : F2[R, R, R] = Func[R,R,R]("/", div)
-  val Approx : F2[R, R, Boolean] = Func[R,R,Boolean]("~", approx)
-  val Power : F2[R, R, R] = Func[R,R,R]("**",power)
-  val Abs : F1[R, R] = Func[R,R]("+", abs)
+  val func:RealFunctions[R] = new RealFunctions(this)
+
+  val vec:VecFunctions[R] = new VecFunctions(this)
 ´
 
 }

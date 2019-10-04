@@ -14,7 +14,7 @@ package object func {
   }
 
 
-  import ds.vec.Vec
+  import ds.vec.VecInfix
 
   /** https://en.wikipedia.org/wiki/Scalar_field */
   class ScalarField[R:Real](f:Seq[R]=>R) extends RealValuedFunc[Seq[R],R](f)
@@ -54,7 +54,7 @@ package object func {
     def apply(e:Engine): X=>Seq[R]  = f
 
     /** Negate real function (one argument) */
-    def unary_- : Expr[X=>Vec[R]] = Then(f, real.negate)
+    def unary_- : Expr[X=>VecInfix[R]] = Then(f, real.negate)
 
   }
 

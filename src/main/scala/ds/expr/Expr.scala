@@ -1,7 +1,7 @@
 package ds.expr
 
 /** Evaluates via  [[Engine]] to result of type ``T``*/
-trait Expr[+T] extends (Engine => T) {
+trait Expr[T] extends (Engine => T) {
   def parts:Seq[Expr[_]]
 
 
@@ -19,4 +19,10 @@ trait Expr[+T] extends (Engine => T) {
 object Expr {
   case class Exception(msg:String, e:Expr[_])
     extends RuntimeException(msg + " in: " + e)
+
+  def apply[T](constant:T):Expr[T]= new Expr[T] {
+    def apply(e:Engine):T=constant
+    def parts:Seq[Expr[T]]=Nil
+
+  }
 }

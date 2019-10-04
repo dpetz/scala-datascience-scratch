@@ -1,5 +1,5 @@
 import ds.num.DoubleReal._
-import ds.vec.Vec._
+import ds.vec.VecInfix._
 import ds.calc.{Descent, Gradient}
 
 class Descent extends ds.PropertySpec {

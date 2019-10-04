@@ -2,12 +2,12 @@ package ds.expr
 
 import ds.num.Real
 import ds.expr.Engine.Config
-import ds.func.{Assign, F1}
+import ds.expr.Func.F1
 
 
 /** Engine for `Real` arithmetic*/
 class Engine(private val configs:List[Config]=Engine.defaults,
-             private val vars:Map[Symbol[_],_] = Map.empty) extends Engine{
+             private val vars:Map[Symbol[_],_] = Map.empty) {
 
   def real[R:Real]: Real[R] = implicitly[Real[R]]
 

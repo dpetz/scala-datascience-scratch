@@ -1,9 +1,9 @@
 import ds.num.BigReal._
 import ds.num.Real._
 import ds.calc.Gradient.Direction
-import ds.vec.Vec
+import ds.vec.VecInfix
 import org.scalacheck.Gen
-import ds.vec.Vec._
+import ds.vec.VecInfix._
 
 /**
   * Works surprisingly well for `ds.num.BigReal._` and surprisingly bad for `ds.num.DoubleReal._`
@@ -13,12 +13,12 @@ import ds.vec.Vec._
 class Gradient extends ds.PropertySpec {
 
     val polynomial_gradient:ds.calc.Gradient[R] = ds.calc.Gradient {
-      v:Vec[R] => v.indexed map { e => e.x ** e.i } total
+      v:VecInfix[R] => v.indexed map { e => e.x ** e.i } total
     } {
       d:Direction[R] => d.i * (  d.v(d.i) ** Real(d.i-1) )
     }
 
-    def estimation_error(g:ds.calc.Gradient[R], v:Vec[R]): Double = {
+    def estimation_error(g:ds.calc.Gradient[R], v:VecInfix[R]): Double = {
       Given("random x:" + v)
 
       val g_v = g(v)
@@ -39,7 +39,7 @@ class Gradient extends ds.PropertySpec {
     }
 
   "Polynomial gradient" should "estimate well for a specific x" in {
-    val sample_x = Vec(
+    val sample_x = VecInfix(
       "[6.072721482157302,8.176355644038862,7.825980307019224,1.81684073553305,2.6316372621853437,2.093666610582376,4.40047512448909,6.704175154754859,9.153798233685135,9.660464204276792,9.32321245761975,3.4561774206862172,2.2714081280371103,6.041985100712073,5.141961580442019,9.94413741878291,2.509043737599328,6.0715246880103795]"
     )
         estimation_error(polynomial_gradient, sample_x) should be <= 0.00001
