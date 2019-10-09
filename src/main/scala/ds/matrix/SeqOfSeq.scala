@@ -3,7 +3,7 @@ package ds.matrix
 import ds.expr.Engine
 import ds.expr.Engine._
 import ds.num.Real
-import ds.vec.VecInfix
+import ds.vec.Vec
 import parser.Json
 
 

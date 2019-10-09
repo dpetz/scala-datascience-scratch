@@ -3,7 +3,7 @@ package ds.calc
 import ds.vec._
 
 import scala.annotation.tailrec
-import ds.vec.VecInfix._
+import ds.vec.Vec._
 import ds.num.Real._
 
 
@@ -17,25 +17,25 @@ import ds.num.Real._
   * @param x Current x/coordinates
   * @param previous Previous descent step (if any)
   */
- class Descent [R:Real] (val gradient:Gradient[R], val x:VecInfix[R], val previous:Option[Descent[R]]=None) {
+ class Descent [R:Real] (val gradient:Gradient[R], val x:Vec[R], val previous:Option[Descent[R]]=None) {
 
   /** Current value at */
   def value:R=gradient.f(x)
 
   /** New [[Descent]] object at location x. Overwrite to create instance of subclass. */
-  def next(x:VecInfix[R])= new Descent(gradient,x,Some(this))
+  def next(x:Vec[R])= new Descent(gradient,x,Some(this))
 
   /** Explore steps and return position with lowest value. */
-  def explore():VecInfix[R] =
+  def explore():Vec[R] =
     steps map { (x + gradient(x)) * _ } minBy { gradient.f } //recode (NaN, PositiveInfinity) }
 
   /** Possible step widths in this iteration.
     * Overwrite for different (incl dynamic) values */
-  val steps:VecInfix[R]=VecInfix(List(100,10,1,.1,.01,.001,.0001,.00001))
+  val steps:Vec[R]=Vec(List(100,10,1,.1,.01,.001,.0001,.00001))
 
   /** Accept next candidate location?
     * Overwrite for different (incl. dynamic) tolerance levels. */
-  def stop(nextV:VecInfix[R]):Boolean= value ~ gradient.f(nextV)
+  def stop(nextV:Vec[R]):Boolean= value ~ gradient.f(nextV)
 
   /** Recursively descent
     * @return last step
@@ -55,6 +55,6 @@ import ds.num.Real._
 }
 
 object Descent {
- def apply [R:Real] (gradient:Gradient[R], x:VecInfix[R]) = new Descent[R](gradient,x)
+ def apply [R:Real] (gradient:Gradient[R], x:Vec[R]) = new Descent[R](gradient,x)
 
 }

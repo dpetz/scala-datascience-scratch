@@ -6,64 +6,53 @@ import ds.num.Real
 
 import scala.Function.tupled
 
-
-
 /** Wraps ``Expr`` evaluating to ``Seq[R]`` for vector infix operations
   * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet */
-class VecInfix[R:Real](val expr:Expr[Seq[R]]) extends Expr[Seq[R]] {
+abstract class Vec[R:Real] extends Expr[Seq[R]] {
 
   val real: Real[R] = implicitly[Real[R]]
 
   private val Elementwise = real.vec.Elementwise
 
-
-  def apply(e:Engine):Seq[R] = expr(e)
-
   def size:Int = Size(this)
 
   def sum: Sum[R] = Sum(this)
 
-  def map(f: F1[R,R]): VecInfix[R] = real.vec.Map(this, f)
+  def map(f: F1[R,R]): Vec[R] = real.vec.Map(this, f)
 
   /** Dot product **/
-  def dot(w: VecInfix[R]): Dot[R] = Dot(this, w)
+  def dot(w: Vec[R]): Dot[R] = Dot(this, w)
 
   /** Calculates the p-norm */
   def norm(p: Expr[R]): Norm[R] = Norm(this, p)
 
   /** Add elementwise */
-  def +(w: VecInfix[R]): VecInfix[R] = Elementwise(real.func.Plus, this, w)
+  def +(w: Vec[R]): Vec[R] = Elementwise(real.func.Plus, this, w)
 
   /** Multiply elementwise */
-  def *(w: VecInfix[R]): VecInfix[R] = Elementwise(real.func.Times, this, w)
+  def *(w: Vec[R]): Vec[R] = Elementwise(real.func.Times, this, w)
 
   /** Divide elementwise */
-  def /(w: VecInfix[R]): VecInfix[R] = Elementwise(real.func.Div, this, w)
+  def /(w: Vec[R]): Vec[R] = Elementwise(real.func.Div, this, w)
 
   /** Substract elementwise */
-  def -(w: VecInfix[R]): VecInfix[R] = Elementwise(real.func.Minus, this, w)
+  def -(w: Vec[R]): Vec[R] = Elementwise(real.func.Minus, this, w)
 
-  def unary_- : VecInfix[R] = Map()(this,real.negate _)
+  def unary_- : Vec[R] = Map()(this,real.negate _)
 
 
 
 
   /** Add constant */
-  def +(x: Expr[R])(implicit r: Real[R]): VecInfix[R] = Map(this)( ds.num.Plus('v',x))
+  def +(x: Expr[R])(implicit r: Real[R]): Vec[R] = Map(this)( ds.num.Plus('v',x))
 
   /** Multiply constant */
-  def *(x: Expr[R])(implicit r: Real[R]): VecInfix[R] = Map(this)(e => r.times(_,e(x)))
+  def *(x: Expr[R])(implicit r: Real[R]): Vec[R] = Map(this)(e => r.times(_,e(x)))
 
 
 }
 
-object VecInfix {
-
-  type E[R] = Expr[R]
-
-
-
-  /** Wraps ``Seq`` as [[Expr]] */
+object Vec {
 
 
   implicit class SeqOp[A](seq:Seq[A]) {
@@ -103,22 +92,15 @@ object VecInfix {
   lazy val parser: Parser[Json.Arr] = Json.Parsers.arrOf(Json.Parsers.num)
 
   /** Parse from json string */
-  def apply[R: Real](s: String)(implicit r: Real[R]): VecInfix[R] = seq2Vec(
+  def apply[R: Real](s: String)(implicit r: Real[R]): Vec[R] = seq2Vec(
     Json(s, parser).toArr.values.map {
       j: Json => r.json(j.toNum)
     })
 
   /** Parse sequence of doubles via [[Real.apply]] */
-  def apply[R](doubles: Seq[Double])(implicit real: Real[R]): VecInfix[R] =
+  def apply[R](doubles: Seq[Double])(implicit real: Real[R]): Vec[R] =
     doubles.map(real(_))
 
-  implicit def seq2Vec[R: Real](s: Seq[R]): VecInfix[R] = new SeqVec[R](s)
-
-  /** zips and applies binary operation */
-  def each[R](v: Seq[R], w: Seq[R], f: (R, R) => R): Seq[R] = {
-    require(v.size == w.size)
-    (v zip w) map (x => f(x._1, x._2))
-  }
 
 }
 

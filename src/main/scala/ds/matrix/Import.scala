@@ -2,7 +2,7 @@ package ds.matrix
 
 import ds.expr.Engine
 import ds.num.Real
-import ds.vec.VecInfix
+import ds.vec.Vec
 import parser.Json
 
 /**  */
@@ -18,7 +18,7 @@ case class Import[R:Real](json:String, rowLayout:Boolean=true)(implicit real:Rea
   /** Parses Json array of arrays into a ``Seq[Seq[R`` */
   lazy val parsed:Seq[Seq[R]]= {
 
-    val parser = Json.Parsers.arrOf(VecInfix.parser)
+    val parser = Json.Parsers.arrOf(Vec.parser)
 
     Json(json, parser).toArr.values.map {
       _.toArr.values.map {

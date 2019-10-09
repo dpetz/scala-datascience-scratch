@@ -3,7 +3,7 @@ package ds.matrix
 import ds.expr.Engine
 import ds.expr.Engine.Columns
 import ds.num.Real
-import ds.vec.VecInfix._
+import ds.vec.Vec._
 
 /** Multiply matrices */
 case class Times[R:Real](m1: Matrix[R], m2: Matrix[R])
