@@ -16,6 +16,8 @@ package object num {
     def eval(e: Engine): R = real(x)
   }
 
+  implicit def val2Real[R](x: AnyVal)(implicit real: Real[R]):R = real(x)
+
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
   implicit class RealScalar[R: Real](x: R) extends Scalar[R] {
     def eval(e: Engine): R = x

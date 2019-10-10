@@ -5,7 +5,6 @@ import ds.num.Real
 
 package object vec {
 
-  type Vec[R] = Expr[Seq[R]]
 
   implicit def expr2Vec[R: Real](expr: Expr[Seq[R]]):Vec[R] = new Vec[R] {
     def eval(e:Engine):Seq[R] = e(expr)
