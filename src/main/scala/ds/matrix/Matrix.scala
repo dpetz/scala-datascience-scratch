@@ -1,17 +1,22 @@
 package ds.matrix
 
-import ds.expr.{Engine, Expr}
-import ds.num.Real
+import ds.expr.Func.{F1, F2, F3}
+import ds.expr._
+import ds.num.{Real, Scalar}
+import ds.vec.Vec
 
 /**
   * Minimal interface for a matrix
   * Evaluates to itself in the sense that all operations that might have stacked up are performed.
   */
-abstract class Matrix[R:Real] extends Expr[Seq[Seq[R]]]{
+abstract class Matrix[R](implicit real:Real[R]) extends Expr[Seq[Seq[R]]]{
+
+  private val mf = Matrix.functions(real)
+  private val sf = Scalar.functions(real)
 
   def shape:Shape
 
-  def apply(e:Engine):Seq[Seq[R]]
+  //def eval(e:Engine):Seq[Seq[R]]
 
   /** Shortcut for ``shape.rows`` */
   def rows: Int = shape.rows
@@ -26,16 +31,16 @@ abstract class Matrix[R:Real] extends Expr[Seq[Seq[R]]]{
 
   override def toString = s"Matrix(${rows} rows, ${cols}‚ cols)"
 
-  def zip(other:Matrix[R],f:(R,R)=>R):Matrix[R] = new Elementwise(this,other)(f)
+  def zip(other:Matrix[R],f:F2[R,R,R]):Matrix[R] = mf.zip(f,this,other)
 
-  def map(f:R=>R):Matrix[R] = Map(this)(_ => f)
+  def map(f:F1[R,R]):Matrix[R] = Map(this)(_ => f)
 
   def transpose:Matrix[R] = Transpose(this)
 
   def aligned[R](other:Matrix[R]):Boolean =
     (rows == other.rows) && (cols == other.cols)
 
-  def +(other:Matrix[R]):Matrix[R] = Plus(this,other)
+  def +(other:Matrix[R]):Matrix[R] = mf.plus(this,other)
 
   def +(x:Expr[R]):Matrix[R] = PlusReal(this,x)
 
@@ -46,6 +51,30 @@ abstract class Matrix[R:Real] extends Expr[Seq[Seq[R]]]{
 }
 
 object Matrix {
+
+
+
+  def functions[R](r:Real[R]):Functions[R] = new Functions(r)
+
+  class Functions[R] (val real:Real[R]) {
+
+    type SS = Seq[Seq[R]]
+
+    private val sf = Scalar.functions(real)
+
+    val zip: F3[(R, R) => R, SS, SS, SS] = Func("zip", (f,m1,m2) =>
+      (m1 zip m2) map (vv => (vv._1 zip vv._2) map (xx => f(xx._1, xx._2)))
+    )
+
+    val map:F2[R=>R,SS,SS] = Func("map", (f,m) => m map (_ map f))
+
+    val plus:F2[SS,SS,SS] = zip ! sf.plus
+
+
+
+
+
+  }
 
   /** Shortcut to ``[[Import(String)]]`` */
   def apply[R:Real](json:String,rows:Boolean=true):Matrix[R] =

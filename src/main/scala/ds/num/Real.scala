@@ -41,10 +41,4 @@ trait Real[R] extends scala.math.Fractional[R] {
   /** Opposite of [[MAX]] */
   def MIN:R
 
-
-  val func:RealFunctions[R] = new RealFunctions(this)
-
-  val vec:VecFunctions[R] = new VecFunctions(this)
-´
-
 }

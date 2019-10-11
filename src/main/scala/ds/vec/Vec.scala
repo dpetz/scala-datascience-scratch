@@ -1,10 +1,8 @@
 package ds.vec
-import parser.{Json, Parser}
 import ds.expr.Func.{F1, F2, F3}
 import ds.expr._
-import ds.num.{Real, Scalar}
+import ds.num._
 
-import scala.Function.tupled
 
 /** Wraps ``Expr`` evaluating to ``Seq[R]`` for vector infix operations
   * @see https://github.com/scalanlp/breeze/wiki/Linear-Algebra-Cheat-Sheet */
@@ -41,10 +39,10 @@ abstract class Vec[R](implicit real:Real[R])extends Expr[Seq[R]] {
   def unary_- : Vec[R] = vf.map(sf.negate, this)
 
   /** Add constant */
-  def +(x: Scalar[R]): Vec[R] = vf.map(sf.plus -> x,this)
+  def +(x: Scalar[R]): Vec[R] = vf.map(sf.plus ! x,this)
 
   /** Multiply constant */
-  def *(x: Scalar[R]): Vec[R] = vf.map(sf.times -> x,this)
+  def *(x: Scalar[R]): Vec[R] = vf.map(sf.times ! x,this)
 
 
 }
@@ -63,22 +61,22 @@ object Vec {
     /** Scalar functions */
     private val sf = Scalar.functions(real)
 
-    /** Zip vector elements and reduce via function. */
+    /** Zip two vectors and reduce pairs via function. */
     val zip: F3[(R, R) => R, Seq[R], Seq[R], Seq[R]] =
-      Func("each", (f,v,w) => ( v zip w) map (x => f(x._1, x._2)))
-
-    val times:VecOps = zip -> sf.times
+      Func("zip", (f,v,w) => ( v zip w) map (x => f(x._1, x._2)))
 
     /** Map function expression to every vector element. */
     val map:F2[R=>R,Seq[R],Seq[R]] = Func("map", (f, v) => v map f)
 
+    val times:VecOps = zip ! sf.times
+
     val sum:ScalarField = Func("sum", _.fold(real.zero)(real.plus))
 
-    val dot:RealOps = times >> sum
+    val dot:RealOps = times ° sum
 
     def norm(p:Int):ScalarField  = p match {
-      case 1 => (map -> sf.abs) >> sum
-      case p:_ => ((map -> (sf.power --> p)) >> sum) >> (sf.power --> (1.0 / p))
+      case 1 => map ! sf.abs ° sum
+      case p:_ => map ! (sf.power !! p) ° sum ° (sf.power !! (1.0 / p))
     }
 
     val size:ScalarField = Func("size", _.size)

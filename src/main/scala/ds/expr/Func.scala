@@ -1,6 +1,7 @@
 package ds.expr
 
 import ds.expr.Closure.{F2B1, F2B2, F3B1}
+import ds.expr.Func.F1
 
 /** ``Expr``that evaluates to a function. */
 trait Func[R] extends Expr[R] {
@@ -18,7 +19,7 @@ object Func {
   trait F1[T,R] extends (E[T] => E[R]) with Func[T=>R] {
     def apply(x:E[T]):Closure.C1[T,R] = Closure.C1(this,x)
     /** Evaluate this, then ``f`` */
-    def >>[R2](f:F1[R,R2]):F1[T,R2] = F1F1(this,f)
+    def °[R2](f:F1[R,R2]):F1[T,R2] = F1F1(this,f)
   }
 
   /** Chain F1 followed by F1 */
@@ -37,12 +38,13 @@ object Func {
   trait F2[T1,T2,R] extends ((E[T1],E[T2]) => E[R]) with Func[(T1,T2)=>R] {
     /** Assign all inputs */
     def apply(x:E[T1], y:E[T2]):Closure.C2[T1,T2,R] = Closure.C2(this,x,y)
+
     /** Evaluate this, then ``f`` */
-    def >>[T](f:F1[R,T]):F2[T2,T2,T] = F2F1(this,f)
+    def °[T](f:F1[R,T]):F2[T2,T2,T] = F2F1(this,f)
     /** Assign first input */
-    def ->(x1:E[T1]):F1[T2,R] = F2B1(this,x1)
+    def !(x1:E[T1]):F1[T2,R] = F2B1(this,x1)
     /** Assign second input */
-    def -->(x2:E[T2]):F1[T1,R] = F2B2(this,x2)
+    def !!(x2:E[T2]):F1[T1,R] = F2B2(this,x2)
   }
 
   /** ``Expr`` evaluating to a function with three inputs */
@@ -50,7 +52,7 @@ object Func {
     /** Assign all inputs */
     def apply(x1:E[T1], x2:E[T2], x3:E[T3]):Closure.C3[T1,T2,T3,R] = Closure.C3(this,x1,x2,x3)
     /** Assign first input */
-    def ->(x1:E[T1]):F2[T2,T3,R] = F3B1(this,x1)
+    def !(x1:E[T1]):F2[T2,T3,R] = F3B1(this,x1)
   }
 
   /** Name and wrap function of one input as ``Expr`` */
