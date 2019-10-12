@@ -1,8 +1,8 @@
 package ds.matrix
 
 import ds.expr._
-import ds.func.{F1, F2, F3, Func}
-import ds.num.{Real, Scalar}
+import ds.func._
+import ds.num._
 import ds.vec.Vec
 
 /**
@@ -11,12 +11,11 @@ import ds.vec.Vec
   */
 abstract class Matrix[R](implicit real:Real[R]) extends Expr[Seq[Seq[R]]]{
 
-  type SS = Seq[Seq[R]
 
   private val mf = Matrix.functions(real)
   private val sf = Scalar.functions(real)
 
-  def eval(e:Engine,q:Query):SS
+  def eval(e:Engine)(implicit o:Orientation):Seq[Seq[R]]
 
   def shape:Shape
 
@@ -37,7 +36,7 @@ abstract class Matrix[R](implicit real:Real[R]) extends Expr[Seq[Seq[R]]]{
 
   def zip(other:Matrix[R],f:F2[R,R,R]):Matrix[R] = mf.zip(f,this,other)
 
-  def map(f:F1[R,R]):Matrix[R] = Map(this)(_ => f)
+  def map(f:F1[R,R]):Matrix[R] = mf.map(f)(this)
 
   def transpose:Matrix[R] = Transpose(this)
 
@@ -56,24 +55,24 @@ abstract class Matrix[R](implicit real:Real[R]) extends Expr[Seq[Seq[R]]]{
 
 object Matrix {
 
+  def functions[R:Real]:Functions[R] = new Functions // @todo buffer
 
+  class Functions[R:Real] {
 
-  def functions[R](r:Real[R]):Functions[R] = new Functions(r)
-
-  class Functions[R] (val real:Real[R]) {
+    val real: Real[R] = implicitly[Real[R]]
 
     type SS = Seq[Seq[R]]
 
     private val sf = Scalar.functions(real)
 
-    val zip: F3[(R, R) => R, SS, SS, SS] = Func("zip", (f,m1,m2) =>
-      (m1 zip m2) map (vv => (vv._1 zip vv._2) map (xx => f(xx._1, xx._2)))
+    def zip(f:F2[R,R,R]) (implicit o:Orientation):F2[SS,SS,SS]= F2("zip matrices",
+      (e,m1,m2) => (e(m1) zip e(m2)) map (vv => (vv._1 zip vv._2) map (xx => f.eval(e,xx._1, xx._2)))
     )
 
-    def map(f:F1[R,R]):F1[SS,SS] =
-      F1("map", (e:Engine,m:Matrix[R]) => e(m,q).map (_ map (x => f.eval(e,x))))
+    def map(f:F1[R,R])(implicit o:Orientation):F1[SS,SS] =
+      F1("map matrix", (e,m) => e(m).map(_ map (x => f.eval(e,x))))
 
-    val plus:F2[SS,SS,SS] = zip ! sf.plus
+    def plus(implicit o:Orientation):F2[SS,SS,SS] = zip(sf.plus)
 
 
 

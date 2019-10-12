@@ -5,7 +5,7 @@ import ds.func.F1.BindAll
 
 
 /** ``Expr`` evaluating to a function with one input */
-trait F1[X,Y] extends Func[Y] {
+trait F1[-X,+Y] extends Func[Y] {
   def apply(x:Expr[X]):Expr[Y] = BindAll(this,x)
   def eval(e:Engine, x:Expr[X]):Y
   /** Evaluate this, then ``f`` */

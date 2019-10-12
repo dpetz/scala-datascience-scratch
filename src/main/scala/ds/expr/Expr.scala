@@ -3,7 +3,7 @@ package ds.expr
 import ds.num.Real
 
 /** Evaluates via  [[Engine]] to result of type ``T``*/
-trait Expr[T] {
+trait Expr[+T] {
   //def eval(e:Engine):T
   def parts:Seq[Expr[_]]
 }

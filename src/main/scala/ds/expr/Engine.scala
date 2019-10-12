@@ -3,6 +3,7 @@ package ds.expr
 import ds.num.Real
 import ds.expr.Engine.Config
 import ds.func.F1
+import ds.matrix.{Matrix, Orientation}
 
 
 /** Engine for `Real` arithmetic*/
@@ -21,6 +22,8 @@ class Engine(private val configs:List[Config]=Engine.defaults,
     case v:Symbol[A] => vars(v).asInstanceOf[A]
     case _ => e(this)
   }
+
+  def apply[R](m:Matrix[R])(implicit o:Orientation):Seq[Seq[R]] = m.eval(this)
 
   def apply[I,O](f:F1[I,O], x:I): O = (new Engine(configs, vars(f.x)=x))[O](f)
 
