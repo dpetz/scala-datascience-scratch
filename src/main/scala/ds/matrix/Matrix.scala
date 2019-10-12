@@ -2,7 +2,7 @@ package ds.matrix
 
 import ds.func.Func.{F1, F2, F3}
 import ds.expr._
-import ds.func.Func
+import ds.func.{F1, F2, F3, Func}
 import ds.num.{Real, Scalar}
 import ds.vec.Vec
 
@@ -67,7 +67,7 @@ object Matrix {
       (m1 zip m2) map (vv => (vv._1 zip vv._2) map (xx => f(xx._1, xx._2)))
     )
 
-    val map:F2[R=>R,SS,SS] = Func("map", (f,m) => m map (_ map f))
+    def map(f:F1[R,R]):F1[SS,SS] = F1("map", (e,m) => e(m).map (_ map (x => f.eval(e,x))))
 
     val plus:F2[SS,SS,SS] = zip ! sf.plus
 

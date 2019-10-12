@@ -3,9 +3,6 @@ import ds.expr.{Engine, Expr}
 
 package object num {
 
-  type E[R] = Expr[R]
-
-
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
   implicit class BigScalar[R: Real](x: BigDecimal)(implicit real: Real[R]) extends Scalar[R] {
     def eval(e: Engine): R = real(x)
