@@ -1,6 +1,5 @@
 package ds.matrix
 
-import ds.func.Func.{F1, F2, F3}
 import ds.expr._
 import ds.func.{F1, F2, F3, Func}
 import ds.num.{Real, Scalar}
@@ -12,8 +11,12 @@ import ds.vec.Vec
   */
 abstract class Matrix[R](implicit real:Real[R]) extends Expr[Seq[Seq[R]]]{
 
+  type SS = Seq[Seq[R]
+
   private val mf = Matrix.functions(real)
   private val sf = Scalar.functions(real)
+
+  def eval(e:Engine,q:Query):SS
 
   def shape:Shape
 
@@ -67,7 +70,8 @@ object Matrix {
       (m1 zip m2) map (vv => (vv._1 zip vv._2) map (xx => f(xx._1, xx._2)))
     )
 
-    def map(f:F1[R,R]):F1[SS,SS] = F1("map", (e,m) => e(m).map (_ map (x => f.eval(e,x))))
+    def map(f:F1[R,R]):F1[SS,SS] =
+      F1("map", (e:Engine,m:Matrix[R]) => e(m,q).map (_ map (x => f.eval(e,x))))
 
     val plus:F2[SS,SS,SS] = zip ! sf.plus
 
