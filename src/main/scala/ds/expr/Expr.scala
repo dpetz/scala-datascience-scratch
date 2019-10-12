@@ -1,16 +1,11 @@
 package ds.expr
 
+import ds.num.Real
+
 /** Evaluates via  [[Engine]] to result of type ``T``*/
 trait Expr[T] {
-  def eval(e:Engine):T
+  def eval[R](e:Engine[R]):T
   def parts:Seq[Expr[_]]
-
-
-}
-
-case class Name[T](name:String, expr:Expr[T]) extends Expr[T] {
-  def eval(e:Engine):T = e(expr)
-  def parts:Seq[Expr[_]]=List(expr)
 }
 
 object Expr {

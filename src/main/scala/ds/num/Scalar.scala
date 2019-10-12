@@ -1,11 +1,12 @@
 package ds.num
 
 import ds.expr.Func.{F1, F2}
-import ds.expr.{Expr, Func}
+import ds.expr.{Engine, Expr, Func}
+import ds.func.Func
 
 
 /** Expr evaluating to a real number */
-abstract class Scalar[R:Real](implicit real:Real[R]) extends Expr[R] {
+abstract class Scalar[R](implicit real:Real[R]) extends Expr[R] {
 
   private val sf = Scalar.functions(real)
 
@@ -34,17 +35,17 @@ abstract class Scalar[R:Real](implicit real:Real[R]) extends Expr[R] {
 
 object Scalar {
 
-  def functions[R](implicit r:Real[R]) : Scalar.Functions[R]
-    = new Functions(r) // @todo buffer
+  def functions[R](implicit r:Real[R]) : Scalar.Functions[R
+  = new Functions(r) // @todo buffer]
 
-  class Functions[R](val real:Real[R]) {
+  class Functions[R:Real] {
     val plus   : F2[R, R, R]       = Func("+", real.plus)
     val minus  : F2[R, R, R]       = Func("-", real.minus)
     val times  : F2[R, R, R]       = Func("*", real.times)
     val div    : F2[R, R, R]       = Func("/", real.div)
     val approx : F2[R, R, Boolean] = Func("~", real.approx)
     val power  : F2[R, R, R]       = Func("**",real.power)
-    val abs    : F1[R, R]          = Func("+", real.abs)
+    val abs    : F1[R, R]          = Func[R,R]("+", (e, x) => e.real.abs(e(x)))
     val negate : F1[R, R]          = Func("-", real.negate)
   }
 

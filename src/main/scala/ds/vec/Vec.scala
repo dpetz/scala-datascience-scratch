@@ -1,6 +1,7 @@
 package ds.vec
-import ds.expr.Func.{F1, F2, F3}
+import ds.func.Func.{F1, F2, F3}
 import ds.expr._
+import ds.func.Func
 import ds.num._
 
 

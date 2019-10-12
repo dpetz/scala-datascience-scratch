@@ -1,6 +1,6 @@
 package ds.calc
 
-import ds.expr.Func._
+import ds.func.Func._
 import ds.calc.Gradient.Direction
 import ds.expr.Engine
 import ds.vec.Vec
