@@ -15,7 +15,7 @@ abstract class Matrix[R](implicit real:Real[R]) extends Expr[Seq[Seq[R]]]{
   private val mf = Matrix.functions(real)
   private val sf = Scalar.functions(real)
 
-  def eval(e:Engine)(implicit o:Orientation):Seq[Seq[R]]
+  def eval(e:Engine):Seq[Seq[R]]
 
   def shape:Shape
 
@@ -65,14 +65,14 @@ object Matrix {
 
     private val sf = Scalar.functions(real)
 
-    def zip(f:F2[R,R,R]) (implicit o:Orientation):F2[SS,SS,SS]= F2("zip matrices",
+    def zip(f:F2[R,R,R]):F2[SS,SS,SS]= F2("zip matrices",
       (e,m1,m2) => (e(m1) zip e(m2)) map (vv => (vv._1 zip vv._2) map (xx => f.eval(e,xx._1, xx._2)))
     )
 
-    def map(f:F1[R,R])(implicit o:Orientation):F1[SS,SS] =
+    def map(f:F1[R,R]):F1[SS,SS] =
       F1("map matrix", (e,m) => e(m).map(_ map (x => f.eval(e,x))))
 
-    def plus(implicit o:Orientation):F2[SS,SS,SS] = zip(sf.plus)
+    def plus:F2[SS,SS,SS] = zip(sf.plus)
 
 
 

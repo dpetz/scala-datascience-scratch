@@ -52,8 +52,6 @@ object Engine {
   val ROW_FILTER = "Row Filter"
   val COLUMN_FILTER = "Column Layout"
 
-
-
   abstract class Filter(rows:Boolean = true) extends Config {
     val name:String = if (rows) ROW_FILTER else COLUMN_FILTER
     def apply(i:Int):Boolean

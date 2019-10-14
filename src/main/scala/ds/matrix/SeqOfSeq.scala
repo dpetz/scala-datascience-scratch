@@ -40,3 +40,7 @@ import parser.Json
 
   }
 }
+
+object SeqOfSeq {
+  apply(data:Seq[Seq[R]], )
+}
