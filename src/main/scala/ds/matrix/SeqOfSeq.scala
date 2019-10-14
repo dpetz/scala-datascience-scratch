@@ -2,6 +2,7 @@ package ds.matrix
 
 import ds.expr.Engine
 import ds.expr.Engine._
+import ds.matrix.Layout.{Columns, Rows}
 import ds.num.Real
 import ds.vec.Vec
 import parser.Json
@@ -24,23 +25,31 @@ import parser.Json
 
     // Filter
 
-    val filter_dim1 = e.config[Filter](if (rows) ROW_FILTER else COLUMN_FILTER)
-    val filter_dim2 = e.config[Filter](if (rows) COLUMN_FILTER else ROW_FILTER)
+    val filter_dim1 = e.config[Filter](if (rows) Filter.ROWS else Filter.COLUMNS)
+    val filter_dim2 = e.config[Filter](if (rows) Filter.COLUMNS else Filter.ROWS)
 
     data.zipWithIndex.filter(row_i => filter_dim1(row_i._2)).map( // filter rows
       _._1.zipWithIndex.filter(col_j => filter_dim2(col_j._2)).map(_._1)) // filter columns within each row
 
     // Layout
     // @todo lazy transpose?
-    e.config[Layout](MATRIX_LAYOUT) match {
+    e.config[Layout](Layout.NAME) match {
       case _:Rows => if (rows) data else data.transpose
-      case _:Columns => if (rows) data.transpose else data//
-      case _ => throw new UnsupportedOperationException("Matrix Layout not 'Rows' or 'Columns'.")
+      case _:Columns => if (rows) data.transpose else data
+      case _ => SeqOfSeq.unknownLayout()
     }
 
   }
 }
 
 object SeqOfSeq {
-  apply(data:Seq[Seq[R]], )
+  def apply[R:Real](data:Seq[Seq[R]], l:Layout): SeqOfSeq[R] = l match {
+    case _: Rows => new SeqOfSeq(data, true)
+    case _: Columns => new SeqOfSeq(data, false)
+    case _ => SeqOfSeq.unknownLayout()
+  }
+
+  def unknownLayout() = throw new UnsupportedOperationException("Matrix Layout not 'Rows' or 'Columns'.")
+
+
 }

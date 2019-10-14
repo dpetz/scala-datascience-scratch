@@ -3,6 +3,7 @@ package ds.expr
 import ds.num.Real
 import ds.expr.Engine.Config
 import ds.func.F1
+import ds.matrix.Layout.Rows
 import ds.matrix.{Matrix, Orientation}
 
 
@@ -48,30 +49,8 @@ object Engine {
     val name:String
   }
 
-  val MATRIX_LAYOUT = "Matrix Layout"
-  val ROW_FILTER = "Row Filter"
-  val COLUMN_FILTER = "Column Layout"
 
-  abstract class Filter(rows:Boolean = true) extends Config {
-    val name:String = if (rows) ROW_FILTER else COLUMN_FILTER
-    def apply(i:Int):Boolean
-  }
 
-  case class All(rows:Boolean) extends Filter(rows) {
-    def apply(i:Int):Boolean = true
-  }
-
-  sealed abstract class Layout() extends Config {
-    val name:String = MATRIX_LAYOUT
-    def transpose:Layout
-  }
-
-  case class Rows() extends Layout {
-    def transpose = Columns()
-  }
-  case class Columns() extends Layout {
-    def transpose = Rows()
-  }
 
 
 
