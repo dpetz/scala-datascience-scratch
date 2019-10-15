@@ -1,16 +1,18 @@
 package ds.matrix
 
 import ds.expr.Engine
+import ds.matrix.Layout.{Columns, Rows}
 import ds.num.Real
 import ds.vec.Vec
 import parser.Json
 
 /**  */
-case class Import[R:Real](json:String, rowLayout:Boolean=true)(implicit real:Real[R]) extends Matrix[R] {
+case class Import[R](json:String, rowLayout:Boolean=true)(implicit real:Real[R]) extends Matrix[R] {
 
-  def shape:Shape = Shape(
+  val shape:Shape = Shape(
     if (rowLayout) parsed.size else parsed.head.size ,
-    if (rowLayout) parsed.head.size else parsed.size
+    if (rowLayout) parsed.head.size else parsed.size,
+    if (rowLayout) Rows() else Columns()
   )
 
   def apply(e:Engine):Seq[Seq[R]] = (new SeqOfSeq(parsed, rowLayout))(e)
@@ -26,5 +28,6 @@ case class Import[R:Real](json:String, rowLayout:Boolean=true)(implicit real:Rea
       } toVector
     }.toVector
   }
-
 }
+
+

@@ -1,7 +1,6 @@
 import ds.num.Real
 
 import scala.Function.tupled
-package ds.vec
 
  class SeqOp[A](seq:Seq[A]) {
 
@@ -37,14 +36,4 @@ package ds.vec
   }
 }
 
-lazy val parser: Parser[Json.Arr] = Json.Parsers.arrOf(Json.Parsers.num)
 
-/** Parse from json string */
-def apply[R: Real](s: String)(implicit r: Real[R]): Vec[R] = seq2Vec(
-Json(s, parser).toArr.values.map {
-j: Json => r.json(j.toNum)
-})
-
-/** Parse sequence of doubles via [[Real.apply]] */
-def apply[R](doubles: Seq[Double])(implicit real: Real[R]): Vec[R] =
-doubles.map(real(_))

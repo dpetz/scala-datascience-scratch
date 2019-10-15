@@ -4,7 +4,7 @@ import ds.num.Real
 import ds.expr.Engine.Config
 import ds.func.F1
 import ds.matrix.Layout.Rows
-import ds.matrix.{Matrix, Orientation}
+import ds.matrix.{All, Matrix, Orientation}
 
 
 /** Engine for `Real` arithmetic*/
@@ -21,10 +21,9 @@ class Engine(private val configs:List[Config]=Engine.defaults,
 
   def apply[A](e:Expr[A]): A = e match {
     case v:Symbol[A] => vars(v).asInstanceOf[A]
-    case _ => e(this)
+    case c:Closed[A] => c.eval(this)
+    case _ => throw Engine.Exception(this,e)
   }
-
-  def apply[R](m:Matrix[R])(implicit o:Orientation):Seq[Seq[R]] = m.eval(this)
 
   def apply[I,O](f:F1[I,O], x:I): O = (new Engine(configs, vars(f.x)=x))[O](f)
 
@@ -35,11 +34,9 @@ class Engine(private val configs:List[Config]=Engine.defaults,
   def real[R]()(implicit tag: TypeTag[R]):Real[R] = tag.tpe match {
     case Double => ds.num.DoubleReal.Real[Double]
     case BigDecimal => ds.num.BigReal.Real[Double]
-    case _ => throw EngineException(this, "No algebra for " + tag)
+    case _ => throw Engine.Exception(this, "No algebra for " + tag)
   }
 }
-
-
 
 object Engine {
 
@@ -49,14 +46,10 @@ object Engine {
     val name:String
   }
 
-
-
-
-
-
+  case class Exception[R](eng:Engine, expr:Expr[R]) extends RuntimeException {
+    override def toString = s"Engine $eng cannot evaluate $expr"
+  }
 
 }
 
-case class EngineException[R](eng:Engine, expr:Expr[R]) extends Exception {
-  override def toString = s"Engine $this cannot evaluate $expr"
-}
+

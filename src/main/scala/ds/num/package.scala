@@ -22,7 +22,7 @@ package object num {
 
   implicit def expr2Scalar[R:Real](expr: Expr[R]):Scalar[R] = new Scalar[R] {
     def eval(e: Engine): R = e(expr)
-    override def parts = List(expr)
+    override def inputs = List(expr)
   }
 
 }

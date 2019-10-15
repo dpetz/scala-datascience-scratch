@@ -4,5 +4,5 @@ package ds.expr
 trait Expressible[+T] extends Expr[T] {
   val express:Expr[T]
   def eval(e:Engine):T = e(express)
-  def parts = List(express)
+  def inputs = List(express)
 }
