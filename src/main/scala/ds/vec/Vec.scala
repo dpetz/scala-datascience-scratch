@@ -70,7 +70,7 @@ object Vec {
       "zip", (e,v,w) => ( e(v) zip e(w)) map (x => f.eval(e, x._1, x._2)))
 
     /** Map function expression to every vector element. */
-    def map(f:F1[E,R]):F1[Vec[R],Seq[R]] = F1("vec.map", (e, v) => e(v) map (x => f.eval(e,x)) )
+    def map(f:F1[E,R], v:Vec[R]):Seq[R] = F0("vec.map", e => e(v) map (x => f.eval(e,x)) )
 
     val times:VecOps = zip (sf.times)
 
