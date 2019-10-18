@@ -1,67 +1,96 @@
 package ds.test
 
 import ds.num.Real
+import ds.test
+import ds.test.Test.E
 
 object Test {
 
 
   type E[T] = Expr[T]
 
-  type Engine
+  trait Engine {
+    def apply[T](e:E[T]):T
+  }
 
-  /** Monadic with ``Expr.apply`` as unit and  ``chain`` as flatMap */
-  case class Expr[X](eval:Engine=>X) {
+  /** Monadic with ``Expr.apply`` as unit and  ``andThen`` as flatMap */
+  case class Expr[T](eval:Engine=>T) {
     //def eval(e:Engine):X
-    //def +[Y,Z](y:Expr[Y])(implicit op:Plus[X,Y,Z]):Expr[Z] = op(this,y)
+    def **[Y,Z](y:Expr[Y])(implicit op:Power[T,Y,Z]):Expr[Z] = op(this,y)
+
+
+    def *[X,Y,Z](y:Expr[Y])(implicit op:Times[X,Y,Z]):Expr[Z] = op(this,y)
+
+    def /[X,Y,Z](y:Expr[Y])(implicit op:Div[X,Y,Z]):Expr[Z] = op(this,y)
+
+    /** flatMap */
+    def andThen[T](f:T=>E[T]): E[T] = Expr {
+      e => e(f(e(this)))
+    }
+
+    //def map[X](implicit vec:Vec[T,X])
 
   }
 
   object Expr {
-    def apply[T](t:T):E[T] =  Expr {
-      _ => t
-    }
+    //def const[T](t:T):E[T] = expr(t)
   }
 
+  /** Sequence S of Elements X  */
+  trait Vec[T,X]
 
-  implicit class Function2Expr[X1,X2,Y](f1:(X1,X2)=>Z) {
-    def °[Z](g:Y=>Z):Chain(f,g)
-  }
+  trait Power[X,Y,Z] extends ((E[X],E[Y])=>E[Z])
 
-  case class Chain[X,Y,Z] extends (X=>)
+  implicit def realPower[R](implicit real:Real[R]):Power[R,R,R] =
+    (x,p) => Expr { e => real.power(e(x),e(p)) }
+
+  implicit def expr[T](t:T): E[T] = Expr { _ => t }
+
 
 
   trait Plus[X,Y] extends ((X,Y)=>X)
 
-  trait Times[X,Y] extends ((X,Y)=>X)
+  trait Div[X,Y,Z] extends ((E[X],E[Y])=>E[Z])
 
-  def realPlus[R](implicit real:Real[R]): Plus[R, R, R] = real.plus _
+  trait Times[X,Y,Z] extends ((E[X],E[Y])=>E[Z])
 
-  def vecTimes[R](implicit real:Real[R]): Times[Seq[R], Seq[R]] =
-    (v:Seq[R], w:Seq[R]) => (v zip w) map (x => real.plus(x._1,x._2))
+  implicit def realPlus[R](implicit real:Real[R]): Plus[R, R] = real.plus _
+
+  implicit def realDiv[R](implicit real:Real[R]): Div[R, R, R] = (x,p) => Expr { e => real.div(e(x),e(p)) }
+
+  def elementwiseTimes[R](implicit real:Real[R]): (Seq[R],Seq[R])=>Seq[R] =
+    (v:Seq[R],w:Seq[R]) => (v zip w) map (x => real.plus(x._1,x._2))
 
   def lift[X1,X2,Y](f:(X1,X2)=>Y):(E[X1],E[X2])=>E[Y] =
-    (e1, e2) => Expr(f(e1.eval, e2.eval))
+    (e1, e2) => Expr {e => f(e(e1), e(e2)) }
+
+  def :*:[R:Real](v:E[Seq[R]], w:E[Seq[R]]):E[Seq[R]] = lift(elementwiseTimes)(v,w)
+
+  def sum[R](v:E[Seq[R]])(implicit real:Real[R]):E[R] =
+    Expr { e=> e(v).foldLeft(real.zero)(real.plus) }
+
+  def map[R,S](v:E[Seq[R]],f:R=>Expr[S]):E[Seq[S]] =
+    Expr { e => e(e(v) map f) }
 
 
-  def sum[R](implicit real:Real[R]): (Seq[R] => R) =
-    (v:Seq[R]) => v.foldLeft(real.zero)(real.plus)
-
-  def dot[R:Real](v:E[Seq[R]]): E[R] =
-    vecTimes(v,v)
+  def dot[R:Real](v:E[Seq[R]]): E[R] = sum(v*v)
 
 
-  def addMatrices(v:Expr[])
 
-  trait Matrix extends
+  /** V will be a Seq[R:Real] */
+  /*
+  abstract class Vec[R,V <: Seq[R]] {
+    def map(v:V,f:)
+  }
+*/
 
-
-  trait Monad[Expr[_]]  {
-
-    def unit[R](x:()=>R):Expr[R]
-
-    def flatMap[R,S](e:Expr[R])(f:R=>Expr[S]):Expr[S]
+  def norm[R](p:Int)(v:E[Seq[R]])(implicit real:Real[R]):Expr[R] =  p match {
+    case real.one => sum ( v ( map(real.abs) ) )
+    case p:_ => sum( map(v, x => x ** real(p) )) ** real.one./(real(p))
 
   }
+
+
 
 
 }
