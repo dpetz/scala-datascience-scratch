@@ -5,12 +5,12 @@ import ds.expr.{Engine, Expr, Inputs}
 
 
 /** ``Expr`` evaluating to a function with three inputs */
-trait F3[X1<:Expr[_],X2<:Expr[_],X3<:Expr[_],Y] extends Func[Y] {
+trait F3[X1,X2,X3,Y] extends Func[Y] {
 
-  def eval(e:Engine, x1:X1, x2:X2, x3:X3):Y
+  def eval(e:Engine, x1:Expr[X1], x2:Expr[X2], x3:Expr[X3]):Y
 
   /** Assign all inputs */
-  def apply(x1:X1, x2:X2, x3:X3):Expr[Y] = F3.BindAll(this,x1,x2,x3)
+  def apply(x1:Expr[X1], x2:Expr[X2], x3:Expr[X3]):Expr[Y] = F3.BindAll(this,x1,x2,x3)
   /** Assign first input */
   def !(x1:X1):F2[X2,X3,Y] = F3.Bind1(this,x1)
 }

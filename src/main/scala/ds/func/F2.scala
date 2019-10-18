@@ -3,12 +3,13 @@ package ds.func
 import ds.expr.{Engine, Expr, Inputs}
 import ds.func.F2.Chain
 
-/** ``Expr`` evaluating to a function with two inputs */
-trait F2[-X1 <: Expr[_],-X2 <: Expr[_],+Y] extends Func[Y] {
-  /** Assign all inputs */
-  def apply(x:X1, y:X2):Expr[Y] = F2.BindAll(this,x,y)
 
-  def eval(e:Engine, x1:X1, x2:X2):Y
+/** ``Expr`` with two free variables */
+trait F2[X1,X2,Y] extends Func[Y] {
+  /** Assign all inputs */
+  def apply(x:Expr[X1], y:Expr[X2]):Expr[Y] = F2.BindAll(this,x,y)
+
+  def eval(e:Engine, x:Expr[X1], y:Expr[X2]):Y
 
   /** Evaluate this, then ``f`` */
   def °[T](f:F1[Expr[Y],T]):F2[X1,X2,T] = Chain(this,f)
@@ -16,10 +17,21 @@ trait F2[-X1 <: Expr[_],-X2 <: Expr[_],+Y] extends Func[Y] {
   def !(x1:X1):F1[X2,Y] = F2.Bind1(this,x1)
   /** Assign second input */
   def !!(x2:X2):F1[X1,Y] = F2.Bind2(this,x2)
+
 }
 
 
 object F2 {
+
+  case class ReduceF1[L1,L2,L,R1,R,Y](leftFunc:F2[L1,L2,L],rightFunc:F1[R1,R],reduce:F2[L,R,Y])
+  extends F3[L1,L2,R1,Y] {
+
+    def eval(e:Engine, x1:Expr[L1], x2:Expr[L2], y1:Expr[R1]):Y =
+      reduce.eval(e,leftFunc(x1,x2),rightFunc(y1))
+
+    val name:String = "reduce F2 F1"
+
+  }
 
   /** Name and wrap function of two inputs as ``Expr`` */
   def apply[X1 <: Expr[_],X2 <: Expr[_],Y](fName:String, func:(Engine, X1, X2) => Y):F2[X1,X2,Y] = new F2[X1,X2,Y] {
