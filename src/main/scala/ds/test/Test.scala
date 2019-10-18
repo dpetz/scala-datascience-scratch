@@ -64,7 +64,7 @@ object Test {
   def lift[X1,X2,Y](f:(X1,X2)=>Y):(E[X1],E[X2])=>E[Y] =
     (e1, e2) => Expr {e => f(e(e1), e(e2)) }
 
-  def :*:[R:Real](v:E[Seq[R]], w:E[Seq[R]]):E[Seq[R]] = lift(elementwiseTimes)(v,w)
+  //def :*:[R:Real](v:E[Seq[R]], w:E[Seq[R]]):E[Seq[R]] = lift(elementwiseTimes)(v,w)
 
   def sum[R](v:E[Seq[R]])(implicit real:Real[R]):E[R] =
     Expr { e=> e(v).foldLeft(real.zero)(real.plus) }
@@ -85,8 +85,8 @@ object Test {
 */
 
   def norm[R](p:Int)(v:E[Seq[R]])(implicit real:Real[R]):Expr[R] =  p match {
-    case real.one => sum ( v ( map(real.abs) ) )
-    case p:_ => sum( map(v, x => x ** real(p) )) ** real.one./(real(p))
+    case real.one => sum ( map (v, real.abs) )
+    case p:_ => sum( map(v, expr(_) ** real(p) )) ** real.one./(real(p))
 
   }
 
