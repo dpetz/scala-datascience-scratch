@@ -6,11 +6,13 @@ Instead Python in Scala incl. training Functional Programming.
 
 ## Notes
 
+* Monad transformers are a flat version of two nested Monads
+  (https://blog.buildo.io/monad-transformers-for-the-working-programmer-aa7e981190e7)
 * To propagate updates in the parser codebase re-build its jar artifact an then
 ``cp parser/out/artifacts/Combinatorial_Parser_jar/Combinatorial\ Parser.jar scratch/lib/``
 
 ## Resources:
-
+* 
 * https://reference.wolfram.com/language/tutorial/VectorsAndMatrices.html
 * https://www.tensorflow.org/guide/tensor
 * https://github.com/scalanlp/breeze/wiki/Quickstart
