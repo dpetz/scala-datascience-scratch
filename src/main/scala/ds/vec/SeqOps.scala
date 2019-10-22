@@ -1,5 +1,3 @@
-import ds.num.Real
-
 import scala.Function.tupled
 
  class SeqOp[A](seq:Seq[A]) {

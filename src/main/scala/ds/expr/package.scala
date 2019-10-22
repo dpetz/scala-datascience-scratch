@@ -32,12 +32,7 @@ package object expr {
   /** Raises ``Real`` to the power of another ``Real``.
     * Matrix multiplication also implements ``Power`` to inherit its symbol ``**`` */
 
-  type Binary[X,Y,Z] = ((E[X],E[Y])=>E[Z])
 
-  trait TimesTimes[X,Y,Z] extends Binary[X,Y,Z]
-  trait Plus[X,Y, Z] extends Binary[X,Y,Z]
-  trait Div[X,Y,Z] extends Binary[X,Y,Z]
-  trait Times[X,Y,Z] extends Binary[X,Y,Z]
 
 
 }

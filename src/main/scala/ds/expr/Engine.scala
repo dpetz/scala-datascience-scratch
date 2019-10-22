@@ -1,50 +1,41 @@
 package ds.expr
 
+import ds.matrix.Matrix
 import ds.num.Real
-import ds.expr.Engine.Config
-import ds.func.F1
-import ds.matrix.Layout.Rows
-import ds.matrix.{All, Matrix, Orientation}
 
 
 /** Engine for `Real` arithmetic*/
-class Engine(private val configs:List[Config]=Engine.defaults,
-             private val vars:Map[Symbol[_],_] = Map.empty) {
+class Engine(val symbols:Map[Symbol[_],_] = Map.empty) {
 
-  //val real: Real[R] = implicitly[Real[R]]
 
-  /** Gets (last added) configuration by type */
-  def config[C <: Config](s:String):C = configs.find(_.name == s).asInstanceOf[C]
-
-  /** Reconfigure engine. */
-  def update(c:Config):Engine = new Engine(c :: configs, vars)
-
-  def apply[A](e:Expr[A]): A = e match {
-    case v:Symbol[A] => vars(v).asInstanceOf[A]
-    case c:Closed[A] => c.eval(this)
-    case _ => throw Engine.Exception(this,e)
+  // @todo cache expensive computations
+  def apply[A](expr: Expr[A]): A = expr match {
+    case s: Symbol[A] => symbols(s).asInstanceOf[A]
+    case e => e.eval(this)
   }
 
-  def apply[I,O](f:F1[I,O], x:I): O = (new Engine(configs, vars(f.x)=x))[O](f)
 
-  import reflect.runtime.universe._
+  /** Create Term by finding and bind evaluation code for ``args``.
+    * */
+  def fromArgs[R](args: Product)(implicit real: Real[R]): E[_] = {
 
-  // https://www.scala-lang.org/api/current/scala-reflect/scala/reflect/api/TypeTags.html
+    val term = List(args)
+    val func = term.head
+    val vars = term.tail
 
-  def real[R]()(implicit tag: TypeTag[R]):Real[R] = tag.tpe match {
-    case Double => ds.num.DoubleReal.Real[Double]
-    case BigDecimal => ds.num.BigReal.Real[Double]
-    case _ => throw Engine.Exception(this, "No algebra for " + tag)
+    func.asInstanceOf[String] match {
+      case "ds.matrix.timesMatrix" => ds.matrix.times(real)(
+        vars.head.asInstanceOf[E[Matrix[R]]], vars(1).asInstanceOf[E[Matrix[R]]]
+      )
+    }
+    // @todo work for new identifiers using reflection
+    // (https://docs.scala-lang.org/overviews/reflection/overview.html)
+
+
   }
 }
 
 object Engine {
-
-  def defaults: List[Config] = List (All(true), All(false), Rows())
-
-  trait Config {
-    val name:String
-  }
 
   case class Exception[R](eng:Engine, expr:Expr[R]) extends RuntimeException {
     override def toString = s"Engine $eng cannot evaluate $expr"
