@@ -24,37 +24,37 @@ import scala.annotation.tailrec
 
  val real = implicitly[Real[R]]
 
- val engine:Engine = new Engine() // @todo implement w/o engine
-
   /** Current value at */
-  def value:R=gradient.f(x)
+  def value:Expr[R] = x.map(gradient.f)
 
   /** New [[Descent]] object at location x. Overwrite to create instance of subclass. */
   def next(x:Vec[R])= new Descent(gradient,x,Some(this))
 
   /** Explore steps and return position with lowest value. */
   def explore:Vec[R] =
-    steps.each { step:Expr[R] => x + (gradient(x) * step) }.map( _ minBy gradient.f)
+    steps.each { step:Expr[R] => x + (gradient(x) * step) }.map( _ minBy gradient.f )
 
   /** Possible step widths in this iteration.
     * Overwrite for different (incl dynamic) values */
-  val steps:Vec[R]= List(100,10,1,.1,.01,.001,.0001,.00001).map(real.apply)
+  val steps:Expr[Seq[R]] = List(100,10,1,.1,.01,.001,.0001,.00001).map(real.apply)
 
   /** Accept next candidate location?
     * Overwrite for different (incl. dynamic) tolerance levels. */
-  def stop(nextV:Vec[R]):Expr[Boolean] = value ~ gradient.f(nextV)
+  def stop(nextV:Vec[R]):Expr[Boolean] = value ~ nextV.map(gradient.f)
 
   /** Recursively descent
     * @return last step
     */
   @tailrec final def minimize:Descent[R]={
     val smallest = explore
-    if ( engine(stop(smallest)) ) return this
+    // @todo implement w/o engine
+    val e = new Engine()
+    if ( e(stop(smallest)) ) return this
     next(smallest).minimize
   }
 
   def maximize:Descent[R]={
-   throw UnsupportedOperationException
+   throw new UnsupportedOperationException
     //new Descent(-gradient,x,None).minimize
   }
 

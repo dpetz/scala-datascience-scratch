@@ -19,11 +19,9 @@ object Functions {
     sum(v * w)
   }
 
-  def norm[R: Real](p: Int)(v: E[S[R]]): Expr[R] =
-    Named("norm") {
-      p match {
-        case 1 => v.each[R](abs).all(sum) //
+  def norm[R: Real](p: Int)(v: Vec[R]): Expr[R] =
+    Named("norm") { p match {
+        case 1 => v.each(abs).all(sum)
         case p => v.each((x: E[R]) => x ** p).all(sum) ** (1 / p)
-      }
-    }
+    }}
 }

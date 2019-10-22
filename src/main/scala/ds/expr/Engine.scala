@@ -2,11 +2,13 @@ package ds.expr
 
 import ds.matrix.Matrix
 import ds.num.Real
+import ds.matrix.Implicits._
 
 
 /** Engine for `Real` arithmetic*/
 class Engine(val symbols:Map[Symbol[_],_] = Map.empty) {
 
+  type E[T] = Expr[T]
 
   // @todo cache expensive computations
   def apply[A](expr: Expr[A]): A = expr match {
@@ -24,7 +26,7 @@ class Engine(val symbols:Map[Symbol[_],_] = Map.empty) {
     val vars = term.tail
 
     func.asInstanceOf[String] match {
-      case "ds.matrix.timesMatrix" => ds.matrix.times(real)(
+      case "ds.matrix.timesMatrix" => times(real)(
         vars.head.asInstanceOf[E[Matrix[R]]], vars(1).asInstanceOf[E[Matrix[R]]]
       )
     }

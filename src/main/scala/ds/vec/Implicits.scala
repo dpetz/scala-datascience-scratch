@@ -1,7 +1,7 @@
 package ds.vec
 
 import ds.expr.Infix.{Div, Minus, Plus, Times}
-import ds.expr.{Expr, Term}
+import ds.expr.{Const, Expr, Term}
 import ds.num.Real
 import ds.expr.Implicits._
 import ds.num.Implicits._
@@ -19,6 +19,8 @@ object Implicits {
   implicit def minusVec[R:Real]: Minus[S[R]] = (v,w) => (v zip w)(_ - _)
 
   implicit def seq2Vec[T](s:Seq[T]): Vec[T] = Vec(expr(s))
+
+  implicit def seq2Expr[T](s:Seq[T]): Vec[T] = expr(s)
 
   implicit def vec2Expr[T](v:Vec[T]): Expr[Seq[T]] = v.expr_v
 

@@ -4,7 +4,6 @@ import ds.calc.Gradient.Direction
 import ds.expr.Expr
 import ds.num.Real
 import ds.vec.Implicits._
-import ds.expr.Functions._
 import ds.expr.Implicits._
 import ds.num.Implicits._
 import ds.vec.Vec
@@ -19,8 +18,8 @@ import ds.vec.Vec
 case class Gradient[R:Real](f:Seq[R]=>R, pd:Direction[R] => Expr[R]) extends (Vec[R] => Vec[R])  {
 
   /** Computes full (= across all indices) gradient at v  */
-  def apply(v:Vec[R]):Vec[R] = transform(v) { s =>
-    (s indices) map { i:Int => pd(Direction(s,i))}
+  def apply(v:Vec[R]):Vec[R] = v.flatMap { s =>
+    lift((s indices) map { i:Int => pd(Direction(Vec(s),i))})
   }
 
   /** Negate function and partial derivatives */
@@ -32,7 +31,7 @@ case class Gradient[R:Real](f:Seq[R]=>R, pd:Direction[R] => Expr[R]) extends (Ve
 object Gradient {
 
   /** A position vector + a direction index to request a partial derivative */
-  case class Direction[R](v:Seq[R], i:Int)
+  case class Direction[R](v:Vec[R], i:Int)
   // @todo How to make this an expression and still type check in Gradient constructor
 
   /** Estimates gradient. Computational expensive (2n function evaluations)
@@ -42,7 +41,7 @@ object Gradient {
   def estimate[R](f:Seq[R]=>R)(implicit real:Real[R]):Gradient[R] =
     Gradient(f, { case Direction(v,i) =>
       val w = v update (i, (x:Expr[R]) => x + real.precision )
-      ( f(w) - f(v) ) / real.precision
+      ( w.map(f) - w.map(f) ) / real.precision // @todo ugly because f not accepting Expr
     })
 
 }

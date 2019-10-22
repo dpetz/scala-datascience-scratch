@@ -2,7 +2,7 @@ package ds.matrix
 
 import ds.expr.{Expr, Term}
 import ds.num.Real
-import parser.Json
+import parser.{Json, Parser}
 
 
 object Functions {
@@ -36,7 +36,7 @@ object Functions {
   /** Parses Json array of arrays into a ``Seq[Seq[R`` */
   private def parse[R](json:String)(implicit real:Real[R]):Seq[Seq[R]] = {
 
-    val parser = Json.Parsers.arrOf(parser)
+    val parser = Json.Parsers.arrOf(Json.Parsers.arr)
 
     Json(json, parser).toArr.values.map {
       _.toArr.values.map {
