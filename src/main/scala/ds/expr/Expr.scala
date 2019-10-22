@@ -21,9 +21,12 @@ sealed trait Expr[X] {
 
   def +(y:E)(implicit op:Plus[X]):E = op(this,y)
 
-  def unary_-(y:E)(implicit op:Negate[X]):E = op(this,y)
+  def ~(y:E)(implicit op:Approx[X]):Expr[Boolean] = op(this,y)
 
-  def unary_/(y:E)(implicit op:Inverse[X]):E = op(this,y)
+
+  def unary_-(implicit op:Negate[X]):E = op(this)
+
+  def unary_/(implicit op:Inverse[X]):E = op(this)
 
 
   // For Scala for comprehensions
@@ -44,9 +47,6 @@ case class Named[T](id:String)(expr:Expr[T]) extends Expr[T] {
 
 case class Symbol[T](id: String) extends Expr[T] {
   def eval: Engine => T = throw new UnsupportedOperationException
-
-
-
   // @todo implement Sym.eval
 }
 

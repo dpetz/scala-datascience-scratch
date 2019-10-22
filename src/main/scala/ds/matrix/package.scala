@@ -4,7 +4,9 @@ import ds.expr.Infix.TimesTimes
 import ds.expr._
 import ds.vec._
 import ds.num.Real
-import parser.Json
+
+import parser.{Json, Parser}
+
 
 package object matrix {
 
@@ -37,7 +39,7 @@ package object matrix {
   /** Parses Json array of arrays into a ``Seq[Seq[R`` */
   private def parse[R](json:String)(implicit real:Real[R]):Seq[Seq[R]] = {
 
-    val parser = Json.Parsers.arrOf(Vec.parser)
+    val parser = Json.Parsers.arrOf(ds.vec.parser)
 
     Json(json, parser).toArr.values.map {
       _.toArr.values.map {

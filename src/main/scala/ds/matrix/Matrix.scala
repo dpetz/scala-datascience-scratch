@@ -17,5 +17,5 @@ trait Matrix[R] {
 
 object Matrix {
 
-  def apply[T](data:Seq[Seq[T]]):Matrix[T] = throw UnsupportedOperationException
+  def apply[T](data:Seq[Seq[T]]):Matrix[T] = throw new UnsupportedOperationException
 }

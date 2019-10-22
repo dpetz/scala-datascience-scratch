@@ -21,10 +21,15 @@ package object num {
 
   def abs[R](implicit real:Real[R]):E[R]=>E[R] = lift(real.abs)
 
-  implicit def inverse[R:Real]:E[R]=>E[R] = implicitly[Real[R]].one / _
+  implicit def inverse[R:Real](implicit real:Real[R]):Inverse[R] =
+    _ flatMap { real.div(real.one, _) }
 
-  implicit def negate[R:Real]:Negate[R] = implicitly[Real[R]].zero - _
+  implicit def negate[R:Real](implicit real:Real[R]):Negate[R] =
+    _ flatMap { real.minus(real.zero, _) }
 
+
+  implicit def approx[R](implicit real:Real[R]): Approx[R] =
+    (ex, ey) => lift[R, R, Boolean](real.approx)(ex, ey)
 
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
   implicit def big2Const[R](x: BigDecimal)(implicit real: Real[R]):Const[R] = Const(real(x))

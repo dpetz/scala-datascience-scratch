@@ -18,6 +18,9 @@ import ds.expr._
   */
  class Descent [R:Real] (val gradient:Gradient[R], val x:Vec[R], val previous:Option[Descent[R]]=None) {
 
+
+ val engine:Engine = new Engine() // @todo implement w/o engine
+
   /** Current value at */
   def value:R=gradient.f(x)
 
@@ -26,23 +29,23 @@ import ds.expr._
 
   /** Explore steps and return position with lowest value. */
   def explore():Vec[R] =
-    seq2Vec( transform[Seq[Seq[R]],Seq[R]](steps.map(s => x + (gradient(x) * s))) { candidates:Seq[Seq[R]] =>
+    transform(steps.map(s => x + (gradient(x) * s))) { candidates:Seq[Seq[R]] =>
        candidates minBy { gradient.f } //recode (NaN, PositiveInfinity) }
-  })
+    }
   /** Possible step widths in this iteration.
     * Overwrite for different (incl dynamic) values */
-  val steps:Vec[R]= seq2Vec(List(100,10,1,.1,.01,.001,.0001,.00001))
+  val steps:List[Double]= List(100,10,1,.1,.01,.001,.0001,.00001)
 
   /** Accept next candidate location?
     * Overwrite for different (incl. dynamic) tolerance levels. */
-  def stop(nextV:Vec[R]):Boolean= value ~ gradient.f(nextV)
+  def stop(nextV:Vec[R]):Expr[Boolean] = value ~ gradient.f(nextV)
 
   /** Recursively descent
     * @return last step
     */
   @tailrec final def minimize:Descent[R]={
     val smallest = explore()
-    if ( stop(smallest) ) return this
+    if ( engine(stop(smallest)) ) return this
     next(smallest).minimize
   }
 

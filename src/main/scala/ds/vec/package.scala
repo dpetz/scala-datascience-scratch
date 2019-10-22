@@ -3,7 +3,7 @@ package ds
 import ds.expr.Infix._
 import ds.expr._
 import ds.num._
-import ds.vec.Vec
+
 import parser.{Json, Parser}
 
 package object vec {
@@ -17,9 +17,9 @@ package object vec {
 
   def dot[R:Real](v:E[S[R]],w:E[S[R]]): E[R] = Named("dot") { sum( v * w ) }
 
-  def norm[R](p:Expr[R], v:E[S[R]])(implicit r:Real[R]):Expr[R] =
+  def norm[R:Real](p:Int)(v:E[S[R]]):Expr[R] =
     Named("norm") { p match {
-      case r.one => v.each(ds.num.abs).all(sum)
+      case 1 => v.each(abs).all(sum)
       case p => v.each((x:E[R]) => x ** p).all(sum) ** (1 / p)
     }}
 
@@ -45,6 +45,9 @@ package object vec {
     /** map */
     def each[Y](f:E[Y]=>E[Y]):E[S[Y]] =
       Term(expr_v,f) { e => e(expr_v) map (x => e(f(x))) }
+
+
+
     /** reduce */
     def all[Y](f:E[Seq[X]]=>E[Y]):E[Y] = f(expr_v)
 
@@ -60,12 +63,18 @@ package object vec {
           e(expr_v).view.updated(i,e(f(e(expr_v)(i))))
       }
 
+    def *(x:Expr[X])(implicit real:Real[X]):E[S[X]] = each(_ * x)
+
+    def +(x:Expr[X])(implicit real:Real[X]):E[S[X]] = each(_ + x)
+
+
   }
 
+  val parser: Parser[Json.Arr] = Json.Parsers.arrOf(Json.Parsers.num)
 
   /** Parse from json string */
   def vec[R:Real](json:String): Term[S[R]] = Term("ds.vec.Vec",json) { _ =>
-    val parser: Parser[Json.Arr] = Json.Parsers.arrOf(Json.Parsers.num)
+
     val r = implicitly[Real[R]]
 
     Json(json, parser).toArr.values.map { j: Json => r.json(j.toNum) }
