@@ -1,6 +1,5 @@
 package ds.num
 
-import ds.vec.VecFunctions
 import parser.Json
 
 /** Abstracts numeric operations from a specific number representation

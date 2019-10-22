@@ -1,28 +1,26 @@
 package ds
-import ds.expr.{Engine, Expr}
+import ds.expr._
+import ds.expr._
 
 package object num {
 
+  implicit def plus[R](implicit real:Real[R]): Plus[R, R, R] =
+    (ex, ey) => lift[R, R, R](real.plus)(ex, ey)
+
+  implicit def div[R](implicit real:Real[R]): Div[R, R, R] =
+    (ex, ey) => lift[R, R, R](real.power)(ex, ey)
+
+  implicit def power[R](implicit real:Real[R]):TimesTimes[R,R,R] =
+    (ex, ey) => lift[R, R, R](real.power)(ex, ey)
+
+  implicit def abs[R](implicit real:Real[R]):E[R]=>E[R] = lift(real.abs)
+
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
-  implicit class BigScalar[R: Real](x: BigDecimal)(implicit real: Real[R]) extends Scalar[R] {
-    def eval(e: Engine): R = real(x)
-  }
+  implicit def big2Const[R](x: BigDecimal)(implicit real: Real[R]):Const[R] = real(x)
 
   /** Convert ``Ìnt``, ``Double`` etc. to ``Expr`` on the fly */
-  implicit class ValScalar[R: Real](x: AnyVal)(implicit real: Real[R]) extends Scalar[R] {
-    def eval(e: Engine): R = real(x)
-  }
+  implicit def val2Cons[R](x: AnyVal)(implicit real: Real[R]):Const[R] = real(x)
 
-  implicit def val2Real[R](x: AnyVal)(implicit real: Real[R]):R = real(x)
 
-  /** Convert ``Ìnt`` to ``Expr`` on the fly */
-  implicit class RealScalar[R: Real](x: R) extends Scalar[R] {
-    def eval(e: Engine): R = x
-  }
-
-  implicit def expr2Scalar[R:Real](expr: Expr[R]):Scalar[R] = new Scalar[R] {
-    def eval(e: Engine): R = e(expr)
-    override def inputs = List(expr)
-  }
 
 }
