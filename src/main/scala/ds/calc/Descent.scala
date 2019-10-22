@@ -1,10 +1,9 @@
 package ds.calc
 
-import ds.vec._
-
 import scala.annotation.tailrec
-import ds.vec.Vec._
-import ds.num.Real._
+import ds.vec._
+import ds.num._
+import ds.expr._
 
 
 
@@ -27,11 +26,12 @@ import ds.num.Real._
 
   /** Explore steps and return position with lowest value. */
   def explore():Vec[R] =
-    steps map { (x + gradient(x)) * _ } minBy { gradient.f } //recode (NaN, PositiveInfinity) }
-
+    seq2Vec( transform[Seq[Seq[R]],Seq[R]](steps.map(s => x + (gradient(x) * s))) { candidates:Seq[Seq[R]] =>
+       candidates minBy { gradient.f } //recode (NaN, PositiveInfinity) }
+  })
   /** Possible step widths in this iteration.
     * Overwrite for different (incl dynamic) values */
-  val steps:Vec[R]=Vec(List(100,10,1,.1,.01,.001,.0001,.00001))
+  val steps:Vec[R]= seq2Vec(List(100,10,1,.1,.01,.001,.0001,.00001))
 
   /** Accept next candidate location?
     * Overwrite for different (incl. dynamic) tolerance levels. */
@@ -47,7 +47,8 @@ import ds.num.Real._
   }
 
   def maximize:Descent[R]={
-    new Descent(-gradient,x,None).minimize
+   throw UnsupportedOperationException
+    //new Descent(-gradient,x,None).minimize
   }
 
   /* Iterate beginning first until this step */

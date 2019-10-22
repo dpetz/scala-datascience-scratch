@@ -7,29 +7,30 @@ import ds.expr.Infix._
  * Monadic with ``expr`` as unit and  ``next`` as flatMap */
 sealed trait Expr[X] {
 
-  type E[T] = Expr[T]
+  type E = Expr[X]
 
   def eval:Engine=>X
 
-  def **(y:E[X])(implicit op:TimesTimes[X]):E[X] = op(this,y)
+  def **(y:E)(implicit op:TimesTimes[X]):E = op(this,y)
 
-  def *(y:E[X])(implicit op:Times[X]):E[X] = op(this,y)
+  def *(y:E)(implicit op:Times[X]):E = op(this,y)
 
-  def /(y:E[X])(implicit op:Div[X]):E[X] = op(this,y)
+  def /(y:E)(implicit op:Div[X]):E = op(this,y)
 
-  def -(y:E[X])(implicit op:Minus[X]):E[X] = op(this,y)
+  def -(y:E)(implicit op:Minus[X]):E = op(this,y)
 
-  def +(y:E[X])(implicit op:Plus[X]):E[X] = op(this,y)
+  def +(y:E)(implicit op:Plus[X]):E = op(this,y)
 
-  def unary_-(y:E[X])(implicit op:Negate[X]):E[X] = op(this,y)
+  def unary_-(y:E)(implicit op:Negate[X]):E = op(this,y)
 
-  def unary_/(y:E[X])(implicit op:Inverse[X]):E[X] = op(this,y)
+  def unary_/(y:E)(implicit op:Inverse[X]):E = op(this,y)
 
 
   // For Scala for comprehensions
-  def flatMap[X](f:X=>E[X]):E[X] = next(this,f)
+  def flatMap[Y](f:X=>Expr[Y]):Expr[Y] = transform(this)(f)
 
-  def map[Y](f:X=>Y):E[Y] = ds.expr.map(this,lift(f))
+  def map[Y](f:X=>Y):Expr[Y] = ds.expr.map(this,lift(f))
+
 
 }
 
@@ -37,8 +38,14 @@ case class Const[T](value: T) extends Expr[T] {
   def eval: Engine => T = _ => value
 }
 
+case class Named[T](id:String)(expr:Expr[T]) extends Expr[T] {
+  def eval: Engine => T = e => e(expr)
+}
+
 case class Symbol[T](id: String) extends Expr[T] {
   def eval: Engine => T = throw new UnsupportedOperationException
+
+
 
   // @todo implement Sym.eval
 }

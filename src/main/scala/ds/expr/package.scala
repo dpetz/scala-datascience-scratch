@@ -15,7 +15,7 @@ package object expr {
   //def id(s:String):String = s"${this.getClass.getName}.$s"
 
   /** flatMap */
-  def next[X,Y](expr:E[X], f:X=>E[Y]): E[Y] = Term("ds.exr.next",expr,f) {
+  def transform[X,Y](expr:E[X])(f:X=>E[Y]): E[Y] = Term("ds.expr.next",expr,f) {
     e => e(f(e(expr)))
   }
 
