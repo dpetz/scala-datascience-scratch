@@ -1,8 +1,10 @@
-package ds
+package ds.num
+import ds.expr.{Const, Expr}
 import ds.expr.Infix._
-import ds.expr._
+import ds.expr.Functions._
+import ds.expr.Implicits._
 
-package object num {
+object Implicits {
 
   implicit def plus[R](implicit real:Real[R]): Plus[R] =
     (ex, ey) => lift[R, R, R](real.plus)(ex, ey)
@@ -18,11 +20,6 @@ package object num {
 
   implicit def power[R](implicit real:Real[R]):TimesTimes[R] =
     (ex, ey) => lift[R, R, R](real.power)(ex, ey)
-
-  def abs[R](implicit real:Real[R]):E[R]=>E[R] = lift(real.abs)
-
-  implicit def inverse[R:Real](implicit real:Real[R]):Inverse[R] =
-    _ flatMap { real.div(real.one, _) }
 
   implicit def negate[R:Real](implicit real:Real[R]):Negate[R] =
     _ flatMap { real.minus(real.zero, _) }

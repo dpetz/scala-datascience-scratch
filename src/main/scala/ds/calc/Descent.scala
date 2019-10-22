@@ -1,10 +1,14 @@
 package ds.calc
 
-import scala.annotation.tailrec
-import ds.vec._
-import ds.num._
-import ds.expr._
+import ds.expr.{Engine, Expr}
+import ds.num.Real
+import ds.vec.Implicits._
+import ds.expr.Implicits._
+import ds.num.Implicits._
+import ds.vec.Vec
+import ds.expr.Functions._
 
+import scala.annotation.tailrec
 
 
 /**
@@ -18,6 +22,7 @@ import ds.expr._
   */
  class Descent [R:Real] (val gradient:Gradient[R], val x:Vec[R], val previous:Option[Descent[R]]=None) {
 
+ val real = implicitly[Real[R]]
 
  val engine:Engine = new Engine() // @todo implement w/o engine
 
@@ -28,13 +33,12 @@ import ds.expr._
   def next(x:Vec[R])= new Descent(gradient,x,Some(this))
 
   /** Explore steps and return position with lowest value. */
-  def explore():Vec[R] =
-    transform(steps.map(s => x + (gradient(x) * s))) { candidates:Seq[Seq[R]] =>
-       candidates minBy { gradient.f } //recode (NaN, PositiveInfinity) }
-    }
+  def explore:Vec[R] =
+    steps.each { step:Expr[R] => x + (gradient(x) * step) }.map( _ minBy gradient.f)
+
   /** Possible step widths in this iteration.
     * Overwrite for different (incl dynamic) values */
-  val steps:List[Double]= List(100,10,1,.1,.01,.001,.0001,.00001)
+  val steps:Vec[R]= List(100,10,1,.1,.01,.001,.0001,.00001).map(real.apply)
 
   /** Accept next candidate location?
     * Overwrite for different (incl. dynamic) tolerance levels. */
@@ -44,7 +48,7 @@ import ds.expr._
     * @return last step
     */
   @tailrec final def minimize:Descent[R]={
-    val smallest = explore()
+    val smallest = explore
     if ( engine(stop(smallest)) ) return this
     next(smallest).minimize
   }

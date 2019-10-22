@@ -1,6 +1,7 @@
 package ds.expr
 
 import ds.expr.Infix._
+import ds.expr.Functions._
 
 
 /** Evaluates via  [[Engine]] to result of type ``X``.
@@ -26,13 +27,13 @@ sealed trait Expr[X] {
 
   def unary_-(implicit op:Negate[X]):E = op(this)
 
-  def unary_/(implicit op:Inverse[X]):E = op(this)
+
 
 
   // For Scala for comprehensions
   def flatMap[Y](f:X=>Expr[Y]):Expr[Y] = transform(this)(f)
 
-  def map[Y](f:X=>Y):Expr[Y] = ds.expr.map(this,lift(f))
+  def map[Y](f:X=>Y):Expr[Y] = ds.expr.Functions.map(this,lift(f))
 
 
 }

@@ -1,14 +1,11 @@
-package ds
+package ds.matrix
 
-import ds.expr.Infix.TimesTimes
-import ds.expr._
-import ds.vec._
+import ds.expr.{Expr, Term}
 import ds.num.Real
+import parser.Json
 
-import parser.{Json, Parser}
 
-
-package object matrix {
+object Functions {
 
   type M[T] = Matrix[T]
   type E[T] = Expr[T]
@@ -39,7 +36,7 @@ package object matrix {
   /** Parses Json array of arrays into a ``Seq[Seq[R`` */
   private def parse[R](json:String)(implicit real:Real[R]):Seq[Seq[R]] = {
 
-    val parser = Json.Parsers.arrOf(ds.vec.parser)
+    val parser = Json.Parsers.arrOf(parser)
 
     Json(json, parser).toArr.values.map {
       _.toArr.values.map {
@@ -48,9 +45,6 @@ package object matrix {
     }.toVector
   }
 
-  implicit def times[R:Real]:TimesTimes[M[R]] =
-    (em1, em2) => Term("ds.matrix.timesMatrix",em1,em2) { e =>
-      Matrix(e(em1).rows map (m1_row => e(em2).columns map (m2_col => e(dot(m1_row, m2_col)))))
-    }
+
 
 }

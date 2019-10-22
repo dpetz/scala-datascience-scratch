@@ -1,16 +1,9 @@
-package ds
+package ds.expr
 
 
-package object expr {
+ object Functions {
 
-  type E[T] = Expr[T]
-
-  implicit def str2Sym[T](s:String): Symbol[T] = Symbol(s)
-
-  implicit def char2Sym[T](c:Char): Symbol[T] = Symbol(c.toString)
-
-  /** ``Expr``'s monadic unit. */
-  implicit def expr[T](t:T): Const[T] = Const(t)
+   type E[T] = Expr[T]
 
   //def id(s:String):String = s"${this.getClass.getName}.$s"
 

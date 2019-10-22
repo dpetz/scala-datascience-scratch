@@ -1,9 +1,14 @@
 package ds.calc
 
 import ds.calc.Gradient.Direction
-import ds.expr._
-import ds.num._
-import ds.vec._
+import ds.expr.Expr
+import ds.num.Real
+import ds.vec.Implicits._
+import ds.expr.Functions._
+import ds.expr.Implicits._
+import ds.num.Implicits._
+import ds.vec.Vec
+
 
 
 

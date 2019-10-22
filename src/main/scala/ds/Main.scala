@@ -2,7 +2,7 @@ package ds
 
 import ds.expr.Engine
 import parser.Json
-import ds.matrix._
+import ds.matrix.Functions._
 
 object Main extends App {
 

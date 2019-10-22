@@ -12,7 +12,6 @@ object Infix {
   trait Times[T] extends Binary[T]
 
   trait Negate[T] extends (Expr[T]=>Expr[T])
-  trait Inverse[T] extends (Expr[T]=>Expr[T])
 
   trait Approx[T] extends Relation[T]
 }
