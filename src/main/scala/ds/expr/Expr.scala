@@ -24,18 +24,12 @@ sealed trait Expr[X] {
 
   def ~(y:E)(implicit op:Approx[X]):Expr[Boolean] = op(this,y)
 
-
   def unary_-(implicit op:Negate[X]):E = op(this)
-
-
-
 
   // For Scala for comprehensions
   def flatMap[Y](f:X=>Expr[Y]):Expr[Y] = transform(this)(f)
 
   def map[Y](f:X=>Y):Expr[Y] = ds.expr.Functions.map(this,lift(f))
-
-
 }
 
 case class Const[T](value: T) extends Expr[T] {

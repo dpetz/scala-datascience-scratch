@@ -9,6 +9,8 @@ case class Vec[X](expr_v:Expr[Seq[X]]) {
   type E[R] = Expr[R]
   type S[R] = Seq[R]
 
+
+
   /** map */
   def each[Y](f:E[X]=>E[Y]):E[S[Y]] =
     Term("each",expr_v,f) { e => e(expr_v) map (x => e(f(expr(x)))) }
