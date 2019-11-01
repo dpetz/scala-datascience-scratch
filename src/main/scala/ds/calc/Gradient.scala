@@ -15,7 +15,7 @@ import ds.vec.Vec
   * Estimated via difference quotient unless provided analytically
   * @param pd ith partial difference quotient of f at v
   * */
-case class Gradient[R:Real](f:Seq[R]=>R, pd:Direction[R] => Expr[R]) extends (Vec[R] => Vec[R])  {
+case class Gradient[R:Real](f:Vec[R]=>Expr[R], pd:Direction[R] => Expr[R]) extends (Vec[R] => Vec[R])  {
 
   /** Computes full (= across all indices) gradient at v  */
   def apply(v:Vec[R]):Vec[R] = v.flatMap { s =>
@@ -38,10 +38,10 @@ object Gradient {
     * and estimation error can be substantial, see Gradient.test
     * The tiny constant to approximate limit for difference quotient is taken from Precision.
     * */
-  def estimate[R](f:Seq[R]=>R)(implicit real:Real[R]):Gradient[R] =
-    Gradient(f, { case Direction(v,i) =>
+  def estimate[R](f:Vec[R]=>Expr[R])(implicit real:Real[R]):Gradient[R] =
+    Gradient[R](f, { case Direction(v,i) =>
       val w = v update (i, (x:Expr[R]) => x + real.precision )
-      ( w.map(f) - w.map(f) ) / real.precision // @todo ugly because f not accepting Expr
+      ( f(v) - f(w) ) / real.precision
     })
 
 }

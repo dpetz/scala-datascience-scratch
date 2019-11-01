@@ -1,11 +1,10 @@
-package ds.cas
+package ds.lab
 
-import ds.cas.Test.{Evaluates, Real}
-import ds.num.BigReal.R
+import ds.lab.MonadicTransformers._
 
 import scala.math.Numeric.BigDecimalIsFractional
 
-object Test {
+object MonadicTransformers {
 
   trait Expr
 
@@ -58,15 +57,17 @@ object Test {
      e => e[Seq[Real]](v).zip(e(w)).map( x => op(x._1,x._2))
     ) with Vec
 
-  case class ForEach(v:Vec,f:Real=>Unit)  extends Evaluates (
-    e => Map()
+  case class ForEach(v:Vec,f:Real=>Unit) extends Evaluates (
+    _ => Map(v, f andThen {_ => Zero })
   ) with Vec
 
   case class Fold(v:Vec, start:Real, op:(Real, Real)=>Real) extends Evaluates (
     e => {
-      val collector = start
-      Map(v,
-        (next:Real) => collector = op(collector,next); collector)
+      var collector = start
+      Map(v, (next:Real) => {
+          collector = op(collector,next)
+          collector
+        })
 
 
     }
@@ -85,20 +86,23 @@ object Test {
       def compare(x:BigDecimal, y:BigDecimal):Int = (x - y).toInt
     }
 
-    def apply(v:Vec): Seq[Real]
+    def apply(v:Vec): Seq[Real] = ???
 
-    def apply[T](expr:Expr): T = expr match {
+    def apply[T](expr:Expr): T = ???
+    /* @todo cannot convert results to T
+    expr match {
       case _:Primitive => {
-        case Plus(x,y) => fractional.plus(self(x),self(y))
+        case Plus(x,y) => fractional.plus(self[BigDecimal](x),self(y))
         case Terminal(value) => value
         case _ => throw new UnsupportedOperationException(self + "does not support Primitive " + expr)
       }
       case c:Composed => this(c.expr)
-      case e:Evaluates[T] => e.eval(self)
+      case e:Evaluates[_] => e.eval(self)
       case _ => throw new UnsupportedOperationException(self + "does not support " + expr)
-
-
     }
+      */
+
+
 
   }
 

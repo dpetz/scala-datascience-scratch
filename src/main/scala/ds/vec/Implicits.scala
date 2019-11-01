@@ -22,7 +22,7 @@ object Implicits {
 
   implicit def seq2Expr[T](s:Seq[T]): Vec[T] = expr(s)
 
-  implicit def vec2Expr[T](v:Vec[T]): Expr[Seq[T]] = v.expr_v
+  implicit def vec2Expr[T](v:Vec[T]): Expr[Seq[T]] = v.ex
 
   implicit def expr2Vec[T](e:E[S[T]]): Vec[T] = Vec(e)
 

@@ -1,18 +1,22 @@
-import ds.num.DoubleReal._
-import ds.vec.Vec._
 import ds.calc.{Descent, Gradient}
+import ds.num.DoubleReal._
+import ds.vec.Vec
+import ds.vec.Implicits._
+import ds.expr.Engine
 
 class Descent extends ds.PropertySpec {
 
   val dim:Int = 10
   val dist:Int = 100
 
+  val e = new Engine
+
   "$dim-dim v*v" should "descend towards (0,..,0)." in {
 
-    val v :Vec[R] = Seq.fill(dim)(Real.random(-dist,dist))
+    val v :Vec[Double] = seq2Vec(Seq.fill(dim)(Real.random(-dist,dist)))
     Given("Random start coordinates in [-$dist,$dist): $v")
 
-    val g = Gradient { v => v dot v } { d => 2 * d.v(d.i) }
+    val g = Gradient[Double] { v => v dot v) } { d => 2 * d.v(d.i) }
       
     val min = Descent(g,v).minimize
     

@@ -25,18 +25,18 @@ import scala.annotation.tailrec
  val real = implicitly[Real[R]]
 
   /** Current value at */
-  def value:Expr[R] = x.map(gradient.f)
+  def value:Expr[R] = gradient.f(x)
 
   /** New [[Descent]] object at location x. Overwrite to create instance of subclass. */
   def next(x:Vec[R])= new Descent(gradient,x,Some(this))
 
   /** Explore steps and return position with lowest value. */
   def explore:Vec[R] =
-    steps.each { step:Expr[R] => x + (gradient(x) * step) }.map( _ minBy gradient.f )
+    steps.each { step:Expr[R] => x + (gradient(x) * step) }.map( _ minBy { v => gradient.f(seq2Vec(v))} )
 
   /** Possible step widths in this iteration.
     * Overwrite for different (incl dynamic) values */
-  val steps:Expr[Seq[R]] = List(100,10,1,.1,.01,.001,.0001,.00001).map(real.apply)
+  val steps:Vec[R] = seq2Vec(List(100,10,1,.1,.01,.001,.0001,.00001).map(real.apply))
 
   /** Accept next candidate location?
     * Overwrite for different (incl. dynamic) tolerance levels. */

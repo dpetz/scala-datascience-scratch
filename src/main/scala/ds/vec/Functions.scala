@@ -13,15 +13,15 @@ object Functions {
 
 
   def sum[R](v: E[S[R]])(implicit real: Real[R]): E[R] =
-    Term("sum", v) { e => e(v).foldLeft(real.zero)(real.plus) }
+    Term("ds.vec.sum", v) { e => e(v).foldLeft(real.zero)(real.plus) }
 
-  def dot[R: Real](v: E[S[R]], w: E[S[R]]): E[R] = Named("dot") {
+  def dot[R: Real](v: E[S[R]], w: E[S[R]]): E[R] = Named("ds.vec.dot") {
     sum(v * w)
   }
 
-  def norm[R: Real](p: Int)(v: Vec[R]): Expr[R] =
-    Named("norm") { p match {
-        case 1 => v.each(abs).all(sum)
-        case p => v.each((x: E[R]) => x ** p).all(sum) ** (1 / p)
+  def norm[R](p: Int)(v: Vec[R])(implicit real:Real[R]): Expr[R] =
+    Named("ds.vec.norm") { p match {
+        case 1 => v.each(abs).all(sum[R])
+        case p => v.each((x: E[R]) => x ** p).all(sum[R]) ** (1 / p)
     }}
 }
