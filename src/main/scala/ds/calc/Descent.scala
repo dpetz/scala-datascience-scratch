@@ -16,27 +16,42 @@ import scala.annotation.tailrec
   * Algorithm can be advanced step-wise via [[next]] or until convergence via [[minimize]] and [[maximize]].
   * [[history]] collects all steps so far as sequence .
   *
-  * @param gradient gradient including function
+  * @param gradient gradient (includes function)
   * @param x Current x/coordinates
   * @param previous Previous descent step (if any)
   */
- class Descent [R:Real] (val gradient:Gradient[R], val x:Vec[R], val previous:Option[Descent[R]]=None) {
+ case class Descent [R:Real] ( gradient:Gradient[R],  x:Vec[R],  previous:Option[Descent[R]]=None) {
 
  val real = implicitly[Real[R]]
 
-  /** Current value at */
+  /** Current value at ``x`` */
   def value:Expr[R] = gradient.f(x)
 
+  implicit def some[T](obj:T):Option[T] = Some(obj)
+
   /** New [[Descent]] object at location x. Overwrite to create instance of subclass. */
-  def next(x:Vec[R])= new Descent(gradient,x,Some(this))
+  def next(x:Vec[R])=  Descent(gradient,x,this)
 
-  /** Explore steps and return position with lowest value. */
-  def explore:Vec[R] =
-    steps.each { step:Expr[R] => x + (gradient(x) * step) }.map( _ minBy { v => gradient.f(seq2Vec(v))} )
-
-  /** Possible step widths in this iteration.
-    * Overwrite for different (incl dynamic) values */
+  /** Possible step sizes in this iteration.
+    * Overwrite for different (eg. dynamic) values */
   val steps:Vec[R] = seq2Vec(List(100,10,1,.1,.01,.001,.0001,.00001).map(real.apply))
+
+
+  /** Explore steps and return position with lowest value.
+    * */
+  def explore:Vec[R] =
+  // First each transforms from Vec[R] to Vec[Seq[R]]]
+    steps.each { step:Expr[R] => x + (gradient(x) * step) }.each(
+     v:Expr[Seq[R]] =>  gradient.f(seq2Vec(v))
+
+    val candidates: E[E[S[R]]] = for (step <- steps.ex)
+      yield (x + (gradient(x) * step)
+
+
+  )
+
+    )
+
 
   /** Accept next candidate location?
     * Overwrite for different (incl. dynamic) tolerance levels. */

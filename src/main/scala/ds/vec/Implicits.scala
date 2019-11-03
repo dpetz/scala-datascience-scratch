@@ -24,7 +24,7 @@ object Implicits {
 
   implicit def vec2Expr[T](v:Vec[T]): Expr[Seq[T]] = v.ex
 
-  implicit def expr2Vec[T](e:E[S[T]]): Vec[T] = Vec(e)
+  implicit def expr2Vec[T](e:Expr[S[T]]): Vec[T] = Vec(e)
 
   implicit def lift[T](s:Seq[Expr[T]]): Expr[Seq[T]] = Term("ds.vec.lift",s) { e => s.map(e(_)) }
 

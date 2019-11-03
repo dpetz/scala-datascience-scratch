@@ -15,12 +15,14 @@ import ds.vec.Vec
   * Estimated via difference quotient unless provided analytically
   * @param pd ith partial difference quotient of f at v
   * */
-case class Gradient[R:Real](f:Vec[R]=>Expr[R], pd:Direction[R] => Expr[R]) extends (Vec[R] => Vec[R])  {
+case class Gradient[R:Real](f:Vec[R]=>Scalar[R], pd:Direction[R] => Scalar[R]) extends (Vec[R] => Vec[R])  {
+
+
 
   /** Computes full (= across all indices) gradient at v  */
-  def apply(v:Vec[R]):Vec[R] = v.flatMap { s =>
+  def apply(v:Vec[R]):Vec[R] = Vec(v.flatMap { s =>
     lift((s indices) map { i:Int => pd(Direction(Vec(s),i))})
-  }
+  })
 
   /** Negate function and partial derivatives */
   //def unary_- : Gradient[R] = Gradient(-f,-pd)

@@ -2,7 +2,8 @@ package ds.expr
 
 object Implicits {
 
-  type E[T] = Expr[T]
+  type Scalar[R] = Expr[R]
+
 
   implicit def str2Sym[T](s:String): Symbol[T] = Symbol(s)
 

@@ -14,12 +14,13 @@ case class Vec[X](ex:Expr[Seq[X]]) {
   type S[R] = Seq[R]
 
 
+
   /** map */
   def each[Y](f:E[X]=>E[Y]):E[S[Y]] =
     Term("ds.vec.each",ex,f) { e => e(ex) map (x => e(f(expr(x)))) }
 
   //def each[Y](f:Y=>E[Y]):E[S[Y]] =
-  //  Term("each",expr_v,f) { e => e(expr_v) map (x => e(f(x))) }
+  //  Term("each",ex,f) { e => e(ex) map (x => e(f(x))) }
 
   /** reduce */
   def all[Y](f:E[Seq[X]]=>E[Y]):E[Y] = f(ex)
