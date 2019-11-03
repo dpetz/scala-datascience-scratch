@@ -32,9 +32,9 @@ object Implicits {
   implicit def big2Const[R](x: BigDecimal)(implicit real: Real[R]):Const[R] = Const(real(x))
 
   /** Convert ``Ìnt``, ``Double`` etc. to ``Expr`` on the fly */
-  implicit def val2Cons[R](x: AnyVal)(implicit real: Real[R]):Const[R] = Const(real(x))
+  implicit def valExpr[R](x: AnyVal)(implicit real: Real[R]):Const[R] = Const(real(x))
 
   /** Convert ``Ìnt``, ``Double`` etc. to ``Expr`` on the fly */
-  //implicit def real2Cons[R:Real](x: R):Const[R] = Const(x)
+  //implicit def realExpr[R:Real](x: R):Const[R] = Const(x)
 
 }

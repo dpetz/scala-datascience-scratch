@@ -1,11 +1,10 @@
 package ds.calc
 
-import ds.expr.{Engine, Expr}
+import ds.expr.{Engine, Expr, Term}
 import ds.num.Real
 import ds.vec.Implicits._
 import ds.expr.Implicits._
 import ds.num.Implicits._
-import ds.vec.Vec
 import ds.expr.Functions._
 
 import scala.annotation.tailrec
@@ -22,7 +21,7 @@ import scala.annotation.tailrec
   */
  case class Descent [R:Real] ( gradient:Gradient[R],  x:Vec[R],  previous:Option[Descent[R]]=None) {
 
- val real = implicitly[Real[R]]
+  private val real = implicitly[Real[R]]
 
   /** Current value at ``x`` */
   def value:Expr[R] = gradient.f(x)
@@ -34,28 +33,24 @@ import scala.annotation.tailrec
 
   /** Possible step sizes in this iteration.
     * Overwrite for different (eg. dynamic) values */
-  val steps:Vec[R] = seq2Vec(List(100,10,1,.1,.01,.001,.0001,.00001).map(real.apply))
+  val steps:Seq[R] = List(100,10,1,.1,.01,.001,.0001,.00001).map(real.apply)
 
 
   /** Explore steps and return position with lowest value.
     * */
-  def explore:Vec[R] =
-  // First each transforms from Vec[R] to Vec[Seq[R]]]
-    steps.each { step:Expr[R] => x + (gradient(x) * step) }.each(
-     v:Expr[Seq[R]] =>  gradient.f(seq2Vec(v))
+  def explore:Vec[R] = {
+    val candidates: Seq[Vec[R]] = steps.map ( (s:R) => x + (gradient(x) :* expr(s)) )
+     Term[Seq[R]]("ds.calc.Descent.explore",this) { e =>
+      e ( candidates minBy ((v:Vec[R]) => e(gradient.f(v))) )
+    }
+  }
 
-    val candidates: E[E[S[R]]] = for (step <- steps.ex)
-      yield (x + (gradient(x) * step)
 
-
-  )
-
-    )
 
 
   /** Accept next candidate location?
     * Overwrite for different (incl. dynamic) tolerance levels. */
-  def stop(nextV:Vec[R]):Expr[Boolean] = value ~ nextV.map(gradient.f)
+  def stop(nextV:Vec[R]):Expr[Boolean] = value ~ gradient.f(nextV)
 
   /** Recursively descent
     * @return last step
