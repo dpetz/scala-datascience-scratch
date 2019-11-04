@@ -28,6 +28,9 @@ object Implicits {
   implicit def approx[R](implicit real:Real[R]): Approx[R] =
     (ex, ey) => lift[R, R, Boolean](real.approx)(ex, ey)
 
+  implicit def compare[R](implicit real:Real[R]): Compare[R] =
+    (ex, ey) => expr(lift[R, R, Int](real.compare)(ex, ey))
+
   /** Convert ``Ìnt`` to ``Expr`` on the fly */
   implicit def big2Const[R](x: BigDecimal)(implicit real: Real[R]):Const[R] = Const(real(x))
 

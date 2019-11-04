@@ -12,6 +12,8 @@ class Descent extends ds.PropertySpec {
 
   val e = new Engine
 
+
+
   "$dim-dim v*v" should "descend towards (0,..,0)." in {
 
     val v :Vec[Double] = vec(Seq.fill(dim)(Real.random(-dist,dist)))

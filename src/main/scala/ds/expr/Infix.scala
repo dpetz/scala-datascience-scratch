@@ -14,4 +14,8 @@ object Infix {
   trait Negate[T] extends (Expr[T]=>Expr[T])
 
   trait Approx[T] extends Relation[T]
+
+  trait Compare[T] extends ((Expr[T],Expr[T])=>Expr[Int])
+
+
 }

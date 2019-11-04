@@ -8,8 +8,6 @@ import ds.matrix.Implicits._
 /** Engine for `Real` arithmetic*/
 class Engine(val symbols:Map[Symbol[_],_] = Map.empty) {
 
-  type E[T] = Expr[T]
-
   // @todo cache expensive computations
   def apply[A](expr: Expr[A]): A = expr match {
     case s: Symbol[A] => symbols(s).asInstanceOf[A]
@@ -19,7 +17,7 @@ class Engine(val symbols:Map[Symbol[_],_] = Map.empty) {
 
   /** Create Term by finding and bind evaluation code for ``args``.
     * */
-  def fromArgs[R](args: Product)(implicit real: Real[R]): E[_] = {
+  def fromArgs[R](args: Product)(implicit real: Real[R]): Expr[_] = {
 
     val term = List(args)
     val func = term.head
@@ -27,7 +25,7 @@ class Engine(val symbols:Map[Symbol[_],_] = Map.empty) {
 
     func.asInstanceOf[String] match {
       case "ds.matrix.timesMatrix" => times(real)(
-        vars.head.asInstanceOf[E[Matrix[R]]], vars(1).asInstanceOf[E[Matrix[R]]]
+        vars.head.asInstanceOf[Expr[Matrix[R]]], vars(1).asInstanceOf[Expr[Matrix[R]]]
       )
     }
     // @todo work for new identifiers using reflection

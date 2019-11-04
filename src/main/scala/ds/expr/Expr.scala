@@ -23,10 +23,25 @@ sealed trait Expr[X] {
 
   def ~(y:Expr[X])(implicit op:Approx[X]):Expr[Boolean] = op(this,y)
 
+  def <(y:Expr[X])(implicit op:Compare[X]):Expr[Boolean] = op(this,y).map(_ < 0)
+
+  def <=(y:Expr[X])(implicit op:Compare[X]):Expr[Boolean] = op(this,y).map(_ <= 0)
+
+  def ==(y:Expr[X])(implicit op:Compare[X]):Expr[Boolean] = op(this,y).map(_ = 0)
+
+  def >=(y:Expr[X])(implicit op:Compare[X]):Expr[Boolean] = op(this,y).map(_ >= 0)
+
+  def >(y:Expr[X])(implicit op:Compare[X]):Expr[Boolean] = op(this,y).map(_ > 0)
+
   def unary_-(implicit op:Negate[X]):Expr[X] = op(this)
 
   // For Scala for comprehensions
-  def flatMap[Y](f:X=>Expr[Y]):Expr[Y] = transform(this)(f)
+  def flatMap[Y](f:X=>Expr[Y]):Expr[Y] = Term("ds.expr.flatMap",this,f) {
+    e => e(f(e(this)))
+  }
+
+  /** Shorthand for flatMap */
+  //def >> [Y](f:X=>Expr[Y]):Expr[Y] = flatMap(f)
 
   def map[Y](f:X=>Y):Expr[Y] = ds.expr.Functions.map(this,lift(f))
 }

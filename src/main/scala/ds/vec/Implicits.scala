@@ -16,6 +16,8 @@ object Implicits {
 
     def apply(i:Int):Expr[X] = Term("ds.vec.apply",v,i) { e => e(v)(i) }
 
+    def size[R](implicit real:Real[R]):Expr[R] = Term("ds.vec.size",v){e => real(e(v).size)}
+
     /** map */
     def each[Y](f:Expr[X]=>Expr[Y]):Vec[Y] =
       Term("ds.vec.each",v,f) { e => e(v) map (x => e(f(expr(x)))) }
