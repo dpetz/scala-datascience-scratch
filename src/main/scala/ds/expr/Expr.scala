@@ -36,7 +36,7 @@ sealed trait Expr[X] {
   def unary_-(implicit op:Negate[X]):Expr[X] = op(this)
 
   // For Scala for comprehensions
-  def flatMap[Y](f:X=>Expr[Y]):Expr[Y] = Term("ds.expr.flatMap",this,f) {
+  def flatMap[Y](f:X=>Expr[Y]):Expr[Y] = Term("ds.expr.flatMap")(this,f) {
     e => e(f(e(this)))
   }
 
@@ -46,25 +46,31 @@ sealed trait Expr[X] {
   def map[Y](f:X=>Y):Expr[Y] = ds.expr.Functions.map(this,lift(f))
 }
 
+trait Expressible[T] extends Expr[T] {
+  def express:E[T]
+  def eval:Engine=>T = express.eval
+
+}
+
+/** Evaluates to ``value`` regardless of Engine */
 case class Const[T](value: T) extends Expr[T] {
   def eval: Engine => T = _ => value
 }
 
+/** Names an existing expression. */
 case class Named[T](id:String)(expr:Expr[T]) extends Expr[T] {
   def eval: Engine => T = e => e(expr)
 }
 
+/** Identifier that is replaced by ``Engine`` with context specific value at each evaluation. */
 case class Symbol[T](id: String) extends Expr[T] {
   def eval: Engine => T = throw new UnsupportedOperationException
   // @todo implement Sym.eval
 }
 
-case class Term[T](args: Product)(override val eval: Engine => T) extends Expr[T]
+case class Term[T](id:String)(args: Product)(override val eval: Engine => T) extends Expr[T]
 
 // Cannot assume ``List[ Expr[_] ]`` because arguments might include functions (eg. map)
-// @todo Good design to have a Product include both function identifier and arguments?
-
-
 
 object Expr {
   case class Exception(msg: String, e: Expr[_])

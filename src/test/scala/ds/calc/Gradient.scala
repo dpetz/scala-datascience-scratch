@@ -11,14 +11,12 @@ import org.scalacheck.Gen
 
 /**
   * Works surprisingly well for `ds.num.BigReal._` and surprisingly bad for `ds.num.DoubleReal._`
-  * Large `Double` are too sparse for gradient estimation so most partial derivatives are `0.0`.
+  * because large `Double`s are too sparse for gradient estimation so most partial derivatives are `0.0`.
   * @see https://github.com/rickynils/scalacheck/blob/master/doc/UserGuide.md
   */
 class Gradient extends ds.PropertySpec {
 
   val e = new Engine
-
-
 
   val polynomial_gradient:ds.calc.Gradient[BigDecimal] = ds.calc.Gradient {
     _ flatMap (  (s:Seq[R]) =>

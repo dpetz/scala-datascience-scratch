@@ -14,13 +14,15 @@ object Implicits {
   /** Wraps a ``Seq[X]`` for infix notations. */
   implicit class VecInfix[X](v:Vec[X]) {
 
-    def apply(i:Int):Expr[X] = Term("ds.vec.apply",v,i) { e => e(v)(i) }
+    def apply(i:Int):Expr[X] =
+      Term("ds.vec.apply")(v,i) { e => e(v)(i) }
 
-    def size[R](implicit real:Real[R]):Expr[R] = Term("ds.vec.size",v){e => real(e(v).size)}
+    def size[R](implicit real:Real[R]):Expr[R] =
+      Term("ds.vec.size")(v){e => real(e(v).size)}
 
     /** map */
     def each[Y](f:Expr[X]=>Expr[Y]):Vec[Y] =
-      Term("ds.vec.each",v,f) { e => e(v) map (x => e(f(expr(x)))) }
+      Term("ds.vec.each")(v,f) { e => e(v) map (x => e(f(expr(x)))) }
 
     //def each[Y](f:Y=>Expr[Y]):Vec[Y] =
     //  Term("each",ex,f) { e => e(ex) map (x => e(f(x))) }
@@ -30,7 +32,7 @@ object Implicits {
 
     /** Zip and apply binary operation */
     def zip[Y,Z](w:Vec[Y])(f:(Expr[X],Expr[Y])=>Expr[Z]): Term[Seq[Z]] =
-      Term("ds.vec.zip",v,w)(e => ( e(v) zip e(w) ) map (pair => e(f(pair._1,pair._2))))
+      Term("ds.vec.zip")(v,w)(e => ( e(v) zip e(w) ) map (pair => e(f(pair._1,pair._2))))
 
     def dot(w:Vec[X])(implicit real:Real[X]):Expr[X] = Functions.dot(v, w)
 
@@ -40,10 +42,9 @@ object Implicits {
       * @see https://www.scala-lang.org/api/2.12.4/scala/collection/SeqView.html
       */
     def update(i:Int, f:Expr[X]=>Expr[X]):Vec[X] =
-      Term("ds.vec.update",this,f){ e =>
+      Term("ds.vec.update")(this,f){ e =>
         e(v).view.updated(i,e(f(e(v)(i))))
       }
-
 
     def :*(x:Expr[X])(implicit real:Real[X]):Vec[X] = each(_ * x)
 
@@ -61,7 +62,7 @@ object Implicits {
 
   implicit def vec[T](s:Seq[T]): Vec[T] = expr(s)
 
-  implicit def lift[T](s:Seq[Expr[T]]): Vec[T] = Term("ds.vec.lift",s) { e => s.map(e(_)) }
+  implicit def lift[T](s:Seq[Expr[T]]): Vec[T] = Term("ds.vec.lift")(s) { e => s.map(e(_)) }
 
   implicit def convertElements[X,Y](s: Seq[X])(implicit f: X => Y):Seq[Y] = s.map(f)
 
