@@ -46,8 +46,10 @@ object Implicits {
         e(v).view.updated(i,e(f(e(v)(i))))
       }
 
+    /** Elementwise multiplication with a scalar. */
     def :*(x:Expr[X])(implicit real:Real[X]):Vec[X] = each(_ * x)
 
+    /** Elementwise addition of a scalar. */
     def :+(x:Expr[X])(implicit real:Real[X]):Vec[X] = each(_ + x)
 
   }

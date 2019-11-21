@@ -19,7 +19,6 @@ trait Real[R] extends scala.math.Fractional[R] {
   /** Convert from a value, like double or int*/
   def apply(x:AnyVal):R
 
-
   /** Convert from BigDecimal */
   def apply(b:BigDecimal):R
 
