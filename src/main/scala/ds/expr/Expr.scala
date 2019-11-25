@@ -12,6 +12,7 @@ sealed trait Expr[X] {
   def eval:Engine=>X
 
   def **(y:Expr[X])(implicit op:TimesTimes[X]):Expr[X] = op(this,y)
+  // @todo create term instead executing immediately
 
   def *(y:Expr[X])(implicit op:Times[X]):Expr[X] = op(this,y)
 
