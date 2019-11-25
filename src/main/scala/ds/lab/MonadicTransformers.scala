@@ -15,7 +15,6 @@ object MonadicTransformers {
   /** Engine knows how to evaluate */
   trait Primitive
 
-
   case class Decimal(bd:BigDecimal) extends Terminal(bd) with Real
 
   val Zero:Real = Decimal(0)
