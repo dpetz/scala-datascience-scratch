@@ -5,6 +5,7 @@ object Infix {
   type Binary[T] = (Expr[T],Expr[T])=>Expr[T]
   type Relation[T] = (Expr[T],Expr[T])=>Expr[Boolean]
 
+
   trait TimesTimes[T] extends Binary[T]
   trait Plus[T] extends Binary[T]
   trait Minus[T] extends Binary[T]

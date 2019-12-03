@@ -1,14 +1,19 @@
-package ds.expr
+package ds
 
 
- object Functions {
+package object expr {
 
-   type E[T] = Expr[T]
+  type Scalar[R] = Expr[R]
 
-  //def id(s:String):String = s"${this.getClass.getName}.$s"
+  implicit def str2Sym[T](s:String): Symbol[T] = Symbol(s)
+
+  implicit def char2Sym[T](c:Char): Symbol[T] = Symbol(c.toString)
+
+  /** ``Expr``'s monadic unit. */
+  implicit def expr[T](t:T): Const[T] = Const(t)
 
 
-  def map[S,T](x:E[S],f:E[S]=>E[T]):Term[T] = Term ("ds.expr.map",x,f) { e => e(f(x)) }
+  type E[R] = Expr[R]
 
   /** Lift `Function2` to map from/to ``Expr`` */
   def lift[X1, X2, Y](f: (X1, X2) => Y): (E[X1], E[X2]) => Term[Y] =
@@ -20,7 +25,6 @@ package ds.expr
 
   /** Raises ``Real`` to the power of another ``Real``.
     * Matrix multiplication also implements ``Power`` to inherit its symbol ``**`` */
-
 
 
 
