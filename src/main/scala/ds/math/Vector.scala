@@ -1,31 +1,50 @@
-package ds.vec
+package ds.math
 
 import ds.expr.Infix.{Div, Minus, Plus, Times}
-import ds.expr.{Const, Expr, Term}
+import ds.expr.{Engine, Expr, Expressible, Term, expr}
 import ds.num.Real
-import ds.expr.Implicits._
+import ds.num.Functions.{Plus, abs}
 import ds.num.Implicits._
+
 import scala.Function.tupled
 
-object Implicits {
+object Vector {
 
-  type Vec[R] = Expr[Seq[R]]
+  type E[R] = Expr[R]
+  type Vec[R] = E[Seq[R]]
+
+
+  case class Sum[R](v: Vec[R])(implicit real:Real[R]) extends Term[R] {
+    def eval(e:Engine) : R = e(v).foldLeft(real.zero)(real.plus)
+  }
+
+  /** map */
+  case class Each[X,Y](v: Vec[X], f:Expr[X=>Y]) extends Term[Vec[Y]] {
+    def eval(e:Engine) : Vec[Y] = e(v) map (x => e(f(x)))
+  }
+
+  case class Dot[R:Real](v: Vec[R], w: Vec[R]) extends Term[R] with Expressible[R] {
+    def express : Expr[R] = Sum(v * w)
+  }
+
+
 
   /** Wraps a ``Seq[X]`` for infix notations. */
-  implicit class VecInfix[X](v:Vec[X]) {
+  implicit class Infix[X](v:Vec[X]) {
 
-    def apply(i:Int):Expr[X] =
-      Term("ds.vec.apply")(v,i) { e => e(v)(i) }
+    def norm[R](p: Int)(v: Vec[R])(implicit real:Real[R]): Expr[R] =
+      Name("vec.norm") { p match {
+        case 1 => v.each(abs).all(sum[R])
+        case p => v.each((x: Expr[R]) => x ** p).all(sum[R]) ** (1 / p)
+      }}
+
+    def apply(i:E[Int]):E[X] =
+      Term(v,i) ( Name("vec.apply") { e => (v,i) => e(v)(i) } )
 
     def size[R](implicit real:Real[R]):Expr[R] =
       Term("ds.vec.size")(v){e => real(e(v).size)}
 
-    /** map */
-    def each[Y](f:Expr[X]=>Expr[Y]):Vec[Y] =
-      Term("ds.vec.each")(v,f) { e => e(v) map (x => e(f(expr(x)))) }
 
-    //def each[Y](f:Y=>Expr[Y]):Vec[Y] =
-    //  Term("each",ex,f) { e => e(ex) map (x => e(f(x))) }
 
     /** reduce */
     def all[Y](f:Vec[X]=>Expr[Y]):Expr[Y] = f(v)
@@ -34,7 +53,6 @@ object Implicits {
     def zip[Y,Z](w:Vec[Y])(f:(Expr[X],Expr[Y])=>Expr[Z]): Term[Seq[Z]] =
       Term("ds.vec.zip")(v,w)(e => ( e(v) zip e(w) ) map (pair => e(f(pair._1,pair._2))))
 
-    def dot(w:Vec[X])(implicit real:Real[X]):Expr[X] = Functions.dot(v, w)
 
     //def minBy(f:Expr[X]=>X)
 
@@ -46,12 +64,13 @@ object Implicits {
         e(v).view.updated(i,e(f(e(v)(i))))
       }
 
-    /** Elementwise multiplication with a scalar. */
-    def :*(x:Expr[X])(implicit real:Real[X]):Vec[X] = each(_ * x)
+
 
     /** Elementwise addition of a scalar. */
     def :+(x:Expr[X])(implicit real:Real[X]):Vec[X] = each(_ + x)
 
+    /** Elementwise multiplication with a scalar. */
+    def :*(x:Expr[X])(implicit real:Real[X]):Vec[X] = Each(v,Plus(x,_))
   }
 
   implicit def timesVec[R:Real]: Times[Seq[R]] = (v,w) => (v zip w)(_ * _)

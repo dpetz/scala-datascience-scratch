@@ -5,8 +5,9 @@ import ds.num.Real
 import ds.matrix.Implicits._
 
 
-/** Engine for `Real` arithmetic*/
-class Engine(val symbols:Map[Symbol[_],_] = Map.empty) {
+/** Engine for `Real` arithmetic. Map is immutable.*/
+ class Engine(val symbols:Map[Symbol[_],_] = Map.empty) {
+
 
   // @todo cache expensive computations
   def apply[A](expr: Expr[A]): A = expr match {

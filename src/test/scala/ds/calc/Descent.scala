@@ -1,6 +1,5 @@
 import ds.calc.{Descent, Gradient}
 import ds.num.DoubleReal._
-import ds.vec.Implicits._
 import ds.expr.Engine
 import ds.expr.Implicits._
 import ds.num.Implicits._

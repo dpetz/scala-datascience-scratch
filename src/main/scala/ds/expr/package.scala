@@ -1,5 +1,7 @@
 package ds
 
+import ds.expr.Term.Term1
+
 
 package object expr {
 
@@ -14,6 +16,17 @@ package object expr {
 
 
   type E[R] = Expr[R]
+
+  implicit def func2Expr[X,Y](f:Engine=>X=>Y): Expr[X=>Y] = new Expr[X=>Y] {
+    def eval(e:Engine):X=>Y = e(f)
+    def bind(x1:E[X]): Term[Y] = Term1(this,x1)
+  }
+
+
+  case class Free1[S,T](s:Symbol[S], expr:Expr[T]) extends Expr[S=>T] {
+    def eval(e:Engine):S=>T = x => expr.eval(new Engine(e.symbols + (s -> x)))
+
+  }
 
   /** Lift `Function2` to map from/to ``Expr`` */
   def lift[X1, X2, Y](f: (X1, X2) => Y): (E[X1], E[X2]) => Term[Y] =

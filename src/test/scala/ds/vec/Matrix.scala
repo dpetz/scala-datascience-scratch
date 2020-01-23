@@ -1,9 +1,7 @@
 
 import ds.matrix.Matrix
-import ds.vec._
 import ds.num.DoubleReal._
 import ds.matrix.Matrix.Math
-import ds.vec.Vec._
 
 class Matrix extends ds.SimpleSpec {
 

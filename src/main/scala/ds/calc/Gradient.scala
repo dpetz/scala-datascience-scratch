@@ -3,16 +3,13 @@ package ds.calc
 import ds.calc.Gradient.Direction
 import ds.expr.Expr
 import ds.num.Real
-import ds.vec.Implicits._
 import ds.expr.Implicits._
 import ds.num.Implicits._
-import ds.vec.Implicits._
-
-
 
 
 /** Gradient of real-valued function
   * Estimated via difference quotient unless provided analytically
+ *
   * @param pd ith partial difference quotient of f at v
   * */
 case class Gradient[R:Real](f:Vec[R]=>Scalar[R])(pd:Direction[R] => Scalar[R]) extends (Vec[R] => Vec[R])  {

@@ -9,7 +9,7 @@ object MonadicTransformers {
   trait Expr
 
   /** Evaluates to a real number / scalar.
-    * Engine manages number type / precision (Double, BigDecimnal) */
+    * Engine manages number type / precision (Double, BigDecimal) */
   trait Real extends Expr
 
   /** Engine knows how to evaluate */

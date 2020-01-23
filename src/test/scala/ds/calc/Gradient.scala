@@ -1,8 +1,6 @@
 import ds.num.BigReal._
 import ds.calc.Gradient.Direction
 import ds.expr.Engine
-import ds.vec.Implicits._
-import ds.vec.Functions._
 import ds.expr.Functions._
 import ds.num.{BigReal, Real}
 import ds.num.Implicits._

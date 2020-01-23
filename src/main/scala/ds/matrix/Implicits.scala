@@ -1,11 +1,8 @@
 package ds.matrix
 
 import ds.expr.Infix.TimesTimes
-import ds.vec.Implicits._
 import ds.expr.Term
 import ds.num.Real
-
-import ds.vec.Functions.dot
 
 object Implicits {
 

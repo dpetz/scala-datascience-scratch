@@ -2,7 +2,6 @@ package ds.calc
 
 import ds.expr.{Engine, Expr, Term}
 import ds.num.Real
-import ds.vec.Implicits._
 import ds.expr.Implicits._
 import ds.num.Implicits._
 import ds.expr.Functions._

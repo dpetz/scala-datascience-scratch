@@ -1,15 +1,39 @@
 package ds.expr
 
 import ds.expr.Infix._
-import ds.expr.Functions._
 
+
+/** Evaluates to ``value`` regardless of Engine */
+case class Const[T](value: T) extends Expr[T] {
+ def eval(e:Engine) : T = value
+}
+
+/** Reifies another expression */
+trait Expressible[T] extends Expr[T] {
+ def express:Expr[T]
+ def eval(e:Engine):T = express.eval(e)
+
+}
+
+/** Application of a function to the arguments of the Product.
+  * Subclasses are usually case classes.  */
+trait Term[T] extends Expr[T] with Product
+
+/** Identifier that is replaced by ``Engine`` with context specific value at each evaluation. */
+case class Symbol[T](id: String) extends Expr[T] {
+ def eval(e: Engine) = throw new UnsupportedOperationException
+ // @todo implement Sym.eval
+}
 
 /** Evaluates via  [[Engine]] to result of type ``X``.
  * Monadic with ``expr`` as unit and  ``next`` as flatMap.
   * Operators can be configure via type classes */
- trait Expr[X] {
+ sealed trait Expr[X] {
 
-  def eval:Engine=>X
+  def eval(e:Engine):X
+
+
+ def named(s:String):Tag[String,X] = Tag(s,this)
 
   def **(y:Expr[X])(implicit op:TimesTimes[X]):Expr[X] = op(this,y)
   // @todo create term instead executing immediately
@@ -44,7 +68,7 @@ import ds.expr.Functions._
   /** Shorthand for flatMap */
   //def >> [Y](f:X=>Expr[Y]):Expr[Y] = flatMap(f)
 
-  def map[Y](f:X=>Y):Expr[Y] = Name("ds.expr.map", Term(this) {
+  def map[Y](f:X=>Y):Expr[Y] = Named("ds.expr.map", Term(this) {
    x => e => e(f(e(x)))
   })
 
