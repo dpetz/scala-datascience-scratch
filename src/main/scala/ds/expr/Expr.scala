@@ -17,7 +17,26 @@ trait Expressible[T] extends Expr[T] {
 
 /** Application of a function to the arguments of the Product.
   * Subclasses are usually case classes.  */
-trait Term[T] extends Expr[T] with Product
+trait Term[Y] extends Expr[Y] {
+  def func:E[_]
+  def args:Product
+
+}
+
+object Term {
+
+ def apply[Y,X1,X2](x1: E[X1], x2: E[X2])(f:E[(X1,X2) => Y]):Term2[Y,X1,X2]=Term2(f)(x1,x2)
+}
+
+case class Term1[Y,X1](f:E[X1 => Y])(x1: E[X1]) extends Term[Y] {
+ def eval(e:Engine):Y = e(f)(e(x1))
+ def args:List[ Expr[_] ] = List(x1)
+ def func:E[X1 => Y] = f
+}
+
+case class Term2[Y,X1,X2](func:E[(X1, X2) => Y], args:Product2[E[X1],E[X2]]) extends Term[Y] {
+ def eval(e:Engine):Y = e(func)(e(args._1), e(args._2))
+}
 
 /** Identifier that is replaced by ``Engine`` with context specific value at each evaluation. */
 case class Symbol[T](id: String) extends Expr[T] {

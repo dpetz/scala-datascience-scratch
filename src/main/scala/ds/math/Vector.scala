@@ -18,10 +18,20 @@ object Vector {
     def eval(e:Engine) : R = e(v).foldLeft(real.zero)(real.plus)
   }
 
-  /** map */
-  case class Each[X,Y](v: Vec[X], f:Expr[X=>Y]) extends Term[Vec[Y]] {
-    def eval(e:Engine) : Vec[Y] = e(v) map (x => e(f(x)))
+
+
+
+  object Vector {
+
+    /** map */
+    def each[X,Y](v: Vec[X], f:Expr[X=>Y]) : Term[Vec[Y]] =
+      def eval(e:Engine) : Vec[Y] = e(v) map (x => e(f(x)))
+    }
+
+
   }
+
+
 
   case class Dot[R:Real](v: Vec[R], w: Vec[R]) extends Term[R] with Expressible[R] {
     def express : Expr[R] = Sum(v * w)

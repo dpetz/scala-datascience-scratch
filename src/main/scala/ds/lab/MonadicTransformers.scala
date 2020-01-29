@@ -9,10 +9,10 @@ object MonadicTransformers {
   trait Expr
 
   /** Evaluates to a real number / scalar.
-    * Engine manages number type / precision (Double, BigDecimal) */
+    * Engine manages number type / conversions / precision (Double, BigDecimal) */
   trait Real extends Expr
 
-  /** Engine knows how to evaluate */
+  /** Engine knows how to evaluate, eg. [[Plus]]*/
   trait Primitive
 
   case class Decimal(bd:BigDecimal) extends Terminal(bd) with Real
@@ -20,6 +20,7 @@ object MonadicTransformers {
   val Zero:Real = Decimal(0)
   val One:Real = Decimal(1)
 
+  /** Seq[Real]. Assume its huge, so push all work to engine instead traversing in local memory */
   trait Vec extends Expr
 
   /** Vec's unit. */
@@ -67,8 +68,6 @@ object MonadicTransformers {
           collector = op(collector,next)
           collector
         })
-
-
     }
     ) with Real
 
