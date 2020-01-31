@@ -8,13 +8,6 @@ case class Const[T](value: T) extends Expr[T] {
  def eval(e:Engine) : T = value
 }
 
-/** Reifies another expression */
-trait Expressible[T] extends Expr[T] {
- def express:Expr[T]
- def eval(e:Engine):T = express.eval(e)
-
-}
-
 /** Application of a function to the arguments of the Product.
   * Subclasses are usually case classes.  */
 trait Term[Y] extends Expr[Y] {
@@ -25,23 +18,29 @@ trait Term[Y] extends Expr[Y] {
 
 object Term {
 
- def apply[Y,X1,X2](x1: E[X1], x2: E[X2])(f:E[(X1,X2) => Y]):Term2[Y,X1,X2]=Term2(f)(x1,x2)
+ case class Term1[Y,X1](f:E[X1 => Y])(x1: E[X1]) extends Term[Y] {
+  def eval(e:Engine):Y = e(f)(e(x1))
+  def args:List[ Expr[_] ] = List(x1)
+  def func:E[X1 => Y] = f
+ }
+
+ case class Term2[Y,X1,X2](func:E[(X1, X2) => Y], args:Product2[E[X1],E[X2]]) extends Term[Y] {
+  def eval(e:Engine):Y = e(func)(e(args._1), e(args._2))
+ }
+
+ def apply[Y,X1](x1: E[X1])(f:E[X1 => Y]):Term1[Y,X1]=Term2(f,(x1))
+ def apply[Y,X1,X2](x1: E[X1], x2: E[X2])(f:E[(X1,X2) => Y]):Term2[Y,X1,X2]=Term2(f,(x1,x2))
 }
 
-case class Term1[Y,X1](f:E[X1 => Y])(x1: E[X1]) extends Term[Y] {
- def eval(e:Engine):Y = e(f)(e(x1))
- def args:List[ Expr[_] ] = List(x1)
- def func:E[X1 => Y] = f
-}
-
-case class Term2[Y,X1,X2](func:E[(X1, X2) => Y], args:Product2[E[X1],E[X2]]) extends Term[Y] {
- def eval(e:Engine):Y = e(func)(e(args._1), e(args._2))
-}
 
 /** Identifier that is replaced by ``Engine`` with context specific value at each evaluation. */
 case class Symbol[T](id: String) extends Expr[T] {
  def eval(e: Engine) = throw new UnsupportedOperationException
  // @todo implement Sym.eval
+}
+
+case class Tag[T,X](tag:T,expr:E[X]) extends Expr[X] {
+ def eval(e: Engine): X = expr.eval(e)
 }
 
 /** Evaluates via  [[Engine]] to result of type ``X``.
@@ -52,7 +51,8 @@ case class Symbol[T](id: String) extends Expr[T] {
   def eval(e:Engine):X
 
 
- def named(s:String):Tag[String,X] = Tag(s,this)
+ /* Wrap expression with a name */
+ def name(s:String):Tag[String,X] = Tag(s,this)
 
   def **(y:Expr[X])(implicit op:TimesTimes[X]):Expr[X] = op(this,y)
   // @todo create term instead executing immediately

@@ -1,7 +1,7 @@
 package ds.math
 
 import ds.expr.Infix.{Div, Minus, Plus, Times}
-import ds.expr.{Engine, Expr, Expressible, Term, expr}
+import ds.expr.{Engine, Expr, Expressible, Term, Term1, expr}
 import ds.num.Real
 import ds.num.Functions.{Plus, abs}
 import ds.num.Implicits._
@@ -14,39 +14,41 @@ object Vector {
   type Vec[R] = E[Seq[R]]
 
 
-  case class Sum[R](v: Vec[R])(implicit real:Real[R]) extends Term[R] {
-    def eval(e:Engine) : R = e(v).foldLeft(real.zero)(real.plus)
+
+  implicit class Ops[X](v:Vec[X]) {
+    /** map each element*/
+    def each[X, Y](f: Expr[X => Y]): Vec[Y] = Term(v, f) {
+      (v: Seq[X], f: X => Y) => v map (x => f(x))
+    } name "vec.each"
+
+    /** reduce */
+    def all[Y](f:E[Seq[X]=>Y]):E[Y] = Term(v, f) {
+      (v: Seq[X], f:Seq[X] => Y) => f(v)
+    } name "vec.all"
   }
 
-
-
-
-  object Vector {
-
-    /** map */
-    def each[X,Y](v: Vec[X], f:Expr[X=>Y]) : Term[Vec[Y]] =
-      def eval(e:Engine) : Vec[Y] = e(v) map (x => e(f(x)))
-    }
-
-
-  }
-
-
-
-  case class Dot[R:Real](v: Vec[R], w: Vec[R]) extends Term[R] with Expressible[R] {
-    def express : Expr[R] = Sum(v * w)
-  }
-
+  //implicit def liftFunc1[X,Y](f:X=>Y):E[X=>Y] = expr(f)
 
 
   /** Wraps a ``Seq[X]`` for infix notations. */
-  implicit class Infix[X](v:Vec[X]) {
+  implicit class MathOps[R](v:Vec[R])(implicit real:Real[R]) {
 
-    def norm[R](p: Int)(v: Vec[R])(implicit real:Real[R]): Expr[R] =
-      Name("vec.norm") { p match {
-        case 1 => v.each(abs).all(sum[R])
-        case p => v.each((x: Expr[R]) => x ** p).all(sum[R]) ** (1 / p)
-      }}
+    def sum: E[R] = Term(v) {
+      v:Seq[R] => v.foldLeft(real.zero)(real.plus)
+    } name "vec.sum"
+
+    def dot(w: Vec[R]) : E[R] = (v * w).sum name "vec.dot"
+
+    case class Partial(x:Symbol, )
+
+    def norm(p: Int): E[R] = p match {
+      case 1 => v.each(abs).sum
+      case p => {
+        def pow_2(x:R):E[R] =
+        v.each(x:R => x ** p).sum ** (1 / p)
+      }
+    } name "vec.norm"
+
 
     def apply(i:E[Int]):E[X] =
       Term(v,i) ( Name("vec.apply") { e => (v,i) => e(v)(i) } )
@@ -56,8 +58,8 @@ object Vector {
 
 
 
-    /** reduce */
-    def all[Y](f:Vec[X]=>Expr[Y]):Expr[Y] = f(v)
+
+
 
     /** Zip and apply binary operation */
     def zip[Y,Z](w:Vec[Y])(f:(Expr[X],Expr[Y])=>Expr[Z]): Term[Seq[Z]] =
