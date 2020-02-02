@@ -16,20 +16,29 @@ trait Term[Y] extends Expr[Y] {
 
 }
 
+
+case class Term1[Y,X1](f:E[X1 => Y],x1: E[X1]) extends Term[Y] {
+ def eval(e:Engine):Y = e(f)(e(x1))
+ def args:List[ Expr[_] ] = List(x1)
+ def func:E[X1 => Y] = f
+}
+
+case class Term2[Y,X1,X2](func:E[(X1, X2) => Y], args:Product2[E[X1],E[X2]]) extends Term[Y] {
+ def eval(e:Engine):Y = e(func)(e(args._1), e(args._2))
+}
+
+case class Term3[Y,X1,X2,X3](func:E[(X1, X2, X3) => Y], args:Product3[E[X1],E[X2],E[X3]]) extends Term[Y] {
+ def eval(e:Engine):Y = e(func)(e(args._1), e(args._2), e(args._3))
+}
+
 object Term {
 
- case class Term1[Y,X1](f:E[X1 => Y])(x1: E[X1]) extends Term[Y] {
-  def eval(e:Engine):Y = e(f)(e(x1))
-  def args:List[ Expr[_] ] = List(x1)
-  def func:E[X1 => Y] = f
- }
 
- case class Term2[Y,X1,X2](func:E[(X1, X2) => Y], args:Product2[E[X1],E[X2]]) extends Term[Y] {
-  def eval(e:Engine):Y = e(func)(e(args._1), e(args._2))
- }
-
- def apply[Y,X1](x1: E[X1])(f:E[X1 => Y]):Term1[Y,X1]=Term2(f,(x1))
- def apply[Y,X1,X2](x1: E[X1], x2: E[X2])(f:E[(X1,X2) => Y]):Term2[Y,X1,X2]=Term2(f,(x1,x2))
+ def apply[Y,X1](x1: E[X1])(f:E[X1 => Y]):Term1[Y,X1]=Term1(f, x1)
+ //def apply[Y,X1,X2](f:E[(X1,X2) => Y])(args:(E[X1], E[X2])):Term2[Y,X1,X2]=Term2(f,args)
+ def apply[Y,X1,X2]( x1:E[X1], x2:E[X2])(f:E[(X1,X2) => Y]):Term2[Y,X1,X2]=Term2(f,(x1,x2))
+ def apply[Y,X1,X2,X3]( x1:E[X1], x2:E[X2], x3:E[X3])(f:E[(X1,X2,X3) => Y]):Term3[Y,X1,X2,X3]=
+  Term3(f,(x1,x2,x3))
 }
 
 
@@ -43,60 +52,68 @@ case class Tag[T,X](tag:T,expr:E[X]) extends Expr[X] {
  def eval(e: Engine): X = expr.eval(e)
 }
 
+trait Func[T] extends E[T] {
+ def vars:Product
+}
+
+case class Func1[Y,X](s:Symbol[X], expr:E[Y]) extends Func[X=>Y] {
+ // @todo verify expr contains var
+ def vars: Product=s
+ def eval(e:Engine):X=>Y = {
+  x:X => {
+   e.bind(s,x)(expr)
+  }
+ }
+}
+
 /** Evaluates via  [[Engine]] to result of type ``X``.
  * Monadic with ``expr`` as unit and  ``next`` as flatMap.
   * Operators can be configure via type classes */
  sealed trait Expr[X] {
 
-  def eval(e:Engine):X
+ def eval(e: Engine): X
+
+ def of[S](s: Symbol[S]): Func1[X, S] = Func1(s, this)
 
 
  /* Wrap expression with a name */
- def name(s:String):Tag[String,X] = Tag(s,this)
+ def name(s: String): Tag[String, X] = Tag(s, this)
 
-  def **(y:Expr[X])(implicit op:TimesTimes[X]):Expr[X] = op(this,y)
-  // @todo create term instead executing immediately
+ def **(y: Expr[X])(implicit op: TimesTimes[X]): Expr[X] = Term(this, y)(op) name "**"
 
-  def *(y:Expr[X])(implicit op:Times[X]):Expr[X] = op(this,y)
+ def *(y: Expr[X])(implicit op: Times[X]): Expr[X] = Term(this, y)(op) name "*"
 
-  def /(y:Expr[X])(implicit op:Div[X]):Expr[X] = op(this,y)
+ def /(y: Expr[X])(implicit op: Div[X]): Expr[X] = Term(this, y)(op) name "/"
 
-  def -(y:Expr[X])(implicit op:Minus[X]):Expr[X] = op(this,y)
+ def -(y: Expr[X])(implicit op: Minus[X]): Expr[X] = Term(this, y)(op) name "-"
 
-  def +(y:Expr[X])(implicit op:Plus[X]):Expr[X] = op(this,y)
+ def +(y: Expr[X])(implicit op: Plus[X]): Expr[X] = Term(this, y)(op) name "+"
 
-  def ~(y:Expr[X])(implicit op:Approx[X]):Expr[Boolean] = op(this,y)
+ def ~(y: Expr[X])(implicit op: Approx[X]): Expr[Boolean] = Term(this, y)(op) name ""
 
-  def <(y:Expr[X])(implicit op:Compare[X]):Expr[Boolean] = op(this,y).map(_ < 0)
+ def <(y: Expr[X])(implicit op: Compare[X]): Expr[Boolean] = Term(this, y)(op).map(_ < 0) name "<"
 
-  def <=(y:Expr[X])(implicit op:Compare[X]):Expr[Boolean] = op(this,y).map(_ <= 0)
+ def <=(y: Expr[X])(implicit op: Compare[X]): Expr[Boolean] = Term(this, y)(op).map(_ <= 0) name "<="
 
-  def ==(y:Expr[X])(implicit op:Compare[X]):Expr[Boolean] = op(this,y).map(_ = 0)
+ def ==(y: Expr[X])(implicit op: Compare[X]): Expr[Boolean] = Term(this, y)(op).map(_ == 0) name "=="
 
-  def >=(y:Expr[X])(implicit op:Compare[X]):Expr[Boolean] = op(this,y).map(_ >= 0)
+ def >=(y: Expr[X])(implicit op: Compare[X]): Expr[Boolean] = Term(this, y)(op).map(_ >= 0) name ">="
 
-  def >(y:Expr[X])(implicit op:Compare[X]):Expr[Boolean] = op(this,y).map(_ > 0)
+ def >(y: Expr[X])(implicit op: Compare[X]): Expr[Boolean] = Term(this, y)(op).map(_ > 0) name ">"
 
-  def unary_-(implicit op:Negate[X]):Expr[X] = op(this)
+ def unary_-(implicit op: Negate[X]): Expr[X] = Term(this)(op) name "_-"
 
+ /* TODO flatMap
   // For Scala for comprehensions
-  def flatMap[Y](f:X=>Expr[Y]):Expr[Y] = Term(f,this) {
-    e => e(f(e(this)))
+  def flatMap[Y](f:X=>Expr[Y]):Expr[Y] = Term(this,f) {
+   (x:X,f:X=>Y) => f(x)
   }
-
-  /** Shorthand for flatMap */
-  //def >> [Y](f:X=>Expr[Y]):Expr[Y] = flatMap(f)
-
-  def map[Y](f:X=>Y):Expr[Y] = Named("ds.expr.map", Term(this) {
-   x => e => e(f(e(x)))
-  })
-
-
-// Cannot assume ``List[ Expr[_] ]`` because arguments might include functions (eg. map)
-/*
-object Expr {
-  case class Exception(msg: String, e: Expr[_])
-    extends RuntimeException(msg + " in: " + e)
-
-}
 */
+
+ /** Shorthand for flatMap */
+ //def >> [Y](f:X=>Expr[Y]):Expr[Y] = flatMap(f)
+
+ def map[Y](f: X => Y): E[Y] = Term(this, f) {
+  (x: X, f: X => Y) => f(x)
+ } name "map"
+}

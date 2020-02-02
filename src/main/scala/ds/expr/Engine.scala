@@ -3,6 +3,7 @@ package ds.expr
 import ds.matrix.Matrix
 import ds.num.Real
 import ds.matrix.Implicits._
+import ds.expr.Symbol
 
 
 /** Engine for `Real` arithmetic. Map is immutable.*/
@@ -15,6 +16,7 @@ import ds.matrix.Implicits._
     case e => e.eval(this)
   }
 
+  def bind[X](s:Symbol[X],x:X) : Engine = new Engine(symbols + (s -> x))
 
   /** Create Term by finding and bind evaluation code for ``args``.
     * */

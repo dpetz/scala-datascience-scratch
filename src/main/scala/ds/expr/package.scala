@@ -1,6 +1,5 @@
 package ds
 
-import ds.expr.Term.Term1
 
 
 package object expr {

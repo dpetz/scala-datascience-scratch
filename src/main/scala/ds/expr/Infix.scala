@@ -2,21 +2,21 @@ package ds.expr
 
 object Infix {
 
-  type Binary[T] = (Expr[T],Expr[T])=>Expr[T]
-  type Relation[T] = (Expr[T],Expr[T])=>Expr[Boolean]
+  type Binary[T] = (T,T)=>T
+  type Relation[T] = (T,T)=>Boolean
 
 
-  trait TimesTimes[T] extends Binary[T]
-  trait Plus[T] extends Binary[T]
-  trait Minus[T] extends Binary[T]
-  trait Div[T] extends Binary[T]
-  trait Times[T] extends Binary[T]
+  trait TimesTimes[T] extends ((T,T)=>T)
+  trait Plus[T] extends ((T,T)=>T)
+  trait Minus[T] extends ((T,T)=>T)
+  trait Div[T] extends ((T,T)=>T)
+  trait Times[T] extends ((T,T)=>T)
 
-  trait Negate[T] extends (Expr[T]=>Expr[T])
+  trait Negate[T] extends (T=>T)
 
-  trait Approx[T] extends Relation[T]
+  trait Approx[T] extends ((T,T)=>Boolean)
 
-  trait Compare[T] extends ((Expr[T],Expr[T])=>Expr[Int])
+  trait Compare[T] extends ((T,T)=>Int)
 
 
 }
